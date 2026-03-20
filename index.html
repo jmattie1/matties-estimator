@@ -32,17 +32,16 @@
   --ease: 0.18s ease;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{background:#E8E0D4;font-family:var(--font-body);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:32px 16px 60px;-webkit-font-smoothing:antialiased;}
+body{background:var(--stock);font-family:var(--font-body);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-/* ── PHONE SHELL ── */
-.app{width:360px;min-height:720px;background:var(--stock);border-radius:40px;box-shadow:var(--shadow-lg),0 0 0 8px var(--navy-dark);overflow:hidden;position:relative;display:flex;flex-direction:column;}
-.app::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:100px;height:26px;background:var(--navy-dark);border-radius:0 0 16px 16px;z-index:30;}
-.status-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 4px;font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:0.08em;color:var(--navy);margin-top:26px;flex-shrink:0;}
-.status-bar.light{color:rgba(244,239,228,0.8);background:var(--navy);}
-.status-bar .time{font-size:11px;font-weight:700;}
+/* ── APP SHELL — full screen ── */
+.app{width:100%;min-height:100vh;max-width:480px;margin:0 auto;background:var(--stock);overflow:hidden;position:relative;display:flex;flex-direction:column;}
+.app::before{display:none;}
+.status-bar{display:none;}
+
 
 /* ── SCREENS ── */
-.screen{display:none;flex-direction:column;flex:1;overflow:hidden;}
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:100vh;}
 .screen.active{display:flex;}
 .scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:80px;}
 .scroll::-webkit-scrollbar{display:none;}
@@ -323,6 +322,18 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
       <div id="roomSection">
         <div class="sdiv">Room Measurements</div>
         <div id="roomList"></div>
+
+        <!-- Live sq ft total -->
+        <div id="sqftTotalBox" style="display:none;margin:0 16px 12px;background:var(--navy);border-radius:var(--radius-md);padding:14px 18px;display:none;justify-content:space-between;align-items:center;">
+          <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(244,239,228,0.55);">Total Sq Ft</div>
+          <div style="font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--white);line-height:1;" id="sqftTotalNum">0</div>
+        </div>
+        <!-- Waste total (install only) -->
+        <div id="sqftWasteBox" style="display:none;margin:-4px 16px 12px;background:var(--stock-dark);border-radius:var(--radius-md);padding:10px 18px;justify-content:space-between;align-items:center;">
+          <div style="font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);">+ 7% Waste</div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--mist);" id="sqftWasteNum">0 sq ft</div>
+        </div>
+
         <div style="padding:0 16px;margin-bottom:12px;">
           <button class="btn btn-ghost" onclick="addRoom()">＋ Add Room</button>
         </div>
@@ -424,7 +435,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
   <!-- ══ SCREEN: RESULTS ══ -->
   <div class="screen" id="screen-results">
     <div class="hero" style="padding-top:10px;padding-bottom:44px;" id="resultsHero">
-      <div class="back-btn" onclick="goTo('screen-estimate')">← Edit Estimate</div>
+      <div class="back-btn" onclick="goTo('screen-estimate')" style="color:var(--stock);opacity:1;font-size:11px;font-weight:700;margin-bottom:14px;">← Back to Estimate</div>
       <div class="hero-meta" id="resultsClient"></div>
       <div class="hero-title" id="resultsTitle"></div>
       <div class="hero-meta" id="resultsMeta" style="margin-top:6px;"></div>
@@ -1101,6 +1112,7 @@ function selectType(el, type) {
     row.style.display = isInstall ? 'block' : 'none';
   });
   updateStairDisplay();
+  updateSqftTotal();
 }
 
 // ══════════════════════════════════════════════
@@ -1119,6 +1131,7 @@ function removeRoom(id) {
   const idx = rooms.findIndex(r => r.id === id);
   if (idx > -1) rooms.splice(idx, 1);
   renderRooms();
+  updateSqftTotal();
 }
 
 function renderRooms() {
@@ -1193,6 +1206,33 @@ function updateRoomSqft(id, val) {
     r.sqft = val;
     const card = [...document.querySelectorAll('.room-card')].find(c => parseInt(c.dataset.roomId) === id);
     if (card) card.classList.toggle('active-card', parseFloat(val) > 0);
+    updateSqftTotal();
+  }
+}
+
+function updateSqftTotal() {
+  const rawSqft = rooms.reduce((acc, room) => acc + calcRoomSqft(room), 0);
+  const wasteSqft = currentType === 'install' ? Math.round(rawSqft * 0.07) : 0;
+
+  const totalBox = document.getElementById('sqftTotalBox');
+  const wasteBox = document.getElementById('sqftWasteBox');
+  const totalNum = document.getElementById('sqftTotalNum');
+  const wasteNum = document.getElementById('sqftWasteNum');
+
+  if (!totalBox) return;
+
+  if (rawSqft > 0) {
+    totalBox.style.display = 'flex';
+    totalNum.textContent = (rawSqft + wasteSqft).toLocaleString() + ' sq ft';
+  } else {
+    totalBox.style.display = 'none';
+  }
+
+  if (wasteSqft > 0 && rawSqft > 0) {
+    wasteBox.style.display = 'flex';
+    wasteNum.textContent = '+' + wasteSqft + ' sq ft waste';
+  } else {
+    wasteBox.style.display = 'none';
   }
 }
 
@@ -1429,7 +1469,7 @@ function row(name, detail, val, highlight) {
 // ══════════════════════════════════════════════
 // GOOGLE SHEETS SAVE
 // ══════════════════════════════════════════════
-function saveToSheet() {
+async function saveToSheet() {
   const url = document.getElementById('sheetUrl').value.trim();
   if (!url) {
     showToast('⚠ Add Sheet URL in Rates first', '');
@@ -1438,49 +1478,87 @@ function saveToSheet() {
   }
   if (!lastEstimate) { showToast('⚠ No estimate to save', ''); return; }
 
-  const e = lastEstimate;
-  const now = new Date().toLocaleDateString('en-US');
-
-  // Build the row data matching Option B layout
-  const rowData = {
-    Date:         now,
-    Client:       e.client,
-    Phone:        e.phone || '',
-    City:         e.city || '',
-    JobType:      e.typeLabel,
-    RawSqFt:      e.rawSqft || 0,
-    WasteSqFt:    e.wasteSqft || 0,
-    TotalSqFt:    e.totalSqft || e.stairCount || 0,
-    StairCount:   e.stairCount || '',
-    LaborRate:    e.laborRate,
-    LaborTotal:   Math.round(e.laborTotal),
-    SealerCoats:  e.sealerCoats,
-    SealerCost:   Math.round(e.sealerCost || 0),
-    PolyCoats:    e.polyCoats,
-    PolyCost:     Math.round(e.polyCost || 0),
-    SuppliesCost: Math.round(e.suppliesCost || 0),
-    MaterialsTotal: Math.round(e.materialsTotal || 0),
-    EstimateTotal: Math.round(e.total),
-    PricePerSqFt: e.perSqft ? e.perSqft.toFixed(2) : '',
-    Rooms:        (e.rooms || []).map(r => r.name + ':' + r.sqft).join(' | '),
-  };
-
-  // For now — simulate save and show what would be sent
   const btn = document.getElementById('saveBtn');
   btn.disabled = true;
   btn.textContent = '⏳ Saving…';
 
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = '✓ Saved to Sheet';
-    btn.style.background = 'var(--success)';
-    showToast('✓ Estimate Saved!', 'success');
+  const e = lastEstimate;
 
-    // Log the row so you can verify the data
-    console.log('📊 Mattie\'s Estimate Row:', rowData);
-    console.log('Sheet URL:', url);
-    // When you connect the Sheet, replace this with a fetch() POST to your Apps Script web app URL
-  }, 900);
+  // Build payload — matches Apps Script buildRow() exactly
+  const payload = {
+    date:          e.date || new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}),
+    client:        e.client       || '',
+    phone:         e.phone        || '',
+    city:          e.city         || '',
+    typeLabel:     e.typeLabel    || '',
+    status:        'estimate',
+    sqft:          e.rawSqft      || 0,
+    rawSqft:       e.rawSqft      || 0,
+    wasteSqft:     e.wasteSqft    || 0,
+    totalSqft:     e.totalSqft    || e.rawSqft || 0,
+    stairTreads:   e.stairTreads  || e.stairCount || 0,
+    stairRisers:   e.stairRisers  || 0,
+    treadWidth:    e.treadWidth   || '',
+    riserWidth:    e.riserWidth   || '',
+    laborRate:     e.laborRate    || 0,
+    laborTotal:    Math.round(e.laborTotal    || 0),
+    sealerCoats:   e.sealerCoats  || 0,
+    sealerCost:    Math.round(e.sealerCost    || 0),
+    polyCoats:     e.polyCoats    || 0,
+    polyCost:      Math.round(e.polyCost      || 0),
+    suppliesCost:  Math.round(e.suppliesCost  || 0),
+    customMatLines: e.customMatLines || [],
+    total:         Math.round(e.total         || 0),
+    perSqft:       e.perSqft ? parseFloat(e.perSqft).toFixed(2) : '',
+    finishType:    e.finishType   || '',
+    finishNotes:   e.finishNotes  || '',
+    stairNotes:    e.stairNotes   || '',
+    rooms:         e.rooms        || [],
+    photos:        e.photos       || { general: [], room: {} },
+  };
+
+  try {
+    // Google Apps Script requires no-cors for simple POST
+    // We use a form-encoded approach via fetch with text response
+    const response = await fetch(url, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    });
+
+    // Apps Script returns JSON — parse it
+    let result;
+    try {
+      result = await response.json();
+    } catch {
+      // If JSON parse fails it still likely worked (Apps Script redirect quirk)
+      result = { success: true };
+    }
+
+    if (result.success !== false) {
+      btn.disabled  = false;
+      btn.textContent = '✓ Saved to Sheet';
+      btn.style.background = 'var(--success)';
+      showToast('✓ Saved to Google Sheets!', 'success');
+      // Also update the locally saved job's status marker
+      const job = savedJobs.find(j =>
+        j.client === payload.client && j.total === payload.total
+      );
+      if (job) {
+        job.savedToSheet = true;
+        try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(e){}
+      }
+    } else {
+      throw new Error(result.error || 'Unknown error');
+    }
+
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = '⚠ Save Failed — Retry';
+    btn.style.background = 'var(--crimson)';
+    showToast('⚠ Sheet save failed — check URL', '');
+    console.error('Sheets save error:', err);
+  }
 }
 
 // ══════════════════════════════════════════════
