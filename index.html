@@ -51,55 +51,55 @@ body{background:var(--stock);font-family:var(--font-body);min-height:100vh;-webk
 .bottom-nav{position:absolute;bottom:0;left:0;right:0;height:68px;background:var(--white);border-top:1px solid var(--stock-mid);display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;z-index:20;box-shadow:0 -4px 20px rgba(28,42,74,0.08);}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 14px;border-radius:var(--radius-pill);transition:all var(--ease);}
 .nav-item.active{background:var(--crimson-fade);}
-.nav-icon{font-size:18px;line-height:1;}
-.nav-label{font-family:var(--font-ui);font-size:8px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mist);}
+.nav-icon{font-size:29px;line-height:1;}
+.nav-label{font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mist);}
 .nav-item.active .nav-label{color:var(--crimson);}
 
 /* ── HERO HEADER ── */
 .hero{background:var(--navy);padding:28px 22px 44px;position:relative;overflow:hidden;flex-shrink:0;}
 .hero::after{content:'';position:absolute;bottom:-28px;left:-20px;right:-20px;height:56px;background:var(--stock);border-radius:50%;}
-.hero-eyebrow{font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:rgba(244,239,228,0.45);margin-bottom:5px;}
-.hero-brand{font-family:var(--font-display);font-size:32px;font-weight:900;color:var(--crimson);letter-spacing:0.04em;line-height:1;}
-.hero-sub{font-family:var(--font-ui);font-size:10px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(244,239,228,0.6);margin-top:3px;}
-.hero-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--white);line-height:1.1;margin-top:4px;}
-.hero-meta{font-family:var(--font-ui);font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.4);margin-top:6px;}
-.back-btn{font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.5);cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;transition:color var(--ease);}
+.hero-eyebrow{font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:rgba(244,239,228,0.45);margin-bottom:5px;}
+.hero-brand{font-family:var(--font-display);font-size:51px;font-weight:900;color:var(--crimson);letter-spacing:0.04em;line-height:1;}
+.hero-sub{font-family:var(--font-ui);font-size:16px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(244,239,228,0.6);margin-top:3px;}
+.hero-title{font-family:var(--font-display);font-size:35px;font-weight:800;color:var(--white);line-height:1.1;margin-top:4px;}
+.hero-meta{font-family:var(--font-ui);font-size:15px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.4);margin-top:6px;}
+.back-btn{font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.5);cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;transition:color var(--ease);}
 .back-btn:hover{color:var(--stock);}
 
 /* ── CARDS ── */
 .card{background:var(--white);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-sm);margin:0 16px 12px;border:1.5px solid var(--stock-mid);transition:all var(--ease);}
 .card.active-card{border-color:var(--crimson);}
-.card-label{font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--mist);margin-bottom:10px;}
+.card-label{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--mist);margin-bottom:10px;}
 
 /* ── FORM FIELDS ── */
 .field-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
 .field-group:last-child{margin-bottom:0;}
 .field-row{display:flex;gap:8px;}
 .field-row .field-group{flex:1;}
-label.fl{font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--navy);}
-input.fi,select.fi{background:var(--stock);border:1.5px solid var(--stock-mid);border-radius:var(--radius-sm);padding:9px 11px;font-family:var(--font-body);font-size:13px;color:var(--navy);outline:none;transition:all var(--ease);width:100%;}
+label.fl{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--navy);}
+input.fi,select.fi{background:var(--stock);border:1.5px solid var(--stock-mid);border-radius:var(--radius-sm);padding:9px 11px;font-family:var(--font-body);font-size:21px;color:var(--navy);outline:none;transition:all var(--ease);width:100%;}
 input.fi:focus,select.fi:focus{border-color:var(--crimson);background:var(--white);box-shadow:0 0 0 3px rgba(139,26,26,0.10);}
 input.fi::placeholder{color:var(--mist);font-weight:300;}
-input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size:16px;font-weight:700;}
+input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size:25px;font-weight:700;}
 .dim-row{display:flex;align-items:center;gap:8px;}
-.dim-x{font-family:var(--font-ui);font-size:14px;font-weight:600;color:var(--mist);}
-.dim-unit{font-family:var(--font-ui);font-size:10px;font-weight:600;color:var(--mist);text-transform:uppercase;}
-.dim-sqft{font-family:var(--font-display);font-size:14px;font-weight:800;color:var(--crimson);margin-left:auto;}
+.dim-x{font-family:var(--font-ui);font-size:22px;font-weight:600;color:var(--mist);}
+.dim-unit{font-family:var(--font-ui);font-size:16px;font-weight:600;color:var(--mist);text-transform:uppercase;}
+.dim-sqft{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--crimson);margin-left:auto;}
 
 /* ── TYPE CHIPS ── */
 .type-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px;margin-bottom:12px;}
 .type-chip{background:var(--white);border:1.5px solid var(--stock-mid);border-radius:var(--radius-sm);padding:10px 12px;cursor:pointer;transition:all var(--ease);text-align:center;}
 .type-chip.selected{background:var(--crimson-fade);border-color:var(--crimson);}
-.type-chip-icon{font-size:18px;display:block;margin-bottom:4px;}
-.type-chip-label{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate);}
+.type-chip-icon{font-size:29px;display:block;margin-bottom:4px;}
+.type-chip-label{font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate);}
 .type-chip.selected .type-chip-label{color:var(--crimson);}
 
 /* ── SECTION DIVIDER ── */
-.sdiv{font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--mist);padding:0 16px;margin:14px 0 8px;display:flex;align-items:center;gap:10px;}
+.sdiv{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--mist);padding:0 16px;margin:14px 0 8px;display:flex;align-items:center;gap:10px;}
 .sdiv::after{content:'';flex:1;height:1px;background:var(--stock-mid);}
 
 /* ── BUTTONS ── */
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;border:none;border-radius:var(--radius-pill);padding:14px 24px;cursor:pointer;transition:all var(--ease);width:100%;}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-ui);font-size:19px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;border:none;border-radius:var(--radius-pill);padding:14px 24px;cursor:pointer;transition:all var(--ease);width:100%;}
 .btn-primary{background:var(--crimson);color:var(--stock);}
 .btn-primary:hover{background:var(--crimson-dark);box-shadow:0 6px 20px rgba(139,26,26,0.28);transform:translateY(-1px);}
 .btn-primary:active{transform:translateY(0);}
@@ -116,76 +116,76 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
 
 /* ── NOTICE ── */
 .notice{background:var(--success-fade);border-radius:var(--radius-sm);padding:10px 14px;margin:0 16px 12px;display:flex;align-items:flex-start;gap:8px;}
-.notice-icon{font-size:13px;margin-top:1px;}
-.notice-text{font-size:11px;color:var(--success);line-height:1.5;}
+.notice-icon{font-size:21px;margin-top:1px;}
+.notice-text{font-size:18px;color:var(--success);line-height:1.5;}
 .notice-text strong{font-weight:700;}
 .notice.warn{background:rgba(184,134,11,0.09);}
 .notice.warn .notice-text{color:#7a5800;}
 
 /* ── RESULTS ── */
 .total-pill{background:var(--white);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow-md);margin:0 16px 14px;display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--stock-mid);}
-.total-label{font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--mist);margin-bottom:3px;}
-.total-amount{font-family:var(--font-display);font-size:34px;font-weight:900;color:var(--crimson);line-height:1;}
+.total-label{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--mist);margin-bottom:3px;}
+.total-amount{font-family:var(--font-display);font-size:55px;font-weight:900;color:var(--crimson);line-height:1;}
 .total-right{text-align:right;}
-.total-sqft-num{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--navy);}
-.total-sqft-label{font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);}
+.total-sqft-num{font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--navy);}
+.total-sqft-label{font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);}
 .breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--stock);}
 .breakdown-row:last-child{border-bottom:none;padding-bottom:0;}
 .breakdown-row:first-child{padding-top:0;}
-.b-name{font-family:var(--font-body);font-size:12px;color:var(--navy);}
-.b-detail{font-size:10px;color:var(--mist);}
-.b-val{font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--slate);}
+.b-name{font-family:var(--font-body);font-size:19px;color:var(--navy);}
+.b-detail{font-size:16px;color:var(--mist);}
+.b-val{font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--slate);}
 .b-val.hi{color:var(--crimson);}
 .b-total-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;margin-top:4px;border-top:1.5px solid var(--stock-mid);}
-.b-total-label{font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);}
-.b-total-val{font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--crimson);}
+.b-total-label{font-family:var(--font-ui);font-size:18px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);}
+.b-total-val{font-family:var(--font-display);font-size:32px;font-weight:900;color:var(--crimson);}
 .room-chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px;margin-bottom:14px;}
 .room-chip{background:var(--navy-fade);border-radius:var(--radius-pill);padding:5px 12px;display:flex;align-items:center;gap:6px;}
-.rc-name{font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--navy);}
-.rc-val{font-family:var(--font-display);font-size:11px;font-weight:700;color:var(--crimson);}
+.rc-name{font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--navy);}
+.rc-val{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--crimson);}
 
 /* ── SETTINGS SCREEN ── */
 .settings-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--stock);}
 .settings-row:last-child{border-bottom:none;}
-.settings-label{font-size:12px;color:var(--navy);font-weight:400;}
-.settings-label small{display:block;font-size:10px;color:var(--mist);margin-top:1px;}
-.settings-input{background:var(--stock);border:1.5px solid var(--stock-mid);border-radius:6px;padding:7px 10px;font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--crimson);text-align:right;width:90px;outline:none;transition:all var(--ease);}
+.settings-label{font-size:19px;color:var(--navy);font-weight:400;}
+.settings-label small{display:block;font-size:16px;color:var(--mist);margin-top:1px;}
+.settings-input{background:var(--stock);border:1.5px solid var(--stock-mid);border-radius:6px;padding:7px 10px;font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--crimson);text-align:right;width:90px;outline:none;transition:all var(--ease);}
 .settings-input:focus{border-color:var(--crimson);background:var(--white);box-shadow:0 0 0 3px rgba(139,26,26,0.10);}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:var(--stock);font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:12px 24px;border-radius:var(--radius-pill);box-shadow:var(--shadow-lg);opacity:0;transition:all 0.3s ease;pointer-events:none;white-space:nowrap;z-index:100;}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:var(--stock);font-family:var(--font-ui);font-size:18px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:12px 24px;border-radius:var(--radius-pill);box-shadow:var(--shadow-lg);opacity:0;transition:all 0.3s ease;pointer-events:none;white-space:nowrap;z-index:100;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .toast.success{background:var(--success);}
 
 /* ── HOME ── */
-.greeting{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--navy);margin-bottom:3px;}
-.greeting-sub{font-size:11px;color:var(--mist);margin-bottom:20px;}
+.greeting{font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--navy);margin-bottom:3px;}
+.greeting-sub{font-size:18px;color:var(--mist);margin-bottom:20px;}
 .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;margin-bottom:24px;}
 .quick-card{background:var(--white);border-radius:var(--radius-md);padding:16px 14px;box-shadow:var(--shadow-sm);cursor:pointer;transition:all var(--ease);border:1.5px solid transparent;}
 .quick-card:hover{border-color:var(--crimson);transform:translateY(-2px);box-shadow:var(--shadow-md);}
 .quick-card.hl{background:var(--crimson);color:var(--white);}
-.q-icon{font-size:22px;margin-bottom:8px;display:block;}
-.q-label{font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);display:block;margin-bottom:2px;}
+.q-icon{font-size:35px;margin-bottom:8px;display:block;}
+.q-label{font-family:var(--font-ui);font-size:18px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);display:block;margin-bottom:2px;}
 .quick-card.hl .q-label{color:rgba(255,255,255,0.9);}
-.q-desc{font-size:10px;color:var(--mist);}
+.q-desc{font-size:16px;color:var(--mist);}
 .quick-card.hl .q-desc{color:rgba(255,255,255,0.6);}
 .recent-item{display:flex;align-items:center;gap:12px;background:var(--white);margin:0 16px 9px;padding:12px 14px;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);cursor:pointer;transition:all var(--ease);}
 .recent-item:hover{transform:translateX(3px);box-shadow:var(--shadow-md);}
-.r-avatar{width:38px;height:38px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:13px;font-weight:900;color:var(--stock);flex-shrink:0;}
+.r-avatar{width:38px;height:38px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:21px;font-weight:900;color:var(--stock);flex-shrink:0;}
 .r-avatar.cr{background:var(--crimson);}
 .r-info{flex:1;}
-.r-name{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:1px;}
-.r-detail{font-size:10px;color:var(--mist);}
-.r-amount{font-family:var(--font-display);font-size:14px;font-weight:800;color:var(--crimson);}
-.sec-title{font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--mist);margin-bottom:10px;padding:0 16px;}
+.r-name{font-size:21px;font-weight:700;color:var(--navy);margin-bottom:1px;}
+.r-detail{font-size:16px;color:var(--mist);}
+.r-amount{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--crimson);}
+.sec-title{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--mist);margin-bottom:10px;padding:0 16px;}
 
 /* stair input */
 .stair-row{display:flex;align-items:center;gap:10px;margin-top:6px;}
-.stair-label{font-size:12px;color:var(--navy);}
+.stair-label{font-size:19px;color:var(--navy);}
 .stair-counter{display:flex;align-items:center;gap:0;}
-.stair-btn{width:32px;height:32px;background:var(--stock-dark);border:1.5px solid var(--stock-mid);border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--navy);transition:all var(--ease);font-family:var(--font-ui);font-weight:700;}
+.stair-btn{width:32px;height:32px;background:var(--stock-dark);border:1.5px solid var(--stock-mid);border-radius:6px;font-size:25px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--navy);transition:all var(--ease);font-family:var(--font-ui);font-weight:700;}
 .stair-btn:hover{background:var(--crimson-fade);border-color:var(--crimson);color:var(--crimson);}
-.stair-num{font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--crimson);width:40px;text-align:center;}
+.stair-num{font-family:var(--font-display);font-size:29px;font-weight:800;color:var(--crimson);width:40px;text-align:center;}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 .screen.active .hero,.screen.active .scroll{animation:fadeUp 0.3s ease both;}
@@ -193,26 +193,26 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
 /* ── PHOTO SYSTEM ── */
 .photo-section{padding:0 16px;margin-bottom:12px;}
 .photo-add-row{display:flex;gap:8px;margin-bottom:10px;}
-.photo-btn{display:flex;align-items:center;justify-content:center;gap:6px;flex:1;padding:11px 10px;border-radius:var(--radius-sm);font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all var(--ease);border:1.5px solid var(--stock-mid);background:var(--white);color:var(--navy);}
+.photo-btn{display:flex;align-items:center;justify-content:center;gap:6px;flex:1;padding:11px 10px;border-radius:var(--radius-sm);font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all var(--ease);border:1.5px solid var(--stock-mid);background:var(--white);color:var(--navy);}
 .photo-btn:hover{border-color:var(--crimson);color:var(--crimson);background:var(--crimson-fade);}
-.photo-btn .pb-icon{font-size:16px;}
+.photo-btn .pb-icon{font-size:25px;}
 .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
 .photo-thumb{position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;background:var(--stock-dark);border:1.5px solid var(--stock-mid);}
 .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.photo-thumb-del{position:absolute;top:3px;right:3px;width:20px;height:20px;background:rgba(28,42,74,0.75);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:white;line-height:1;transition:background var(--ease);}
+.photo-thumb-del{position:absolute;top:3px;right:3px;width:20px;height:20px;background:rgba(28,42,74,0.75);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:white;line-height:1;transition:background var(--ease);}
 .photo-thumb-del:hover{background:var(--crimson);}
-.photo-thumb-label{position:absolute;bottom:0;left:0;right:0;padding:3px 5px;background:rgba(28,42,74,0.6);font-family:var(--font-ui);font-size:8px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.photo-empty{grid-column:1/-1;text-align:center;padding:16px;font-size:11px;color:var(--mist);font-style:italic;}
+.photo-thumb-label{position:absolute;bottom:0;left:0;right:0;padding:3px 5px;background:rgba(28,42,74,0.6);font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.photo-empty{grid-column:1/-1;text-align:center;padding:16px;font-size:18px;color:var(--mist);font-style:italic;}
 
 /* lightbox */
 .lightbox{display:none;position:fixed;inset:0;background:rgba(17,24,40,0.95);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
 .lightbox.open{display:flex;}
 .lightbox img{max-width:90%;max-height:75vh;border-radius:var(--radius-md);object-fit:contain;box-shadow:var(--shadow-lg);}
-.lightbox-caption{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(244,239,228,0.6);}
-.lightbox-close{position:absolute;top:16px;right:20px;font-size:24px;color:rgba(244,239,228,0.7);cursor:pointer;transition:color var(--ease);}
+.lightbox-caption{font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(244,239,228,0.6);}
+.lightbox-close{position:absolute;top:16px;right:20px;font-size:39px;color:rgba(244,239,228,0.7);cursor:pointer;transition:color var(--ease);}
 .lightbox-close:hover{color:var(--stock);}
 .lightbox-nav{display:flex;gap:16px;margin-top:4px;}
-.lb-nav-btn{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(244,239,228,0.6);cursor:pointer;padding:6px 14px;border-radius:var(--radius-pill);border:1px solid rgba(244,239,228,0.2);transition:all var(--ease);}
+.lb-nav-btn{font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(244,239,228,0.6);cursor:pointer;padding:6px 14px;border-radius:var(--radius-pill);border:1px solid rgba(244,239,228,0.2);transition:all var(--ease);}
 .lb-nav-btn:hover{color:var(--stock);border-color:rgba(244,239,228,0.5);}
 </style>
 </head>
@@ -223,7 +223,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
   <!-- STATUS BAR (swapped per screen via JS) -->
   <div class="status-bar" id="statusBar">
     <span class="time">9:41</span>
-    <div style="display:flex;gap:5px;font-size:10px;">●●● WiFi 🔋</div>
+    <div style="display:flex;gap:5px;font-size:16px;">●●● WiFi 🔋</div>
   </div>
 
   <!-- ══ SCREEN: HOME ══ -->
@@ -262,7 +262,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
       </div>
       <div class="sec-title">Recent Estimates</div>
       <div id="recentEstimatesList">
-        <div style="padding:16px 16px 0;font-size:12px;color:var(--mist);font-style:italic;">No estimates saved yet. Calculate one to get started.</div>
+        <div style="padding:16px 16px 0;font-size:19px;color:var(--mist);font-style:italic;">No estimates saved yet. Calculate one to get started.</div>
       </div>
     </div>
     <div class="bottom-nav">
@@ -277,7 +277,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
   <div class="screen" id="screen-estimate">
     <div class="hero" style="padding-top:10px;">
       <div class="back-btn" onclick="goTo('screen-home')">← Back</div>
-      <div class="hero-brand" style="font-size:26px;">New Estimate</div>
+      <div class="hero-brand" style="font-size:41px;">New Estimate</div>
       <div class="hero-sub">Client info · Job type · Rooms</div>
     </div>
     <div class="scroll">
@@ -326,13 +326,13 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
 
         <!-- Live sq ft total -->
         <div id="sqftTotalBox" style="display:none;margin:0 16px 12px;background:var(--navy);border-radius:var(--radius-md);padding:14px 18px;display:none;justify-content:space-between;align-items:center;">
-          <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(244,239,228,0.55);">Total Sq Ft</div>
-          <div style="font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--white);line-height:1;" id="sqftTotalNum">0</div>
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(244,239,228,0.55);">Total Sq Ft</div>
+          <div style="font-family:var(--font-display);font-size:45px;font-weight:900;color:var(--white);line-height:1;" id="sqftTotalNum">0</div>
         </div>
         <!-- Waste total (install only) -->
         <div id="sqftWasteBox" style="display:none;margin:-4px 16px 12px;background:var(--stock-dark);border-radius:var(--radius-md);padding:10px 18px;justify-content:space-between;align-items:center;">
-          <div style="font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);">+ 7% Waste</div>
-          <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--mist);" id="sqftWasteNum">0 sq ft</div>
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);">+ 7% Waste</div>
+          <div style="font-family:var(--font-display);font-size:25px;font-weight:700;color:var(--mist);" id="sqftWasteNum">0 sq ft</div>
         </div>
 
         <div style="padding:0 16px;margin-bottom:12px;">
@@ -340,7 +340,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
         </div>
         <div class="notice">
           <div class="notice-icon">ℹ️</div>
-          <div class="notice-text"><strong>7% waste factor</strong> applied automatically for New Installs. Not applied to Sand & Finish.</div>
+          <div class="notice-text">Enter actual measured sq ft. <strong>7% waste</strong> is added to flooring material order quantity only — not to labor.</div>
         </div>
       </div>
 
@@ -350,7 +350,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
         <div class="card">
           <!-- Treads row -->
           <div style="margin-bottom:14px;">
-            <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:8px;">Treads</div>
+            <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:8px;">Treads</div>
             <div style="display:flex;align-items:center;gap:12px;">
               <div class="stair-counter">
                 <button class="stair-btn" onclick="changeStairs('treads',-1)">−</button>
@@ -359,13 +359,13 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
               </div>
               <div style="flex:1;">
                 <label class="fl" style="margin-bottom:3px;display:block;">Width</label>
-                <input class="fi" id="treadWidth" type="text" placeholder='e.g. 3¼" or 4"' style="font-size:13px;">
+                <input class="fi" id="treadWidth" type="text" placeholder='e.g. 3¼" or 4"' style="font-size:21px;">
               </div>
             </div>
           </div>
           <!-- Risers row -->
           <div style="margin-bottom:14px;padding-top:12px;border-top:1px solid var(--stock);">
-            <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:8px;">Risers</div>
+            <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:8px;">Risers</div>
             <div style="display:flex;align-items:center;gap:12px;">
               <div class="stair-counter">
                 <button class="stair-btn" onclick="changeStairs('risers',-1)">−</button>
@@ -374,19 +374,19 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
               </div>
               <div style="flex:1;">
                 <label class="fl" style="margin-bottom:3px;display:block;">Width</label>
-                <input class="fi" id="riserWidth" type="text" placeholder='e.g. 7½"' style="font-size:13px;">
+                <input class="fi" id="riserWidth" type="text" placeholder='e.g. 7½"' style="font-size:21px;">
               </div>
             </div>
           </div>
           <!-- Rate + Notes -->
           <div style="padding-top:10px;border-top:1px solid var(--stock);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-              <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);">Rate per tread</div>
-              <div style="font-family:var(--font-display);font-size:16px;font-weight:800;color:var(--crimson);" id="stairRateDisplay">$0</div>
+              <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);">Rate per tread</div>
+              <div style="font-family:var(--font-display);font-size:25px;font-weight:800;color:var(--crimson);" id="stairRateDisplay">$0</div>
             </div>
             <div class="field-group" style="margin-bottom:0;">
               <label class="fl">Notes</label>
-              <textarea class="fi" id="stairNotes" placeholder="e.g. Glue down, paint grade risers, match existing stain…" style="min-height:68px;resize:vertical;font-size:13px;"></textarea>
+              <textarea class="fi" id="stairNotes" placeholder="e.g. Glue down, paint grade risers, match existing stain…" style="min-height:68px;resize:vertical;font-size:21px;"></textarea>
             </div>
           </div>
         </div>
@@ -436,7 +436,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
   <!-- ══ SCREEN: RESULTS ══ -->
   <div class="screen" id="screen-results">
     <div class="hero" style="padding-top:10px;padding-bottom:44px;" id="resultsHero">
-      <div class="back-btn" onclick="goTo('screen-estimate')" style="color:var(--stock);opacity:1;font-size:11px;font-weight:700;margin-bottom:14px;">← Back to Estimate</div>
+      <div class="back-btn" onclick="goTo('screen-estimate')" style="color:var(--stock);opacity:1;font-size:18px;font-weight:700;margin-bottom:14px;">← Back to Estimate</div>
       <div class="hero-meta" id="resultsClient"></div>
       <div class="hero-title" id="resultsTitle"></div>
       <div class="hero-meta" id="resultsMeta" style="margin-top:6px;"></div>
@@ -472,9 +472,17 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
       <div class="card" id="perSqftCard" style="display:flex;justify-content:space-between;align-items:center;">
         <div>
           <div class="card-label" style="margin-bottom:3px;">Price Per Sq Ft</div>
-          <div style="font-size:11px;color:var(--mist);" id="perSqftDetail"></div>
+          <div style="font-size:18px;color:var(--mist);" id="perSqftDetail"></div>
         </div>
-        <div style="font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--navy);" id="rPerSqft">$0</div>
+        <div style="font-family:var(--font-display);font-size:41px;font-weight:800;color:var(--navy);" id="rPerSqft">$0</div>
+      </div>
+
+      <!-- Flooring Material Order (shown when flooring spec exists) -->
+      <div id="flooringOrderCard" style="display:none;">
+        <div class="sdiv">Flooring Order</div>
+        <div class="card" style="padding:14px 16px;">
+          <div id="flooringOrderContent"></div>
+        </div>
       </div>
 
       <div class="notice">
@@ -511,7 +519,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
   <div class="screen" id="screen-settings">
     <div class="hero" style="padding-top:10px;padding-bottom:44px;">
       <div class="back-btn" onclick="goTo('screen-home')">← Back</div>
-      <div class="hero-brand" style="font-size:26px;">My Rates</div>
+      <div class="hero-brand" style="font-size:41px;">My Rates</div>
       <div class="hero-sub">Labor & Material Costs</div>
     </div>
     <div class="scroll">
@@ -567,21 +575,21 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
 
       <div class="sdiv">Custom Materials</div>
       <div class="card" style="padding:14px 16px;">
-        <div style="font-size:11px;color:var(--mist);margin-bottom:12px;line-height:1.5;">Add any material with a description and cost per sq ft. These are calculated against total sq ft (with waste) and added to every estimate.</div>
+        <div style="font-size:18px;color:var(--mist);margin-bottom:12px;line-height:1.5;">Add any material with a description and cost per sq ft. These are calculated against total sq ft (with waste) and added to every estimate.</div>
         <div id="customMaterialsList"></div>
-        <button class="btn btn-ghost" style="margin-top:8px;font-size:10px;padding:10px;" onclick="addCustomMaterial()">＋ Add Material</button>
+        <button class="btn btn-ghost" style="margin-top:8px;font-size:16px;padding:10px;" onclick="addCustomMaterial()">＋ Add Material</button>
       </div>
 
       <div class="sdiv">Crew Costs (for profit calc)</div>
       <div class="card">
-        <div style="font-size:11px;color:var(--mist);margin-bottom:4px;line-height:1.6;">
+        <div style="font-size:18px;color:var(--mist);margin-bottom:4px;line-height:1.6;">
           What you <em>pay</em> the crew — not what you charge.<br>
           Based on: <strong style="color:var(--navy);">Lead $40/hr + Helper $35/hr = $75/hr combined</strong>
         </div>
-        <div style="background:var(--stock);border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:10px;color:var(--slate);line-height:1.8;">
+        <div style="background:var(--stock);border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:16px;color:var(--slate);line-height:1.8;">
           <strong>S&amp;F:</strong> 40 hrs × $75 ÷ 1,000 sq ft = $3.00/sq ft<br>
           <strong>Install:</strong> 25 hrs × $75 ÷ 1,000 sq ft = $1.88/sq ft<br>
-          <strong>Stairs:</strong> 2.5 hrs × $75 = $187.50/tread<br>
+          <strong>Stairs:</strong> ~35 min × $75/hr = $44/tread<br>
           <em>Edit below if your actual hours differ.</em>
         </div>
         <div class="settings-row">
@@ -594,7 +602,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
         </div>
         <div class="settings-row">
           <div class="settings-label">Stair Work<small>Crew cost per tread</small></div>
-          <input class="settings-input" id="cost_stairs" type="number" step="5" value="187.50">
+          <input class="settings-input" id="cost_stairs" type="number" step="5" value="44">
         </div>
         <div class="settings-row" style="border-bottom:none;">
           <div class="settings-label">Overhead<small>% of job revenue (~$4,500/mo)</small></div>
@@ -608,7 +616,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
           <label class="fl">Sheet URL (paste when ready)</label>
           <input class="fi" id="sheetUrl" type="url" placeholder="https://docs.google.com/spreadsheets/...">
         </div>
-        <div style="font-size:11px;color:var(--mist);margin-top:6px;line-height:1.5;">When connected, estimates save as one row with full material detail columns. <strong style="color:var(--navy);">Setup guide coming soon.</strong></div>
+        <div style="font-size:18px;color:var(--mist);margin-top:6px;line-height:1.5;">When connected, estimates save as one row with full material detail columns. <strong style="color:var(--navy);">Setup guide coming soon.</strong></div>
       </div>
 
       <div style="height:16px;"></div>
@@ -629,7 +637,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
   <div class="screen" id="screen-jobs">
     <div class="hero" style="padding-top:10px;padding-bottom:44px;">
       <div class="back-btn" onclick="goTo('screen-home')">← Home</div>
-      <div class="hero-brand" style="font-size:26px;">My Jobs</div>
+      <div class="hero-brand" style="font-size:41px;">My Jobs</div>
       <div class="hero-sub">Saved Estimates</div>
     </div>
     <div class="scroll">
@@ -644,7 +652,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
       </div>
 
       <div id="jobsList">
-        <div style="padding:24px 16px;text-align:center;font-size:13px;color:var(--mist);font-style:italic;">
+        <div style="padding:24px 16px;text-align:center;font-size:21px;color:var(--mist);font-style:italic;">
           No estimates saved yet.<br>Calculate an estimate to see it here.
         </div>
       </div>
@@ -663,7 +671,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
   <div class="screen" id="screen-materials">
     <div class="hero" style="padding-top:10px;padding-bottom:44px;">
       <div class="back-btn" onclick="goTo('screen-estimate')">← Back</div>
-      <div class="hero-brand" style="font-size:26px;">Materials</div>
+      <div class="hero-brand" style="font-size:41px;">Materials</div>
       <div class="hero-sub">Flooring · Vents · Reducers</div>
     </div>
     <div class="scroll">
@@ -754,8 +762,8 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
         </div>
         <!-- Vent total display -->
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--stock);">
-          <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);">Vent Subtotal</div>
-          <div style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--crimson);" id="ventSubtotal">$0.00</div>
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);">Vent Subtotal</div>
+          <div style="font-family:var(--font-display);font-size:29px;font-weight:800;color:var(--crimson);" id="ventSubtotal">$0.00</div>
         </div>
       </div>
 
@@ -770,11 +778,11 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
       <div class="sdiv">Summary</div>
       <div class="card" style="padding:14px 16px;">
         <div id="matSummaryRows">
-          <div style="font-size:12px;color:var(--mist);text-align:center;padding:8px 0;">Fill in materials above to see summary</div>
+          <div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">Fill in materials above to see summary</div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;margin-top:8px;border-top:1.5px solid var(--stock-mid);">
-          <div style="font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);">Materials Total</div>
-          <div style="font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--crimson);" id="matGrandTotal">$0.00</div>
+          <div style="font-family:var(--font-ui);font-size:18px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);">Materials Total</div>
+          <div style="font-family:var(--font-display);font-size:35px;font-weight:900;color:var(--crimson);" id="matGrandTotal">$0.00</div>
         </div>
       </div>
 
@@ -813,8 +821,8 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
 
       <!-- Status -->
       <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;">
-        <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--mist);">Status</div>
-        <div id="detailStatusBadge" onclick="cycleDetailStatus()" style="font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border-radius:3px;cursor:pointer;"></div>
+        <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--mist);">Status</div>
+        <div id="detailStatusBadge" onclick="cycleDetailStatus()" style="font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border-radius:3px;cursor:pointer;"></div>
       </div>
 
       <!-- Room chips -->
@@ -834,9 +842,9 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
       <div class="card" id="detailPerSqftCard" style="display:flex;justify-content:space-between;align-items:center;">
         <div>
           <div class="card-label" style="margin-bottom:3px;">Price Per Sq Ft</div>
-          <div style="font-size:11px;color:var(--mist);" id="detailPerSqftDetail"></div>
+          <div style="font-size:18px;color:var(--mist);" id="detailPerSqftDetail"></div>
         </div>
-        <div style="font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--navy);" id="detailPerSqft"></div>
+        <div style="font-family:var(--font-display);font-size:41px;font-weight:800;color:var(--navy);" id="detailPerSqft"></div>
       </div>
 
       <!-- Client info -->
@@ -880,7 +888,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
   <div class="screen" id="screen-reports">
     <div class="hero" style="padding-top:10px;padding-bottom:44px;">
       <div class="back-btn" onclick="goTo('screen-home')">← Home</div>
-      <div class="hero-brand" style="font-size:26px;">Reports</div>
+      <div class="hero-brand" style="font-size:41px;">Reports</div>
       <div class="hero-sub">Revenue · Margin · Pipeline</div>
     </div>
     <div class="scroll">
@@ -896,45 +904,45 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
       <!-- Revenue + Margin pills -->
       <div style="display:flex;gap:10px;padding:0 16px;margin-bottom:14px;">
         <div style="flex:1;background:var(--white);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-sm);border:1.5px solid var(--stock-mid);">
-          <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Est. Revenue</div>
-          <div style="font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--crimson);line-height:1;" id="rptRevenue">$0</div>
-          <div style="font-size:10px;color:var(--mist);margin-top:3px;" id="rptJobCount">0 jobs</div>
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Est. Revenue</div>
+          <div style="font-family:var(--font-display);font-size:45px;font-weight:900;color:var(--crimson);line-height:1;" id="rptRevenue">$0</div>
+          <div style="font-size:16px;color:var(--mist);margin-top:3px;" id="rptJobCount">0 jobs</div>
         </div>
         <div style="flex:1;background:var(--white);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-sm);border:1.5px solid var(--stock-mid);">
-          <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Est. Margin</div>
-          <div style="font-family:var(--font-display);font-size:28px;font-weight:900;color:var(--success);line-height:1;" id="rptMargin">0%</div>
-          <div style="font-size:10px;color:var(--mist);margin-top:3px;" id="rptProfit">$0 profit</div>
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Est. Margin</div>
+          <div style="font-family:var(--font-display);font-size:45px;font-weight:900;color:var(--success);line-height:1;" id="rptMargin">0%</div>
+          <div style="font-size:16px;color:var(--mist);margin-top:3px;" id="rptProfit">$0 profit</div>
         </div>
       </div>
 
       <!-- Avg job value -->
       <div style="background:var(--navy);border-radius:var(--radius-md);padding:14px 18px;margin:0 16px 14px;display:flex;justify-content:space-between;align-items:center;">
         <div>
-          <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.5);margin-bottom:3px;">Avg Job Value</div>
-          <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--white);line-height:1;" id="rptAvgJob">$0</div>
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.5);margin-bottom:3px;">Avg Job Value</div>
+          <div style="font-family:var(--font-display);font-size:39px;font-weight:800;color:var(--white);line-height:1;" id="rptAvgJob">$0</div>
         </div>
         <div style="text-align:right;">
-          <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.5);margin-bottom:3px;">Unbooked Value</div>
-          <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--gold);line-height:1;" id="rptUnbooked">$0</div>
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.5);margin-bottom:3px;">Unbooked Value</div>
+          <div style="font-family:var(--font-display);font-size:39px;font-weight:800;color:var(--gold);line-height:1;" id="rptUnbooked">$0</div>
         </div>
       </div>
 
       <!-- Job type breakdown -->
       <div class="sdiv">By Job Type</div>
       <div class="card" style="padding:14px 16px;" id="rptTypeBreakdown">
-        <div style="font-size:12px;color:var(--mist);text-align:center;padding:8px 0;">No data yet</div>
+        <div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">No data yet</div>
       </div>
 
       <!-- Pipeline -->
       <div class="sdiv">Estimate Pipeline</div>
       <div class="card" style="padding:14px 16px;" id="rptPipeline">
-        <div style="font-size:12px;color:var(--mist);text-align:center;padding:8px 0;">No data yet</div>
+        <div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">No data yet</div>
       </div>
 
       <!-- Cost basis breakdown -->
       <div class="sdiv">Cost Basis</div>
       <div class="card" style="padding:14px 16px;">
-        <div style="font-size:10px;color:var(--mist);margin-bottom:10px;line-height:1.6;">Based on your rates: Lead $40 + Helper $35 = $75/hr combined · 18% overhead</div>
+        <div style="font-size:16px;color:var(--mist);margin-bottom:10px;line-height:1.6;">Based on your rates: Lead $40 + Helper $35 = $75/hr combined · 18% overhead</div>
         <div id="rptCostBasis"></div>
       </div>
 
@@ -1006,16 +1014,16 @@ function renderCustomMaterials() {
     row.style.cssText = 'display:flex;gap:8px;align-items:center;margin-bottom:8px;';
     row.innerHTML = `
       <input class="fi" type="text" placeholder="Description (e.g. Stain)" value="${mat.desc}"
-        style="flex:2;font-size:12px;"
+        style="flex:2;font-size:19px;"
         oninput="updateMat(${mat.id},'desc',this.value)" />
       <div style="display:flex;align-items:center;gap:4px;flex:1;">
-        <span style="font-family:var(--font-ui);font-size:11px;color:var(--mist);">$/sqft</span>
+        <span style="font-family:var(--font-ui);font-size:18px;color:var(--mist);">$/sqft</span>
         <input class="fi" type="number" min="0" step="0.01" placeholder="0.00" value="${mat.costPerSqft}"
-          style="font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--crimson);text-align:right;"
+          style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--crimson);text-align:right;"
           oninput="updateMat(${mat.id},'costPerSqft',this.value)" />
       </div>
       <span onclick="removeCustomMaterial(${mat.id})"
-        style="cursor:pointer;color:var(--mist);font-size:18px;line-height:1;flex-shrink:0;padding:2px 4px;transition:color 0.15s;"
+        style="cursor:pointer;color:var(--mist);font-size:29px;line-height:1;flex-shrink:0;padding:2px 4px;transition:color 0.15s;"
         onmouseover="this.style.color='var(--crimson)'" onmouseout="this.style.color='var(--mist)'">×</span>`;
     list.appendChild(row);
   });
@@ -1063,7 +1071,7 @@ function getRates() {
     // Crew costs for margin calculation
     costSf:       parseFloat(document.getElementById('cost_sf').value)       || 3.00,
     costInstall:  parseFloat(document.getElementById('cost_install').value)  || 1.88,
-    costStairs:   parseFloat(document.getElementById('cost_stairs').value)   || 187.50,
+    costStairs:   parseFloat(document.getElementById('cost_stairs').value)   || 44,
     overheadPct:  parseFloat(document.getElementById('overhead_pct').value)  || 18,
     sheetUrl:     document.getElementById('sheetUrl').value.trim(),
   };
@@ -1157,17 +1165,17 @@ function buildRoomCard(list, room) {
   div.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
       <input class="fi" type="text"
-        style="font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--navy);background:transparent;border:none;padding:0;width:auto;flex:1;"
+        style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--navy);background:transparent;border:none;padding:0;width:auto;flex:1;"
         value="${room.name}" onchange="updateRoomName(${room.id}, this.value)" />
       <span onclick="removeRoom(${room.id})"
-        style="cursor:pointer;color:var(--mist);font-size:16px;line-height:1;padding:2px 6px;border-radius:4px;transition:all 0.15s ease;"
+        style="cursor:pointer;color:var(--mist);font-size:25px;line-height:1;padding:2px 6px;border-radius:4px;transition:all 0.15s ease;"
         onmouseover="this.style.color='var(--crimson)'" onmouseout="this.style.color='var(--mist)'">×</span>
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
       <input class="fi" type="number" min="1" placeholder="Enter sq ft" value="${room.sqft}"
-        style="font-family:var(--font-display);font-size:18px;font-weight:700;text-align:center;flex:1;"
+        style="font-family:var(--font-display);font-size:29px;font-weight:700;text-align:center;flex:1;"
         oninput="updateRoomSqft(${room.id}, this.value)" />
-      <div style="font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mist);">sq ft</div>
+      <div style="font-family:var(--font-ui);font-size:18px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mist);">sq ft</div>
     </div>
     <div class="room-tearup-row" style="display:${currentType === 'install' ? 'block' : 'none'};">
       <div style="border-top:1px solid var(--stock);padding-top:10px;margin-bottom:10px;">
@@ -1190,7 +1198,7 @@ function buildRoomCard(list, room) {
       </div>
     </div>
     <div style="border-top:1px solid var(--stock);padding-top:10px;">
-      <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:7px;">Room Photos</div>
+      <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:7px;">Room Photos</div>
       <div class="photo-add-row" style="margin-bottom:8px;">
         <div class="photo-btn" onclick="triggerPhoto('camera','room',${room.id})"><span class="pb-icon">📷</span>Camera</div>
         <div class="photo-btn" onclick="triggerPhoto('library','room',${room.id})"><span class="pb-icon">🖼</span>Library</div>
@@ -1213,28 +1221,20 @@ function updateRoomSqft(id, val) {
 
 function updateSqftTotal() {
   const rawSqft = rooms.reduce((acc, room) => acc + calcRoomSqft(room), 0);
-  const wasteSqft = currentType === 'install' ? Math.round(rawSqft * 0.07) : 0;
-
   const totalBox = document.getElementById('sqftTotalBox');
   const wasteBox = document.getElementById('sqftWasteBox');
   const totalNum = document.getElementById('sqftTotalNum');
-  const wasteNum = document.getElementById('sqftWasteNum');
 
   if (!totalBox) return;
 
   if (rawSqft > 0) {
     totalBox.style.display = 'flex';
-    totalNum.textContent = (rawSqft + wasteSqft).toLocaleString() + ' sq ft';
+    totalNum.textContent = rawSqft.toLocaleString() + ' sq ft';
   } else {
     totalBox.style.display = 'none';
   }
-
-  if (wasteSqft > 0 && rawSqft > 0) {
-    wasteBox.style.display = 'flex';
-    wasteNum.textContent = '+' + wasteSqft + ' sq ft waste';
-  } else {
-    wasteBox.style.display = 'none';
-  }
+  // Waste box never shows here — waste is materials ordering only
+  if (wasteBox) wasteBox.style.display = 'none';
 }
 
 function updateRoomRemove(id, val) {
@@ -1321,48 +1321,56 @@ function calculate() {
       finishType, finishNotes,
     };
   } else {
-    // Total raw sqft
+    // Total raw sqft — labor is ALWAYS based on actual measured sq ft, no waste
     const rawSqft = rooms.reduce((acc, room) => acc + calcRoomSqft(room), 0);
     if (rawSqft === 0) { showToast('⚠ Add at least one room', ''); return; }
 
-    // Waste factor only applies to New Install
+    // Waste is for materials ordering only — NOT applied to labor
     const wasteSqft  = currentType === 'install' ? Math.round(rawSqft * 0.07) : 0;
-    const totalSqft  = rawSqft + wasteSqft;
+    const orderSqft  = rawSqft + wasteSqft; // sq ft to ORDER flooring material
+    const totalSqft  = rawSqft;             // sq ft for labor calculation
 
-    // Labor
+    // Labor — based on actual measured sq ft only
     const laborRate  = r[currentType] || r.sf;
-    const laborTotal = totalSqft * laborRate;
+    const laborTotal = rawSqft * laborRate;
 
-    // Use default coat counts from rates for material calculation
+    // Use default coat counts from rates for finish material calculation
     const sealerCoats = 1;
     const polyCoats   = 2;
 
-    // Materials — sealer
+    // Finish materials — sealer and poly based on actual sq ft
     const mk = 1 + (r.markup / 100);
     let sealerCost = 0;
     if (sealerCoats > 0) {
-      const sealerGals = Math.ceil(totalSqft / r.covSealer) * sealerCoats;
+      const sealerGals = Math.ceil(rawSqft / r.covSealer) * sealerCoats;
       sealerCost = sealerGals * r.sealerGal * mk;
     }
 
-    // Materials — poly
     let polyCost = 0;
     if (polyCoats >= 1) {
-      const gals1 = Math.ceil(totalSqft / r.covPoly1);
+      const gals1 = Math.ceil(rawSqft / r.covPoly1);
       polyCost += gals1 * r.polyGal * mk;
     }
     if (polyCoats >= 2) {
-      const gals2 = Math.ceil(totalSqft / r.covPoly2) * (polyCoats - 1);
+      const gals2 = Math.ceil(rawSqft / r.covPoly2) * (polyCoats - 1);
       polyCost += gals2 * r.polyGal * mk;
     }
 
-    const suppliesCost   = r.supplies;
+    const suppliesCost = r.supplies;
 
-    // Custom materials (per sq ft × totalSqft)
+    // Custom materials — based on actual sq ft
     const customMatLines = customMaterials
       .filter(m => m.desc && parseFloat(m.costPerSqft) > 0)
-      .map(m => ({desc: m.desc, costPerSqft: parseFloat(m.costPerSqft), total: parseFloat(m.costPerSqft) * totalSqft}));
+      .map(m => ({desc: m.desc, costPerSqft: parseFloat(m.costPerSqft), total: parseFloat(m.costPerSqft) * rawSqft}));
     const customMatTotal = customMatLines.reduce((a, m) => a + m.total, 0);
+
+    // Grab flooring material spec from Materials tab
+    const flooringType  = document.getElementById('mat_flooring_type')?.value || '';
+    const flooringOther = document.getElementById('mat_flooring_other')?.value.trim() || '';
+    const flooringLabel = flooringType === 'other' ? flooringOther : flooringType;
+    const flooringWidth = document.getElementById('mat_flooring_width')?.value.trim() || '';
+    const flooringThick = document.getElementById('mat_flooring_thickness')?.value.trim() || '';
+    const flooringNotes = document.getElementById('mat_flooring_notes')?.value.trim() || '';
 
     const materialsTotal = sealerCost + polyCost + suppliesCost + customMatTotal;
     const total          = laborTotal + materialsTotal;
@@ -1374,14 +1382,15 @@ function calculate() {
       type: currentType,
       typeLabel: typeLabels[currentType] || 'Estimate',
       client, phone, city,
-      rawSqft, wasteSqft, totalSqft,
+      rawSqft, wasteSqft, orderSqft, totalSqft,
       laborRate, laborTotal,
       sealerCoats, polyCoats,
       sealerCost, polyCost, suppliesCost,
       customMatLines, customMatTotal,
       materialsTotal, total, perSqft,
       finishType, finishNotes,
-      rooms: rooms.map(r => ({name: r.name, sqft: calcRoomSqft(r)})),
+      flooringLabel, flooringWidth, flooringThick, flooringNotes,
+      rooms: rooms.map(r => ({name: r.name, sqft: calcRoomSqft(r), removeType: r.removeType, removeOther: r.removeOther})),
     };
   }
 
@@ -1405,7 +1414,6 @@ function renderResults(e) {
     e.type === 'stairs'
       ? e.stairTreads + ' treads · ' + (e.stairRisers||0) + ' risers · $' + e.laborRate + '/tread'
       : e.typeLabel + ' · ' + e.rawSqft + ' sq ft' + (e.finishType ? ' · ' + e.finishType : '');
-
   document.getElementById('rTotal').textContent = fmt(e.total);
   document.getElementById('rTotalBottom').textContent = fmt(e.total);
 
@@ -1428,7 +1436,7 @@ function renderResults(e) {
       if (r.sqft > 0) chips.innerHTML += `<div class="room-chip"><span class="rc-name">${r.name}</span><span class="rc-val">${r.sqft}</span></div>`;
     });
     if (e.wasteSqft > 0) {
-      chips.innerHTML += `<div class="room-chip"><span class="rc-name">+7% Waste</span><span class="rc-val">${e.wasteSqft}</span></div>`;
+      chips.innerHTML += `<div class="room-chip"><span class="rc-name">+7% Waste (materials)</span><span class="rc-val">${e.wasteSqft}</span></div>`;
     }
   }
 
@@ -1443,7 +1451,7 @@ function renderResults(e) {
     if (e.riserWidth) rows.innerHTML += `<div class="breakdown-row"><div><div class="b-name">Riser Width</div></div><div class="b-val">${e.riserWidth}</div></div>`;
     if (e.stairNotes) rows.innerHTML += `<div class="breakdown-row"><div><div class="b-name">Notes</div><div class="b-detail">${e.stairNotes}</div></div><div class="b-val">—</div></div>`;
   } else {
-    rows.innerHTML += row('Labor — ' + e.typeLabel, e.totalSqft + ' sq ft × ' + fmt2(e.laborRate) + '/sqft', e.laborTotal, true);
+    rows.innerHTML += row('Labor — ' + e.typeLabel, e.rawSqft + ' sq ft × ' + fmt2(e.laborRate) + '/sqft', e.laborTotal, true);
     if (e.sealerCoats > 0 && e.sealerCost > 0)
       rows.innerHTML += row('Sealer (' + e.sealerCoats + ' coat)', 'Material + markup', e.sealerCost, false);
     if (e.polyCost > 0)
@@ -1451,12 +1459,37 @@ function renderResults(e) {
     rows.innerHTML += row('Supplies & sandpaper', 'Flat rate', e.suppliesCost, false);
     if (e.customMatLines && e.customMatLines.length) {
       e.customMatLines.forEach(m => {
-        rows.innerHTML += row(m.desc, fmt2(m.costPerSqft) + '/sq ft × ' + e.totalSqft + ' sq ft', m.total, false);
+        rows.innerHTML += row(m.desc, fmt2(m.costPerSqft) + '/sq ft × ' + e.rawSqft + ' sq ft', m.total, false);
       });
     }
     if (e.finishNotes) {
       rows.innerHTML += `<div class="breakdown-row"><div><div class="b-name">Finish — ${e.finishType||'Natural'}</div><div class="b-detail">${e.finishNotes}</div></div><div class="b-val">—</div></div>`;
     }
+  }
+
+  // Flooring order card
+  const orderCard = document.getElementById('flooringOrderCard');
+  const orderContent = document.getElementById('flooringOrderContent');
+  if (orderCard && orderContent && e.flooringLabel) {
+    orderCard.style.display = 'block';
+    const orderQty = e.orderSqft || e.rawSqft;
+    orderContent.innerHTML = `
+      <div class="breakdown-row" style="padding-top:0;">
+        <div><div class="b-name">Species / Type</div></div>
+        <div class="b-val hi">${e.flooringLabel}</div>
+      </div>
+      ${e.flooringWidth ? `<div class="breakdown-row"><div><div class="b-name">Width</div></div><div class="b-val">${e.flooringWidth}</div></div>` : ''}
+      ${e.flooringThick ? `<div class="breakdown-row"><div><div class="b-name">Thickness</div></div><div class="b-val">${e.flooringThick}</div></div>` : ''}
+      <div class="breakdown-row">
+        <div>
+          <div class="b-name">Order Quantity</div>
+          <div class="b-detail">${e.rawSqft} sq ft measured${e.wasteSqft > 0 ? ' + ' + e.wasteSqft + ' sq ft waste (7%)' : ''}</div>
+        </div>
+        <div class="b-val hi">${orderQty} sq ft</div>
+      </div>
+      ${e.flooringNotes ? `<div class="breakdown-row" style="border-bottom:none;"><div><div class="b-name">Notes</div><div class="b-detail">${e.flooringNotes}</div></div><div class="b-val">—</div></div>` : ''}`;
+  } else if (orderCard) {
+    orderCard.style.display = 'none';
   }
 }
 
@@ -1663,8 +1696,8 @@ function renderReducers() {
     div.style.marginBottom = '10px';
     div.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <div style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--navy);">Reducer #${reducers.indexOf(r)+1}</div>
-        <span onclick="removeReducer(${r.id})" style="cursor:pointer;color:var(--mist);font-size:16px;padding:2px 6px;border-radius:4px;transition:all 0.15s ease;" onmouseover="this.style.color='var(--crimson)'" onmouseout="this.style.color='var(--mist)'">×</span>
+        <div style="font-family:var(--font-ui);font-size:16px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--navy);">Reducer #${reducers.indexOf(r)+1}</div>
+        <span onclick="removeReducer(${r.id})" style="cursor:pointer;color:var(--mist);font-size:25px;padding:2px 6px;border-radius:4px;transition:all 0.15s ease;" onmouseover="this.style.color='var(--crimson)'" onmouseout="this.style.color='var(--mist)'">×</span>
       </div>
       <div class="field-row">
         <div class="field-group">
@@ -1688,7 +1721,7 @@ function renderReducers() {
           <label class="fl" style="display:flex;justify-content:space-between;">
             <span>Subtotal</span>
           </label>
-          <div class="fi" style="font-family:var(--font-display);font-size:14px;font-weight:800;color:var(--crimson);background:var(--stock);cursor:default;" id="reducerSub-${r.id}">
+          <div class="fi" style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--crimson);background:var(--stock);cursor:default;" id="reducerSub-${r.id}">
             ${r.qty && r.unitCost ? '$' + (parseFloat(r.qty)*parseFloat(r.unitCost)).toFixed(2) : '—'}
           </div>
         </div>
@@ -1770,7 +1803,7 @@ function renderMatSummary(ventTotal, reducerTotal, grand) {
   });
 
   if (!html) {
-    html = '<div style="font-size:12px;color:var(--mist);text-align:center;padding:8px 0;">Fill in materials above to see summary</div>';
+    html = '<div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">Fill in materials above to see summary</div>';
   }
   el.innerHTML = html;
 }
@@ -1778,10 +1811,10 @@ function renderMatSummary(ventTotal, reducerTotal, grand) {
 function sumRow(name, detail, val) {
   return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--stock);">
     <div>
-      <div style="font-size:12px;color:var(--navy);font-weight:400;">${name}</div>
-      <div style="font-size:10px;color:var(--mist);">${detail}</div>
+      <div style="font-size:19px;color:var(--navy);font-weight:400;">${name}</div>
+      <div style="font-size:16px;color:var(--mist);">${detail}</div>
     </div>
-    <div style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--slate);">${val != null ? '$'+val.toFixed(2) : '—'}</div>
+    <div style="font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--slate);">${val != null ? '$'+val.toFixed(2) : '—'}</div>
   </div>`;
 }
 
@@ -2013,7 +2046,7 @@ function renderJobsList() {
     : savedJobs.filter(j => j.type === jobsFilter);
 
   if (!filtered.length) {
-    list.innerHTML = `<div style="padding:24px 16px;text-align:center;font-size:13px;color:var(--mist);font-style:italic;">
+    list.innerHTML = `<div style="padding:24px 16px;text-align:center;font-size:21px;color:var(--mist);font-style:italic;">
       ${jobsFilter === 'all' ? 'No estimates saved yet.<br>Calculate an estimate to see it here.' : 'No ' + jobsFilter + ' estimates saved.'}
     </div>`;
     return;
@@ -2037,23 +2070,23 @@ function renderJobsList() {
     div.style.cssText = 'background:var(--white);margin:0 16px 10px;padding:14px;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);border:1.5px solid var(--stock-mid);';
     div.innerHTML = `
       <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:38px;height:38px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;font-weight:900;color:var(--stock);flex-shrink:0;">${initial}</div>
+        <div style="width:38px;height:38px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--stock);flex-shrink:0;">${initial}</div>
         <div style="flex:1;min-width:0;">
-          <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${job.client}</div>
-          <div style="font-size:10px;color:var(--mist);">${job.typeLabel} · ${detail}${job.city ? ' · ' + job.city : ''}</div>
+          <div style="font-size:21px;font-weight:700;color:var(--navy);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${job.client}</div>
+          <div style="font-size:16px;color:var(--mist);">${job.typeLabel} · ${detail}${job.city ? ' · ' + job.city : ''}</div>
         </div>
         <div style="text-align:right;flex-shrink:0;">
-          <div style="font-family:var(--font-display);font-size:15px;font-weight:800;color:var(--crimson);">$${job.total.toLocaleString()}</div>
-          <div style="font-size:9px;color:var(--mist);margin-top:1px;">${job.date}</div>
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--crimson);">$${job.total.toLocaleString()}</div>
+          <div style="font-size:15px;color:var(--mist);margin-top:1px;">${job.date}</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid var(--stock);">
-        <div class="job-status-btn" style="font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:3px;cursor:pointer;transition:all 0.15s ease;${statusStyle}">
+        <div class="job-status-btn" style="font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:3px;cursor:pointer;transition:all 0.15s ease;${statusStyle}">
           ${job.status} ›
         </div>
         <div style="display:flex;gap:8px;">
-          <div class="job-view-btn" style="font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);cursor:pointer;padding:4px 8px;border-radius:3px;border:1px solid var(--navy);transition:all 0.15s ease;">View</div>
-          <div class="job-delete-btn" style="font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mist);cursor:pointer;padding:4px 8px;border-radius:3px;border:1px solid var(--stock-mid);transition:all 0.15s ease;">Delete</div>
+          <div class="job-view-btn" style="font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);cursor:pointer;padding:4px 8px;border-radius:3px;border:1px solid var(--navy);transition:all 0.15s ease;">View</div>
+          <div class="job-delete-btn" style="font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mist);cursor:pointer;padding:4px 8px;border-radius:3px;border:1px solid var(--stock-mid);transition:all 0.15s ease;">Delete</div>
         </div>
       </div>`;
 
@@ -2076,7 +2109,7 @@ function renderRecentEstimates() {
   if (!container) return;
   const recent = savedJobs.slice(0, 4);
   if (!recent.length) {
-    container.innerHTML = '<div style="padding:16px 16px 0;font-size:12px;color:var(--mist);font-style:italic;">No estimates saved yet. Calculate one to get started.</div>';
+    container.innerHTML = '<div style="padding:16px 16px 0;font-size:19px;color:var(--mist);font-style:italic;">No estimates saved yet. Calculate one to get started.</div>';
     return;
   }
   container.innerHTML = '';
@@ -2173,15 +2206,15 @@ function openJobDetail(id) {
   document.getElementById('detailClientInfo').innerHTML = `
     <div class="settings-row" style="border-bottom:1px solid var(--stock);">
       <div class="settings-label">Name</div>
-      <div style="font-size:13px;color:var(--navy);font-weight:600;">${job.client}</div>
+      <div style="font-size:21px;color:var(--navy);font-weight:600;">${job.client}</div>
     </div>
     ${job.phone ? `<div class="settings-row" style="border-bottom:1px solid var(--stock);">
       <div class="settings-label">Phone</div>
-      <div style="font-size:13px;color:var(--navy);">${job.phone}</div>
+      <div style="font-size:21px;color:var(--navy);">${job.phone}</div>
     </div>` : ''}
     ${job.city ? `<div class="settings-row" style="border-bottom:none;">
       <div class="settings-label">City</div>
-      <div style="font-size:13px;color:var(--navy);">${job.city}</div>
+      <div style="font-size:21px;color:var(--navy);">${job.city}</div>
     </div>` : ''}`;
 
   // Delete button
@@ -2268,7 +2301,7 @@ function renderDetailStatus(status) {
   };
   const el = document.getElementById('detailStatusBadge');
   el.textContent = status + ' ›';
-  el.style.cssText = (colors[status] || colors['estimate']) + ';font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border-radius:3px;cursor:pointer;';
+  el.style.cssText = (colors[status] || colors['estimate']) + ';font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border-radius:3px;cursor:pointer;';
 }
 
 function cycleDetailStatus() {
@@ -2311,7 +2344,7 @@ function calcJobMargin(job, r) {
   // Labor cost — what you actually pay crew
   let laborCost = 0;
   if (job.type === 'stairs') {
-    laborCost = (job.stairTreads || job.stairCount || 0) * (r.costStairs || 187.50);
+    laborCost = (job.stairTreads || job.stairCount || 0) * (r.costStairs || 44);
   } else {
     const sqft = job.sqft || 0;
     const rate = job.type === 'install' ? (r.costInstall || 1.88) : (r.costSf || 3.00);
@@ -2378,7 +2411,7 @@ function renderReports() {
 
   const typeEl = document.getElementById('rptTypeBreakdown');
   if (!typeData.length) {
-    typeEl.innerHTML = '<div style="font-size:12px;color:var(--mist);text-align:center;padding:8px 0;">No jobs in this period</div>';
+    typeEl.innerHTML = '<div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">No jobs in this period</div>';
   } else {
     typeEl.innerHTML = '';
     typeData.forEach(t => {
@@ -2387,8 +2420,8 @@ function renderReports() {
       row.style.cssText = 'margin-bottom:12px;';
       row.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
-          <div style="font-size:12px;color:var(--navy);font-weight:600;">${t.label}</div>
-          <div style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--crimson);">$${t.rev.toLocaleString()} <span style="font-family:var(--font-body);font-size:10px;color:var(--mist);font-weight:400;">${t.jobs.length} job${t.jobs.length!==1?'s':''}</span></div>
+          <div style="font-size:19px;color:var(--navy);font-weight:600;">${t.label}</div>
+          <div style="font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--crimson);">$${t.rev.toLocaleString()} <span style="font-family:var(--font-body);font-size:16px;color:var(--mist);font-weight:400;">${t.jobs.length} job${t.jobs.length!==1?'s':''}</span></div>
         </div>
         <div style="background:var(--stock-mid);border-radius:2px;height:5px;overflow:hidden;">
           <div style="height:100%;border-radius:2px;background:var(--crimson);width:${pct}%;transition:width 0.5s ease;"></div>
@@ -2413,7 +2446,7 @@ function renderReports() {
   })).filter(p => p.count > 0);
 
   if (!pipeData.length) {
-    pipeEl.innerHTML = '<div style="font-size:12px;color:var(--mist);text-align:center;padding:8px 0;">No jobs saved yet</div>';
+    pipeEl.innerHTML = '<div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">No jobs saved yet</div>';
   } else {
     pipeEl.innerHTML = '';
     pipeData.forEach(p => {
@@ -2422,10 +2455,10 @@ function renderReports() {
       row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--stock);';
       row.innerHTML = `
         <div style="display:flex;align-items:center;gap:10px;">
-          <div style="font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;background:${bg};${col}">${p.status}</div>
-          <div style="font-size:11px;color:var(--mist);">${p.count} job${p.count!==1?'s':''}</div>
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;background:${bg};${col}">${p.status}</div>
+          <div style="font-size:18px;color:var(--mist);">${p.count} job${p.count!==1?'s':''}</div>
         </div>
-        <div style="font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--navy);">$${p.value.toLocaleString()}</div>`;
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--navy);">$${p.value.toLocaleString()}</div>`;
       pipeEl.appendChild(row);
     });
     pipeEl.lastChild.style.borderBottom = 'none';
@@ -2452,10 +2485,10 @@ function renderReports() {
       row.style.cssText = 'padding:10px 0;border-bottom:1px solid var(--stock);';
       row.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
-          <div style="font-size:12px;font-weight:700;color:var(--navy);">${t.label}</div>
-          <div style="font-family:var(--font-display);font-size:14px;font-weight:800;color:${marginCol};">~${exMargin}% margin</div>
+          <div style="font-size:19px;font-weight:700;color:var(--navy);">${t.label}</div>
+          <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:${marginCol};">~${exMargin}% margin</div>
         </div>
-        <div style="font-size:10px;color:var(--mist);line-height:1.9;">
+        <div style="font-size:16px;color:var(--mist);line-height:1.9;">
           Charge <strong style="color:var(--navy);">$${t.charge.toFixed(2)}/${t.unit}</strong> &nbsp;·&nbsp; Labor cost <strong style="color:var(--crimson);">$${t.cost.toFixed(2)}/${t.unit}</strong><br>
           ${t.example} ${t.unit} example → Rev $${exRev.toLocaleString()} − Labor $${exLabor.toLocaleString()} − OH $${Math.round(exOverhead).toLocaleString()} = <strong style="color:${marginCol};">$${Math.round(exProfit).toLocaleString()} profit</strong>
         </div>`;
