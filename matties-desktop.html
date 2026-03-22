@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mattie's — Desktop Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238B1A1A'/><text x='50' y='68' text-anchor='middle' font-family='Georgia,serif' font-size='62' font-weight='900' fill='%23FFFFFF'>M</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,400&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -826,7 +827,7 @@ tbody tr:hover { background: var(--stock); }
             </div>
             <div>
               <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Vendor Email</div>
-              <div style="font-size:12px;color:var(--navy);">infogdc@galleherduffy.com</div>
+              <div style="font-size:12px;color:var(--navy);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fc95929a939b989fbc9b9d90909994998e98899a9a85d29f9391">[email&#160;protected]</a></div>
             </div>
           </div>
         </div>
@@ -878,7 +879,7 @@ tbody tr:hover { background: var(--stock); }
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ══════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════
@@ -1406,6 +1407,7 @@ function showToast(msg, type) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
+// ═════════════════════════════════════
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
