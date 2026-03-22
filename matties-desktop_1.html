@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mattie's — Desktop Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,400&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --crimson:      #8B1A1A;
+  --crimson-dark: #6B1212;
+  --crimson-fade: rgba(139,26,26,0.07);
+  --navy:         #1C2A4A;
+  --navy-dark:    #111828;
+  --navy-fade:    rgba(28,42,74,0.06);
+  --stock:        #F4EFE4;
+  --stock-dark:   #EAE2D2;
+  --stock-mid:    #D9CFBC;
+  --white:        #FFFFFF;
+  --slate:        #4A4A45;
+  --mist:         #7A7A72;
+  --gold:         #B8860B;
+  --gold-fade:    rgba(184,134,11,0.10);
+  --success:      #2D5A3A;
+  --success-fade: rgba(45,90,58,0.08);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-ui:      'Oswald', sans-serif;
+  --font-body:    'Lato', sans-serif;
+  --sidebar-w:    240px;
+  --shadow-sm:    0 1px 4px rgba(28,42,74,0.08);
+  --shadow-md:    0 4px 16px rgba(28,42,74,0.10);
+  --shadow-lg:    0 8px 32px rgba(28,42,74,0.14);
+  --radius:       8px;
+  --ease:         0.18s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  background: var(--stock);
+  font-family: var(--font-body);
+  color: var(--navy);
+  min-height: 100vh;
+  display: flex;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--navy);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+}
+
+.sidebar-brand {
+  padding: 28px 20px 24px;
+  border-bottom: 1px solid rgba(244,239,228,0.08);
+}
+.sidebar-brand-main {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--crimson);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.sidebar-brand-sub {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(244,239,228,0.45);
+  margin-top: 4px;
+}
+.sidebar-tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 11px;
+  color: rgba(244,239,228,0.25);
+  margin-top: 6px;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 16px 0;
+}
+.nav-section-label {
+  font-family: var(--font-ui);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(244,239,228,0.25);
+  padding: 12px 20px 6px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all var(--ease);
+  border-left: 3px solid transparent;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(244,239,228,0.55);
+}
+.nav-item:hover { background: rgba(244,239,228,0.06); color: rgba(244,239,228,0.85); }
+.nav-item.active { background: rgba(139,26,26,0.15); color: var(--stock); border-left-color: var(--crimson); }
+.nav-icon { font-size: 15px; width: 20px; text-align: center; }
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(244,239,228,0.08);
+  font-size: 10px;
+  color: rgba(244,239,228,0.25);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+.sidebar-footer strong { color: rgba(244,239,228,0.4); }
+
+/* ── MAIN CONTENT ── */
+.main {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--stock-mid);
+  padding: 0 32px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--navy);
+}
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.topbar-btn {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  transition: all var(--ease);
+}
+.topbar-btn.primary { background: var(--crimson); color: var(--stock); }
+.topbar-btn.primary:hover { background: var(--crimson-dark); }
+.topbar-btn.ghost { background: transparent; color: var(--slate); border: 1px solid var(--stock-mid); }
+.topbar-btn.ghost:hover { border-color: var(--navy); color: var(--navy); }
+
+.content {
+  flex: 1;
+  padding: 32px;
+}
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── STAT CARDS ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--stock-mid);
+  transition: box-shadow var(--ease);
+}
+.stat-card:hover { box-shadow: var(--shadow-md); }
+.stat-card.crimson { background: var(--crimson); border-color: var(--crimson); }
+.stat-card.navy { background: var(--navy); border-color: var(--navy); }
+.stat-label {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mist);
+  margin-bottom: 6px;
+}
+.stat-card.crimson .stat-label,
+.stat-card.navy .stat-label { color: rgba(244,239,228,0.5); }
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--crimson);
+  line-height: 1;
+}
+.stat-card.crimson .stat-value { color: var(--white); font-size: 28px; }
+.stat-card.navy .stat-value { color: var(--stock); font-size: 28px; }
+.stat-sub {
+  font-size: 11px;
+  color: var(--mist);
+  margin-top: 4px;
+}
+.stat-card.crimson .stat-sub,
+.stat-card.navy .stat-sub { color: rgba(244,239,228,0.5); }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.section-sub {
+  font-size: 11px;
+  color: var(--mist);
+  margin-top: 2px;
+}
+
+/* ── TABLE ── */
+.table-wrap {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--stock-mid);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead { background: var(--navy); }
+th {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(244,239,228,0.65);
+  padding: 11px 14px;
+  text-align: left;
+  white-space: nowrap;
+}
+td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--stock);
+  color: var(--slate);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tbody tr { transition: background var(--ease); cursor: pointer; }
+tbody tr:hover { background: var(--stock); }
+.td-name { font-weight: 700; color: var(--navy); }
+.td-amount { font-family: var(--font-display); font-weight: 800; color: var(--crimson); font-size: 14px; }
+.td-badge {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+.badge-estimate    { background: var(--navy-fade); color: var(--navy); }
+.badge-booked      { background: var(--gold-fade); color: var(--gold); }
+.badge-in-progress { background: var(--crimson-fade); color: var(--crimson); }
+.badge-complete    { background: var(--success-fade); color: var(--success); }
+
+/* ── CHARTS ── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.chart-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--stock-mid);
+}
+.chart-title {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mist);
+  margin-bottom: 16px;
+}
+.bar-chart { display: flex; flex-direction: column; gap: 10px; }
+.bar-row { display: flex; align-items: center; gap: 10px; }
+.bar-label { font-size: 11px; color: var(--navy); font-weight: 600; width: 90px; flex-shrink: 0; }
+.bar-track { flex: 1; background: var(--stock-dark); border-radius: 2px; height: 8px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 2px; background: var(--crimson); transition: width 0.6s ease; }
+.bar-fill.navy { background: var(--navy); }
+.bar-fill.gold { background: var(--gold); }
+.bar-val { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--crimson); width: 60px; text-align: right; flex-shrink: 0; }
+
+.pipeline-list { display: flex; flex-direction: column; gap: 8px; }
+.pipeline-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--stock);
+  border-radius: var(--radius);
+  border: 1px solid var(--stock-mid);
+}
+.pipeline-status { font-family: var(--font-ui); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.pipeline-count { font-size: 11px; color: var(--mist); margin-top: 2px; }
+.pipeline-val { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--navy); }
+
+/* ── PERIOD TABS ── */
+.period-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--stock-dark);
+  padding: 4px;
+  border-radius: 6px;
+  margin-bottom: 24px;
+  width: fit-content;
+}
+.period-tab {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 7px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--mist);
+  transition: all var(--ease);
+}
+.period-tab.active { background: var(--white); color: var(--crimson); box-shadow: var(--shadow-sm); }
+
+/* ── DETAIL PANEL ── */
+.detail-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(17,24,40,0.4);
+  z-index: 200;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+.detail-overlay.open { display: flex; }
+.detail-panel {
+  width: 480px;
+  background: var(--white);
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: -8px 0 32px rgba(28,42,74,0.15);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.25s ease;
+}
+@keyframes slideIn { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.detail-header {
+  background: var(--navy);
+  padding: 24px 28px;
+  flex-shrink: 0;
+}
+.detail-close {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244,239,228,0.5);
+  cursor: pointer;
+  margin-bottom: 12px;
+  display: inline-block;
+  transition: color var(--ease);
+}
+.detail-close:hover { color: var(--stock); }
+.detail-client { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: var(--white); }
+.detail-meta { font-family: var(--font-ui); font-size: 9px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(244,239,228,0.4); margin-top: 5px; }
+.detail-body { padding: 24px 28px; flex: 1; }
+.detail-total { font-family: var(--font-display); font-size: 40px; font-weight: 900; color: var(--crimson); line-height: 1; margin-bottom: 4px; }
+.detail-total-label { font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mist); margin-bottom: 20px; }
+.detail-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--stock); font-size: 13px; }
+.detail-row:last-child { border-bottom: none; }
+.detail-row-label { color: var(--navy); }
+.detail-row-val { font-family: var(--font-display); font-weight: 700; color: var(--slate); font-size: 14px; }
+.detail-row-val.hi { color: var(--crimson); }
+.detail-section-title { font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mist); margin: 18px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--stock-mid); }
+.detail-actions { display: flex; flex-direction: column; gap: 8px; padding: 0 28px 28px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--font-ui); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  border: none; border-radius: 4px; padding: 11px 20px;
+  cursor: pointer; transition: all var(--ease); width: 100%;
+}
+.btn-crimson { background: var(--crimson); color: var(--stock); }
+.btn-crimson:hover { background: var(--crimson-dark); }
+.btn-navy { background: var(--navy); color: var(--stock); }
+.btn-navy:hover { background: var(--navy-dark); }
+.btn-outline { background: transparent; color: var(--navy); border: 1px solid var(--stock-mid); }
+.btn-outline:hover { border-color: var(--navy); }
+.btn-gold { background: var(--gold); color: var(--white); }
+.btn-success { background: var(--success); color: var(--white); }
+
+/* ── SEARCH + FILTER ── */
+.toolbar { display: flex; gap: 10px; margin-bottom: 14px; align-items: center; }
+.search-input {
+  flex: 1; max-width: 320px;
+  background: var(--white); border: 1px solid var(--stock-mid);
+  border-radius: var(--radius); padding: 9px 14px;
+  font-family: var(--font-body); font-size: 13px; color: var(--navy);
+  outline: none; transition: all var(--ease);
+}
+.search-input:focus { border-color: var(--crimson); box-shadow: 0 0 0 3px rgba(139,26,26,0.08); }
+.search-input::placeholder { color: var(--mist); }
+.filter-select {
+  background: var(--white); border: 1px solid var(--stock-mid);
+  border-radius: var(--radius); padding: 9px 12px;
+  font-family: var(--font-ui); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--navy); outline: none; cursor: pointer;
+  transition: all var(--ease);
+}
+.filter-select:focus { border-color: var(--crimson); }
+
+/* ── CLIENT CARDS ── */
+.client-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+.client-card {
+  background: var(--white); border-radius: var(--radius);
+  padding: 18px; box-shadow: var(--shadow-sm);
+  border: 1px solid var(--stock-mid); cursor: pointer;
+  transition: all var(--ease);
+}
+.client-card:hover { box-shadow: var(--shadow-md); border-color: var(--crimson); transform: translateY(-1px); }
+.client-avatar {
+  width: 44px; height: 44px; background: var(--navy);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 16px; font-weight: 900;
+  color: var(--stock); margin-bottom: 10px;
+}
+.client-avatar.crimson { background: var(--crimson); }
+.client-name { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+.client-detail { font-size: 11px; color: var(--mist); }
+.client-total { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--crimson); margin-top: 8px; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  background: var(--white); border-radius: var(--radius);
+  border: 1px solid var(--stock-mid);
+}
+.empty-icon { font-size: 48px; margin-bottom: 16px; }
+.empty-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+.empty-text { font-size: 13px; color: var(--mist); line-height: 1.6; max-width: 400px; margin: 0 auto 20px; }
+
+/* ── CONNECT BANNER ── */
+.connect-banner {
+  background: var(--navy);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+.connect-banner-text { color: rgba(244,239,228,0.8); font-size: 13px; line-height: 1.5; }
+.connect-banner-text strong { color: var(--stock); }
+.connect-input {
+  flex: 1; max-width: 420px;
+  background: rgba(244,239,228,0.1); border: 1px solid rgba(244,239,228,0.2);
+  border-radius: 4px; padding: 9px 14px;
+  font-family: var(--font-body); font-size: 13px; color: var(--stock);
+  outline: none; transition: all var(--ease);
+}
+.connect-input:focus { border-color: rgba(244,239,228,0.5); background: rgba(244,239,228,0.15); }
+.connect-input::placeholder { color: rgba(244,239,228,0.3); }
+
+/* ── STATUS EDITOR ── */
+.status-select {
+  font-family: var(--font-ui); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 3px; border: none;
+  cursor: pointer; outline: none;
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--navy); color: var(--stock);
+  font-family: var(--font-ui); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 12px 22px; border-radius: 4px;
+  box-shadow: var(--shadow-lg); opacity: 0;
+  transition: all 0.3s ease; pointer-events: none;
+  z-index: 999;
+}
+.toast.show { opacity: 1; }
+.toast.success { background: var(--success); }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.screen.active { animation: fadeUp 0.3s ease both; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="sidebar-brand-main">MATTIE'S</div>
+    <div class="sidebar-brand-sub">Hardwood Flooring</div>
+    <div class="sidebar-tagline">"20 Years of Beautiful Floors"</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <div class="nav-item active" onclick="showScreen('dashboard')">
+      <span class="nav-icon">📊</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showScreen('estimates')">
+      <span class="nav-icon">📋</span> All Estimates
+    </div>
+    <div class="nav-item" onclick="showScreen('clients')">
+      <span class="nav-icon">👥</span> Clients
+    </div>
+    <div class="nav-section-label">Export</div>
+    <div class="nav-item" onclick="showScreen('quickbooks')">
+      <span class="nav-icon">💼</span> QuickBooks
+    </div>
+    <div class="nav-item" onclick="exportAllCSV()">
+      <span class="nav-icon">⬇</span> Export CSV
+    </div>
+    <div class="nav-section-label">Settings</div>
+    <div class="nav-item" onclick="showScreen('settings')">
+      <span class="nav-icon">⚙️</span> Connection
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <strong>John Mattie</strong><br>
+    (707) 953-9663<br>
+    License No. 969033
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-right">
+      <button class="topbar-btn ghost" onclick="loadFromSheet()">↻ Refresh Data</button>
+      <button class="topbar-btn primary" onclick="showScreen('quickbooks')">Export to QuickBooks</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ══ SCREEN: DASHBOARD ══ -->
+    <div class="screen active" id="screen-dashboard">
+
+      <!-- Period tabs -->
+      <div class="period-tabs">
+        <div class="period-tab active" id="dtab-month"  onclick="setDashPeriod('month')">This Month</div>
+        <div class="period-tab"        id="dtab-year"   onclick="setDashPeriod('year')">This Year</div>
+        <div class="period-tab"        id="dtab-all"    onclick="setDashPeriod('all')">All Time</div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="stat-grid">
+        <div class="stat-card crimson">
+          <div class="stat-label">Est. Revenue</div>
+          <div class="stat-value" id="d-revenue">$0</div>
+          <div class="stat-sub" id="d-job-count">0 jobs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Job Value</div>
+          <div class="stat-value" id="d-avg">$0</div>
+          <div class="stat-sub">per estimate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Est. Margin</div>
+          <div class="stat-value" id="d-margin" style="color:var(--success)">0%</div>
+          <div class="stat-sub" id="d-profit">$0 profit</div>
+        </div>
+        <div class="stat-card navy">
+          <div class="stat-label">Unbooked Pipeline</div>
+          <div class="stat-value" id="d-unbooked">$0</div>
+          <div class="stat-sub">estimates not yet booked</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">Revenue by Job Type</div>
+          <div class="bar-chart" id="d-type-chart">
+            <div style="font-size:12px;color:var(--mist);">No data yet</div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Estimate Pipeline</div>
+          <div class="pipeline-list" id="d-pipeline">
+            <div style="font-size:12px;color:var(--mist);">No data yet</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent estimates -->
+      <div class="section-header">
+        <div>
+          <div class="section-title">Recent Estimates</div>
+          <div class="section-sub">Last 10 saved estimates</div>
+        </div>
+        <button class="topbar-btn ghost" onclick="showScreen('estimates')">View All →</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th><th>Job Type</th><th>Sq Ft</th>
+              <th>Total</th><th>Date</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="d-recent-tbody">
+            <tr><td colspan="6" style="text-align:center;color:var(--mist);padding:32px;">Connect your Google Sheet to load estimates</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ SCREEN: ALL ESTIMATES ══ -->
+    <div class="screen" id="screen-estimates">
+      <div class="toolbar">
+        <input class="search-input" type="text" placeholder="Search client, city, job type…" id="est-search" oninput="filterEstimates()">
+        <select class="filter-select" id="est-type-filter" onchange="filterEstimates()">
+          <option value="">All Types</option>
+          <option value="Sand & Finish">Sand & Finish</option>
+          <option value="New Installation">New Install</option>
+          <option value="Stair Work">Stairs</option>
+        </select>
+        <select class="filter-select" id="est-status-filter" onchange="filterEstimates()">
+          <option value="">All Statuses</option>
+          <option value="estimate">Estimate</option>
+          <option value="booked">Booked</option>
+          <option value="in progress">In Progress</option>
+          <option value="complete">Complete</option>
+        </select>
+        <button class="topbar-btn ghost" onclick="exportFilteredCSV()">⬇ Export CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Client</th><th>City</th><th>Job Type</th><th>Sq Ft</th>
+              <th>Labor</th><th>Materials</th><th>Total</th><th>$/sqft</th>
+              <th>Date</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="est-tbody">
+            <tr><td colspan="10" style="text-align:center;color:var(--mist);padding:32px;">No estimates loaded</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ SCREEN: CLIENTS ══ -->
+    <div class="screen" id="screen-clients">
+      <div class="toolbar">
+        <input class="search-input" type="text" placeholder="Search clients…" id="client-search" oninput="filterClients()">
+      </div>
+      <div class="client-grid" id="client-grid">
+        <div class="empty-state" style="grid-column:1/-1;">
+          <div class="empty-icon">👥</div>
+          <div class="empty-title">No clients yet</div>
+          <div class="empty-text">Connect your Google Sheet to build your client database automatically from saved estimates.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SCREEN: QUICKBOOKS EXPORT ══ -->
+    <div class="screen" id="screen-quickbooks">
+      <div style="max-width:700px;">
+        <div class="section-header" style="margin-bottom:20px;">
+          <div>
+            <div class="section-title">QuickBooks Online Export</div>
+            <div class="section-sub">Generate a CSV formatted for QuickBooks Online import</div>
+          </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom:16px;">
+          <div class="chart-title">Export Options</div>
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--navy);">
+              <input type="radio" name="qb-type" value="invoices" checked style="accent-color:var(--crimson);"> Invoices
+            </label>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--navy);">
+              <input type="radio" name="qb-type" value="estimates" style="accent-color:var(--crimson);"> Estimates / Proposals
+            </label>
+          </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom:16px;">
+          <div class="chart-title">Filter by Status</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--navy);">
+              <input type="checkbox" value="estimate" id="qb-estimate" style="accent-color:var(--crimson);"> Estimate
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--navy);">
+              <input type="checkbox" value="booked" id="qb-booked" checked style="accent-color:var(--crimson);"> Booked
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--navy);">
+              <input type="checkbox" value="in progress" id="qb-inprogress" checked style="accent-color:var(--crimson);"> In Progress
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--navy);">
+              <input type="checkbox" value="complete" id="qb-complete" checked style="accent-color:var(--crimson);"> Complete
+            </label>
+          </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom:20px;">
+          <div class="chart-title">QB Column Mapping</div>
+          <div style="font-size:12px;color:var(--mist);line-height:1.9;margin-top:4px;">
+            <strong style="color:var(--navy);">InvoiceNo</strong> → Auto-generated (MATT-001, MATT-002…)<br>
+            <strong style="color:var(--navy);">Customer</strong> → Client name<br>
+            <strong style="color:var(--navy);">InvoiceDate</strong> → Estimate date<br>
+            <strong style="color:var(--navy);">DueDate</strong> → 30 days from estimate date<br>
+            <strong style="color:var(--navy);">Item</strong> → Job type (Sand & Finish, New Install, Stair Work)<br>
+            <strong style="color:var(--navy);">ItemDescription</strong> → Rooms + sq ft details<br>
+            <strong style="color:var(--navy);">ItemQuantity</strong> → Sq ft or tread count<br>
+            <strong style="color:var(--navy);">ItemRate</strong> → Price per sq ft<br>
+            <strong style="color:var(--navy);">ItemAmount</strong> → Total labor<br>
+            <strong style="color:var(--navy);">Amount</strong> → Estimate total
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-crimson" style="width:auto;padding:12px 28px;" onclick="exportQB()">⬇ Download QB CSV</button>
+          <button class="btn btn-outline" style="width:auto;padding:12px 20px;" onclick="previewQB()">Preview First 3 Rows</button>
+        </div>
+
+        <div id="qb-preview" style="display:none;margin-top:20px;">
+          <div class="chart-title" style="margin-bottom:10px;">Preview</div>
+          <div style="background:var(--navy-dark);border-radius:var(--radius);padding:16px;overflow-x:auto;">
+            <pre id="qb-preview-content" style="font-size:11px;color:rgba(244,239,228,0.8);line-height:1.7;white-space:pre;"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SCREEN: SETTINGS ══ -->
+    <div class="screen" id="screen-settings">
+      <div style="max-width:600px;">
+        <div class="section-title" style="margin-bottom:6px;">Google Sheet Connection</div>
+        <div class="section-sub" style="margin-bottom:20px;">Connect to the same Sheet your phone app writes to</div>
+
+        <div class="chart-card" style="margin-bottom:16px;">
+          <div class="chart-title">Sheet URL</div>
+          <div style="display:flex;gap:10px;margin-top:8px;">
+            <input class="search-input" style="flex:1;max-width:100%;" type="url" id="desktop-sheet-url"
+              placeholder="https://script.google.com/macros/s/…/exec">
+            <button class="topbar-btn primary" onclick="saveSheetUrl()">Save & Connect</button>
+          </div>
+          <div style="font-size:11px;color:var(--mist);margin-top:8px;line-height:1.6;">
+            This is the same Web App URL from your Apps Script deployment. The desktop app reads your estimates directly from the Sheet.
+          </div>
+        </div>
+
+        <div class="chart-card" style="margin-bottom:16px;" id="connection-status-card">
+          <div class="chart-title">Connection Status</div>
+          <div id="connection-status" style="font-size:13px;color:var(--mist);margin-top:6px;">Not connected</div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-title">Your Details</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
+            <div>
+              <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Name</div>
+              <div style="font-size:13px;color:var(--navy);font-weight:600;">John Mattie</div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Phone</div>
+              <div style="font-size:13px;color:var(--navy);">(707) 953-9663</div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">License</div>
+              <div style="font-size:13px;color:var(--navy);">No. 969033</div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Vendor Email</div>
+              <div style="font-size:12px;color:var(--navy);">infogdc@galleherduffy.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- DETAIL PANEL -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="detail-panel" onclick="event.stopPropagation()">
+    <div class="detail-header">
+      <div class="detail-close" onclick="closeDetailPanel()">← Back to estimates</div>
+      <div class="detail-client" id="dp-client"></div>
+      <div class="detail-meta" id="dp-meta"></div>
+    </div>
+    <div class="detail-body">
+      <div class="detail-total" id="dp-total"></div>
+      <div class="detail-total-label">Estimate Total</div>
+
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+        <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);">Status</div>
+        <select class="status-select badge-estimate" id="dp-status" onchange="updateDetailStatus()">
+          <option value="estimate">Estimate</option>
+          <option value="booked">Booked</option>
+          <option value="in progress">In Progress</option>
+          <option value="complete">Complete</option>
+        </select>
+      </div>
+
+      <div class="detail-section-title">Cost Breakdown</div>
+      <div id="dp-breakdown"></div>
+
+      <div class="detail-section-title">Client Info</div>
+      <div id="dp-client-info"></div>
+
+      <div class="detail-section-title" id="dp-rooms-title" style="display:none;">Rooms</div>
+      <div id="dp-rooms"></div>
+    </div>
+    <div class="detail-actions">
+      <button class="btn btn-gold" onclick="exportSingleQB()">💼 Export to QuickBooks</button>
+      <button class="btn btn-crimson" onclick="printEstimate()">🖨 Print Estimate</button>
+      <button class="btn btn-outline" onclick="closeDetailPanel()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let allEstimates = [];
+let filteredEstimates = [];
+let dashPeriod = 'month';
+let currentDetailIdx = null;
+let sheetUrl = '';
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+const screenTitles = {
+  'dashboard': 'Dashboard',
+  'estimates': 'All Estimates',
+  'clients':   'Client Database',
+  'quickbooks':'QuickBooks Export',
+  'settings':  'Connection Settings',
+};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(n => { if (n.textContent.toLowerCase().includes(id.split('-')[0].toLowerCase())) n.classList.add('active'); });
+  document.getElementById('topbarTitle').textContent = screenTitles[id] || id;
+  if (id === 'dashboard') renderDashboard();
+  if (id === 'estimates') renderEstimatesTable(filteredEstimates.length ? filteredEstimates : allEstimates);
+  if (id === 'clients')   renderClients();
+}
+
+// ══════════════════════════════════════════════
+// SHEET CONNECTION
+// ══════════════════════════════════════════════
+function saveSheetUrl() {
+  const url = document.getElementById('desktop-sheet-url').value.trim();
+  if (!url) { showToast('⚠ Enter a Sheet URL first', ''); return; }
+  sheetUrl = url;
+  try { localStorage.setItem('mattie_desktop_sheet', url); } catch(e){}
+  document.getElementById('connection-status').innerHTML =
+    '<span style="color:var(--success);">✓ Connected — click Refresh Data to load estimates</span>';
+  showToast('✓ URL Saved', 'success');
+}
+
+function loadSettings() {
+  try {
+    const saved = localStorage.getItem('mattie_desktop_sheet');
+    if (saved) {
+      sheetUrl = saved;
+      document.getElementById('desktop-sheet-url').value = saved;
+      document.getElementById('connection-status').innerHTML =
+        '<span style="color:var(--success);">✓ Connected — ' + saved.substring(0,60) + '…</span>';
+    }
+  } catch(e){}
+}
+
+// ══════════════════════════════════════════════
+// LOAD DATA FROM SHEET
+// Reads the Google Sheet directly via fetch
+// ══════════════════════════════════════════════
+async function loadFromSheet() {
+  if (!sheetUrl) {
+    showToast('⚠ Add Sheet URL in Connection Settings first', '');
+    showScreen('settings');
+    return;
+  }
+
+  showToast('Loading estimates…', '');
+
+  try {
+    // Fetch sheet as CSV (published sheet) or via Apps Script GET endpoint
+    const url = sheetUrl.includes('exec')
+      ? sheetUrl + '?action=getAll'
+      : sheetUrl;
+
+    const resp = await fetch(url);
+    const text = await resp.text();
+
+    // Try JSON first
+    try {
+      const data = JSON.parse(text);
+      if (data.estimates) {
+        allEstimates = data.estimates;
+        filteredEstimates = [...allEstimates];
+        renderAll();
+        showToast('✓ Loaded ' + allEstimates.length + ' estimates', 'success');
+        return;
+      }
+    } catch(e) {}
+
+    // Fall back to CSV parse
+    allEstimates = parseCSV(text);
+    filteredEstimates = [...allEstimates];
+    renderAll();
+    showToast('✓ Loaded ' + allEstimates.length + ' estimates', 'success');
+
+  } catch(err) {
+    showToast('⚠ Could not load — check URL', '');
+    console.error(err);
+    // Load demo data so the app is usable
+    loadDemoData();
+  }
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g,'').toLowerCase().replace(/ /g,'_'));
+  return lines.slice(1).map((line, i) => {
+    const vals = line.match(/(".*?"|[^,]+|(?<=,)(?=,)|^(?=,)|(?<=,)$)/g) || [];
+    const obj = { _idx: i };
+    headers.forEach((h, j) => {
+      obj[h] = (vals[j] || '').replace(/"/g,'').trim();
+    });
+    // Normalize key fields
+    obj.client      = obj.client || obj.name || '';
+    obj.total       = parseFloat(obj.estimate_total || obj.total || 0);
+    obj.laborTotal  = parseFloat(obj.labor_total || 0);
+    obj.sqft        = parseFloat(obj.raw_sq_ft || obj.sqft || 0);
+    obj.status      = obj.status || 'estimate';
+    obj.typeLabel   = obj.job_type || obj.typelabel || '';
+    obj.type        = typeFromLabel(obj.typeLabel);
+    obj.date        = obj.date || '';
+    obj.city        = obj.city || '';
+    obj.phone       = obj.phone || '';
+    obj.perSqft     = obj.price_per_sq_ft || '';
+    obj.stairTreads = parseInt(obj.stair_treads || 0);
+    obj.wasteSqft   = parseInt(obj.waste_sq_ft || 0);
+    obj.rooms       = obj.rooms || '';
+    return obj;
+  }).filter(r => r.client);
+}
+
+function typeFromLabel(label) {
+  if (!label) return 'sf';
+  const l = label.toLowerCase();
+  if (l.includes('install')) return 'install';
+  if (l.includes('stair'))   return 'stairs';
+  return 'sf';
+}
+
+function loadDemoData() {
+  allEstimates = [
+    { _idx:0, client:'Peterson Residence', city:'Santa Rosa', phone:'(707) 555-0101', typeLabel:'Sand & Finish', type:'sf', sqft:620, total:4495, laborTotal:2790, status:'complete', date:'Mar 15, 2026', perSqft:'7.25', wasteSqft:0, rooms:'Living Room 420sqft | Hallway 200sqft' },
+    { _idx:1, client:'Nakamura', city:'Petaluma', phone:'(707) 555-0202', typeLabel:'Stair Work', type:'stairs', sqft:0, stairTreads:14, total:1750, laborTotal:1750, status:'booked', date:'Mar 18, 2026', perSqft:'', wasteSqft:0, rooms:'' },
+    { _idx:2, client:'DeLeon', city:'Novato', phone:'(707) 555-0303', typeLabel:'New Installation', type:'install', sqft:980, total:7420, laborTotal:5880, status:'in progress', date:'Mar 10, 2026', perSqft:'7.57', wasteSqft:69, rooms:'Master Bedroom 480sqft | Living Room 500sqft' },
+    { _idx:3, client:'Thompson Residence', city:'Petaluma', phone:'(707) 555-0404', typeLabel:'Sand & Finish', type:'sf', sqft:350, total:2629, laborTotal:2100, status:'estimate', date:'Mar 20, 2026', perSqft:'7.51', wasteSqft:0, rooms:'Living Room 350sqft' },
+    { _idx:4, client:'Garcia', city:'Sebastopol', phone:'(707) 555-0505', typeLabel:'New Installation', type:'install', sqft:750, total:5630, laborTotal:4500, status:'estimate', date:'Mar 19, 2026', perSqft:'7.51', wasteSqft:53, rooms:'Kitchen 350sqft | Dining Room 400sqft' },
+  ];
+  filteredEstimates = [...allEstimates];
+  renderAll();
+  showToast('Showing demo data — connect Sheet for live data', '');
+}
+
+function renderAll() {
+  renderDashboard();
+  renderEstimatesTable(allEstimates);
+  renderClients();
+}
+
+// ══════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════
+function setDashPeriod(period) {
+  dashPeriod = period;
+  ['month','year','all'].forEach(p => {
+    document.getElementById('dtab-' + p).classList.toggle('active', p === period);
+  });
+  renderDashboard();
+}
+
+function getForPeriod(period) {
+  const now = new Date();
+  return allEstimates.filter(j => {
+    const d = new Date(j.date);
+    if (isNaN(d)) return period === 'all';
+    if (period === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    if (period === 'year')  return d.getFullYear() === now.getFullYear();
+    return true;
+  });
+}
+
+function renderDashboard() {
+  const jobs    = getForPeriod(dashPeriod);
+  const totalRev = jobs.reduce((a, j) => a + (j.total || 0), 0);
+  const avgJob   = jobs.length ? Math.round(totalRev / jobs.length) : 0;
+  const unbooked = allEstimates.filter(j => j.status === 'estimate').reduce((a,j) => a+(j.total||0),0);
+
+  // Simple margin estimate: 35% average
+  const estProfit = Math.round(totalRev * 0.35);
+  const margin    = totalRev > 0 ? 35 : 0;
+
+  document.getElementById('d-revenue').textContent   = '$' + totalRev.toLocaleString();
+  document.getElementById('d-job-count').textContent = jobs.length + ' job' + (jobs.length !== 1 ? 's' : '');
+  document.getElementById('d-avg').textContent       = '$' + avgJob.toLocaleString();
+  document.getElementById('d-margin').textContent    = margin + '%';
+  document.getElementById('d-profit').textContent    = '$' + estProfit.toLocaleString() + ' est. profit';
+  document.getElementById('d-unbooked').textContent  = '$' + unbooked.toLocaleString();
+
+  // Type breakdown chart
+  const types = [
+    { key: 'sf',      label: 'Sand & Finish', color: '' },
+    { key: 'install', label: 'New Install',   color: 'navy' },
+    { key: 'stairs',  label: 'Stairs',        color: 'gold' },
+  ];
+  const typeChart = document.getElementById('d-type-chart');
+  typeChart.innerHTML = '';
+  types.forEach(t => {
+    const tJobs = jobs.filter(j => j.type === t.key);
+    const tRev  = tJobs.reduce((a, j) => a + (j.total||0), 0);
+    const pct   = totalRev > 0 ? Math.round((tRev / totalRev) * 100) : 0;
+    if (!tJobs.length) return;
+    typeChart.innerHTML += `
+      <div class="bar-row">
+        <div class="bar-label">${t.label}</div>
+        <div class="bar-track"><div class="bar-fill ${t.color}" style="width:${pct}%"></div></div>
+        <div class="bar-val">$${tRev.toLocaleString()}</div>
+      </div>`;
+  });
+  if (!typeChart.innerHTML) typeChart.innerHTML = '<div style="font-size:12px;color:var(--mist);">No jobs in this period</div>';
+
+  // Pipeline
+  const pipe = document.getElementById('d-pipeline');
+  pipe.innerHTML = '';
+  const statuses = ['estimate','booked','in progress','complete'];
+  const statusColors = { estimate:'var(--navy)', booked:'var(--gold)', 'in progress':'var(--crimson)', complete:'var(--success)' };
+  statuses.forEach(s => {
+    const sJobs = allEstimates.filter(j => j.status === s);
+    if (!sJobs.length) return;
+    const sRev = sJobs.reduce((a,j) => a+(j.total||0), 0);
+    pipe.innerHTML += `
+      <div class="pipeline-row">
+        <div>
+          <div class="pipeline-status" style="color:${statusColors[s]}">${s}</div>
+          <div class="pipeline-count">${sJobs.length} job${sJobs.length!==1?'s':''}</div>
+        </div>
+        <div class="pipeline-val">$${sRev.toLocaleString()}</div>
+      </div>`;
+  });
+  if (!pipe.innerHTML) pipe.innerHTML = '<div style="font-size:12px;color:var(--mist);">No pipeline data</div>';
+
+  // Recent table
+  const tbody = document.getElementById('d-recent-tbody');
+  const recent = [...allEstimates].slice(0, 10);
+  if (!recent.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--mist);padding:32px;">Connect your Google Sheet to load estimates</td></tr>';
+    return;
+  }
+  tbody.innerHTML = recent.map((j, i) => `
+    <tr onclick="openDetail(${j._idx})">
+      <td><span class="td-name">${j.client}</span></td>
+      <td>${j.typeLabel}</td>
+      <td>${j.type === 'stairs' ? (j.stairTreads||0) + ' treads' : (j.sqft||0) + ' sq ft'}</td>
+      <td><span class="td-amount">$${(j.total||0).toLocaleString()}</span></td>
+      <td>${j.date}</td>
+      <td><span class="td-badge badge-${(j.status||'estimate').replace(' ','-')}">${j.status||'estimate'}</span></td>
+    </tr>`).join('');
+}
+
+// ══════════════════════════════════════════════
+// ESTIMATES TABLE
+// ══════════════════════════════════════════════
+function renderEstimatesTable(data) {
+  const tbody = document.getElementById('est-tbody');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--mist);padding:32px;">No estimates found</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(j => `
+    <tr onclick="openDetail(${j._idx})">
+      <td><span class="td-name">${j.client}</span></td>
+      <td>${j.city||'—'}</td>
+      <td>${j.typeLabel}</td>
+      <td>${j.type==='stairs'?(j.stairTreads||0)+' treads':(j.sqft||0)+' sq ft'}</td>
+      <td>$${(j.laborTotal||0).toLocaleString()}</td>
+      <td>$${Math.round((j.total||0)-(j.laborTotal||0)).toLocaleString()}</td>
+      <td><span class="td-amount">$${(j.total||0).toLocaleString()}</span></td>
+      <td>${j.perSqft ? '$'+j.perSqft : '—'}</td>
+      <td>${j.date}</td>
+      <td><span class="td-badge badge-${(j.status||'estimate').replace(' ','-')}">${j.status||'estimate'}</span></td>
+    </tr>`).join('');
+}
+
+function filterEstimates() {
+  const search = document.getElementById('est-search').value.toLowerCase();
+  const type   = document.getElementById('est-type-filter').value;
+  const status = document.getElementById('est-status-filter').value;
+  filteredEstimates = allEstimates.filter(j => {
+    const matchSearch = !search || j.client.toLowerCase().includes(search) || (j.city||'').toLowerCase().includes(search) || j.typeLabel.toLowerCase().includes(search);
+    const matchType   = !type   || j.typeLabel === type;
+    const matchStatus = !status || j.status === status;
+    return matchSearch && matchType && matchStatus;
+  });
+  renderEstimatesTable(filteredEstimates);
+}
+
+// ══════════════════════════════════════════════
+// CLIENTS
+// ══════════════════════════════════════════════
+function renderClients(filter = '') {
+  const grid = document.getElementById('client-grid');
+  // Build client map from estimates
+  const clientMap = {};
+  allEstimates.forEach(j => {
+    const key = j.client;
+    if (!clientMap[key]) clientMap[key] = { name: j.client, city: j.city, phone: j.phone, jobs: [], total: 0 };
+    clientMap[key].jobs.push(j);
+    clientMap[key].total += (j.total || 0);
+  });
+
+  let clients = Object.values(clientMap);
+  if (filter) clients = clients.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+
+  if (!clients.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
+      <div class="empty-icon">👥</div>
+      <div class="empty-title">No clients yet</div>
+      <div class="empty-text">Connect your Google Sheet to build your client database.</div>
+    </div>`;
+    return;
+  }
+
+  const avatarColors = ['', 'crimson', '', 'crimson', ''];
+  grid.innerHTML = clients.sort((a,b) => b.total - a.total).map((c, i) => `
+    <div class="client-card">
+      <div class="client-avatar ${avatarColors[i%5]}">${c.name[0].toUpperCase()}</div>
+      <div class="client-name">${c.name}</div>
+      <div class="client-detail">${c.city||''}${c.phone ? ' · ' + c.phone : ''}</div>
+      <div class="client-detail" style="margin-top:3px;">${c.jobs.length} estimate${c.jobs.length!==1?'s':''}</div>
+      <div class="client-total">$${c.total.toLocaleString()}</div>
+    </div>`).join('');
+}
+
+function filterClients() {
+  renderClients(document.getElementById('client-search').value);
+}
+
+// ══════════════════════════════════════════════
+// DETAIL PANEL
+// ══════════════════════════════════════════════
+function openDetail(idx) {
+  const j = allEstimates.find(e => e._idx === idx);
+  if (!j) return;
+  currentDetailIdx = idx;
+
+  document.getElementById('dp-client').textContent = j.client + (j.city ? ', ' + j.city : '');
+  document.getElementById('dp-meta').textContent   = j.typeLabel + ' · ' + j.date;
+  document.getElementById('dp-total').textContent  = '$' + (j.total||0).toLocaleString();
+
+  const statusSel = document.getElementById('dp-status');
+  statusSel.value = j.status || 'estimate';
+  updateStatusSelectStyle(statusSel);
+
+  // Breakdown
+  const bd = document.getElementById('dp-breakdown');
+  const sqftLabel = j.type === 'stairs' ? (j.stairTreads||0) + ' treads' : (j.sqft||0) + ' sq ft';
+  bd.innerHTML = `
+    <div class="detail-row"><span class="detail-row-label">Labor</span><span class="detail-row-val hi">$${(j.laborTotal||0).toLocaleString()}</span></div>
+    <div class="detail-row"><span class="detail-row-label">Materials</span><span class="detail-row-val">$${Math.round((j.total||0)-(j.laborTotal||0)).toLocaleString()}</span></div>
+    <div class="detail-row"><span class="detail-row-label">Sq Ft / Units</span><span class="detail-row-val">${sqftLabel}</span></div>
+    ${j.perSqft ? `<div class="detail-row"><span class="detail-row-label">Price / sq ft</span><span class="detail-row-val">$${j.perSqft}</span></div>` : ''}
+    ${j.wasteSqft > 0 ? `<div class="detail-row"><span class="detail-row-label">Waste (7%)</span><span class="detail-row-val">${j.wasteSqft} sq ft</span></div>` : ''}
+  `;
+
+  // Client info
+  document.getElementById('dp-client-info').innerHTML = `
+    <div class="detail-row"><span class="detail-row-label">Name</span><span class="detail-row-val">${j.client}</span></div>
+    ${j.city  ? `<div class="detail-row"><span class="detail-row-label">City</span><span class="detail-row-val">${j.city}</span></div>` : ''}
+    ${j.phone ? `<div class="detail-row"><span class="detail-row-label">Phone</span><span class="detail-row-val">${j.phone}</span></div>` : ''}
+  `;
+
+  // Rooms
+  const roomsTitle = document.getElementById('dp-rooms-title');
+  const roomsEl    = document.getElementById('dp-rooms');
+  if (j.rooms) {
+    roomsTitle.style.display = 'block';
+    roomsEl.innerHTML = j.rooms.split('|').map(r => r.trim()).filter(Boolean).map(r =>
+      `<div class="detail-row"><span class="detail-row-label">${r}</span></div>`
+    ).join('');
+  } else {
+    roomsTitle.style.display = 'none';
+    roomsEl.innerHTML = '';
+  }
+
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function updateStatusSelectStyle(sel) {
+  const colors = { estimate:'badge-estimate', booked:'badge-booked', 'in progress':'badge-in-progress', complete:'badge-complete' };
+  sel.className = 'status-select ' + (colors[sel.value] || 'badge-estimate');
+}
+
+function updateDetailStatus() {
+  const sel = document.getElementById('dp-status');
+  updateStatusSelectStyle(sel);
+  const j = allEstimates.find(e => e._idx === currentDetailIdx);
+  if (j) { j.status = sel.value; renderEstimatesTable(filteredEstimates.length ? filteredEstimates : allEstimates); renderDashboard(); }
+}
+
+function closeDetailPanel() { document.getElementById('detailOverlay').classList.remove('open'); }
+function closeDetail(e) { if (e.target === document.getElementById('detailOverlay')) closeDetailPanel(); }
+
+// ══════════════════════════════════════════════
+// QUICKBOOKS CSV EXPORT
+// ══════════════════════════════════════════════
+function getQBStatuses() {
+  return ['estimate','booked','in progress','complete'].filter(s => {
+    const el = document.getElementById('qb-' + s.replace(' ',''));
+    return el && el.checked;
+  });
+}
+
+function buildQBRows(jobs, type) {
+  const isInvoice = type === 'invoices';
+  const rows = [];
+  const header = isInvoice
+    ? ['InvoiceNo','Customer','InvoiceDate','DueDate','Terms','Item','ItemDescription','ItemQuantity','ItemRate','ItemAmount','TaxCode','Amount']
+    : ['EstimateNo','Customer','EstimateDate','ExpiryDate','Item','ItemDescription','ItemQuantity','ItemRate','ItemAmount','Amount'];
+
+  rows.push(header);
+
+  jobs.forEach((j, i) => {
+    const num     = 'MATT-' + String(i + 1).padStart(3, '0');
+    const sqftLabel = j.type === 'stairs' ? (j.stairTreads||0) : (j.sqft||0);
+    const sqftUnit  = j.type === 'stairs' ? 'treads' : 'sq ft';
+    const rate      = j.perSqft || (j.sqft > 0 ? (j.total / j.sqft).toFixed(2) : '');
+    const dueDate   = addDays(j.date, 30);
+    const rooms     = j.rooms ? ' — ' + j.rooms.replace(/\|/g, ',') : '';
+    const desc      = j.typeLabel + ' · ' + sqftLabel + ' ' + sqftUnit + rooms;
+
+    if (isInvoice) {
+      rows.push([num, j.client, j.date, dueDate, 'Net 30', j.typeLabel, desc, sqftLabel, rate, j.laborTotal||0, 'NON', j.total||0]);
+      if ((j.total||0) - (j.laborTotal||0) > 0) {
+        rows.push(['', j.client, j.date, dueDate, '', 'Materials', 'Finish materials & supplies', 1, Math.round((j.total||0)-(j.laborTotal||0)), Math.round((j.total||0)-(j.laborTotal||0)), 'NON', '']);
+      }
+    } else {
+      rows.push([num, j.client, j.date, dueDate, j.typeLabel, desc, sqftLabel, rate, j.laborTotal||0, j.total||0]);
+    }
+  });
+  return rows;
+}
+
+function addDays(dateStr, days) {
+  try { const d = new Date(dateStr); d.setDate(d.getDate() + days); return d.toLocaleDateString('en-US'); } catch(e) { return ''; }
+}
+
+function rowsToCSV(rows) {
+  return rows.map(r => r.map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',')).join('\n');
+}
+
+function exportQB() {
+  const type     = document.querySelector('input[name="qb-type"]:checked').value;
+  const statuses = getQBStatuses();
+  const jobs     = allEstimates.filter(j => statuses.includes(j.status));
+  if (!jobs.length) { showToast('⚠ No jobs match selected filters', ''); return; }
+  const csv  = rowsToCSV(buildQBRows(jobs, type));
+  downloadCSV(csv, 'matties-' + type + '-qb.csv');
+  showToast('✓ Downloaded ' + jobs.length + ' records', 'success');
+}
+
+function previewQB() {
+  const type     = document.querySelector('input[name="qb-type"]:checked').value;
+  const statuses = getQBStatuses();
+  const jobs     = allEstimates.filter(j => statuses.includes(j.status)).slice(0, 3);
+  const rows     = buildQBRows(jobs, type);
+  const preview  = rows.slice(0, Math.min(7, rows.length)).map(r => r.join(', ')).join('\n');
+  document.getElementById('qb-preview-content').textContent = preview;
+  document.getElementById('qb-preview').style.display = 'block';
+}
+
+function exportSingleQB() {
+  const j = allEstimates.find(e => e._idx === currentDetailIdx);
+  if (!j) return;
+  const type = 'invoices';
+  const csv  = rowsToCSV(buildQBRows([j], type));
+  downloadCSV(csv, 'mattie-' + (j.client||'estimate').replace(/\s/g,'-').toLowerCase() + '-qb.csv');
+  showToast('✓ QB export downloaded', 'success');
+}
+
+function exportAllCSV() {
+  if (!allEstimates.length) { showToast('⚠ No data to export', ''); return; }
+  const headers = ['Date','Client','City','Phone','Job Type','Sq Ft','Labor Total','Materials','Total','$/sqft','Status'];
+  const rows = [headers, ...allEstimates.map(j => [
+    j.date, j.client, j.city||'', j.phone||'', j.typeLabel,
+    j.type==='stairs'?(j.stairTreads||0):(j.sqft||0),
+    j.laborTotal||0, Math.round((j.total||0)-(j.laborTotal||0)),
+    j.total||0, j.perSqft||'', j.status||''
+  ])];
+  downloadCSV(rowsToCSV(rows), 'matties-all-estimates.csv');
+  showToast('✓ CSV downloaded', 'success');
+}
+
+function exportFilteredCSV() {
+  const data = filteredEstimates.length ? filteredEstimates : allEstimates;
+  if (!data.length) { showToast('⚠ No data to export', ''); return; }
+  const headers = ['Date','Client','City','Phone','Job Type','Sq Ft','Labor Total','Materials','Total','$/sqft','Status'];
+  const rows = [headers, ...data.map(j => [
+    j.date, j.client, j.city||'', j.phone||'', j.typeLabel,
+    j.type==='stairs'?(j.stairTreads||0):(j.sqft||0),
+    j.laborTotal||0, Math.round((j.total||0)-(j.laborTotal||0)),
+    j.total||0, j.perSqft||'', j.status||''
+  ])];
+  downloadCSV(rowsToCSV(rows), 'matties-estimates-filtered.csv');
+  showToast('✓ CSV downloaded', 'success');
+}
+
+function downloadCSV(csv, filename) {
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function printEstimate() { window.print(); }
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type === 'success' ? ' success' : '') + ' show';
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+loadSettings();
+loadDemoData();
+</script>
+</body>
+</html>
