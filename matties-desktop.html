@@ -867,6 +867,18 @@ tbody tr:hover { background: var(--stock); }
 
       <div class="detail-section-title" id="dp-rooms-title" style="display:none;">Rooms</div>
       <div id="dp-rooms"></div>
+
+      <div class="detail-section-title" id="dp-flooring-title" style="display:none;">Flooring Spec</div>
+      <div id="dp-flooring"></div>
+
+      <div class="detail-section-title" id="dp-finish-title" style="display:none;">Finish</div>
+      <div id="dp-finish"></div>
+
+      <div class="detail-section-title" id="dp-stair-title" style="display:none;">Stair Details</div>
+      <div id="dp-stair-detail"></div>
+
+      <div class="detail-section-title" id="dp-photos-title" style="display:none;">Photos</div>
+      <div id="dp-photos"></div>
     </div>
     <div class="detail-actions">
       <button class="btn btn-gold" onclick="exportSingleQB()">💼 Export to QuickBooks</button>
@@ -1234,35 +1246,139 @@ function openDetail(idx) {
   statusSel.value = j.status || 'estimate';
   updateStatusSelectStyle(statusSel);
 
-  // Breakdown
+  // ── COST BREAKDOWN ──
   const bd = document.getElementById('dp-breakdown');
-  const sqftLabel = j.type === 'stairs' ? (j.stairTreads||0) + ' treads' : (j.sqft||0) + ' sq ft';
-  bd.innerHTML = `
-    <div class="detail-row"><span class="detail-row-label">Labor</span><span class="detail-row-val hi">$${(j.laborTotal||0).toLocaleString()}</span></div>
-    <div class="detail-row"><span class="detail-row-label">Materials</span><span class="detail-row-val">$${Math.round((j.total||0)-(j.laborTotal||0)).toLocaleString()}</span></div>
-    <div class="detail-row"><span class="detail-row-label">Sq Ft / Units</span><span class="detail-row-val">${sqftLabel}</span></div>
-    ${j.perSqft ? `<div class="detail-row"><span class="detail-row-label">Price / sq ft</span><span class="detail-row-val">$${j.perSqft}</span></div>` : ''}
-    ${j.wasteSqft > 0 ? `<div class="detail-row"><span class="detail-row-label">Waste (7%)</span><span class="detail-row-val">${j.wasteSqft} sq ft</span></div>` : ''}
-  `;
+  const sqftLabel = j.type === 'stairs'
+    ? (j.stair_treads||j.stairTreads||0) + ' treads'
+    : (j.raw_sq_ft||j.sqft||0) + ' sq ft';
+  const laborRate  = j.labor_rate  || j.laborRate  || 0;
+  const laborTotal = j.labor_total || j.laborTotal || 0;
+  const sealerCost = parseFloat(j.sealer_cost||j.sealerCost||0);
+  const polyCost   = parseFloat(j.poly_cost  ||j.polyCost  ||0);
+  const supplies   = parseFloat(j.supplies_cost||j.suppliesCost||0);
+  const matTotal   = parseFloat(j.materials_total||j.materialsTotal||0) || (sealerCost+polyCost+supplies);
+  const wasteSqft  = parseInt(j.waste_sq_ft||j.wasteSqft||0);
+  const perSqft    = j.price_per_sq_ft||j.perSqft||'';
+  const customMats = j.custom_materials||j.customMaterials||'';
+  const flooringSpecies = j.flooring_species||j.flooringLabel||'';
+  const flooringWidth   = j.flooring_width ||j.flooringWidth||'';
+  const flooringThick   = j.flooring_thickness||j.flooringThick||'';
+  const flooringNotes   = j.flooring_notes ||j.flooringNotes||'';
+  const finishType  = j.finish_type  ||j.finishType ||'';
+  const finishNotes = j.finish_notes ||j.finishNotes||'';
+  const stairNotes  = j.stair_notes  ||j.stairNotes ||'';
+  const treadWidth  = j.tread_width  ||j.treadWidth ||'';
+  const riserWidth  = j.riser_width  ||j.riserWidth ||'';
+  const stairRisers = parseInt(j.stair_risers||j.stairRisers||0);
 
-  // Client info
-  document.getElementById('dp-client-info').innerHTML = `
-    <div class="detail-row"><span class="detail-row-label">Name</span><span class="detail-row-val">${j.client}</span></div>
-    ${j.city  ? `<div class="detail-row"><span class="detail-row-label">City</span><span class="detail-row-val">${j.city}</span></div>` : ''}
-    ${j.phone ? `<div class="detail-row"><span class="detail-row-label">Phone</span><span class="detail-row-val">${j.phone}</span></div>` : ''}
-  `;
+  function dr(label, val, hi) {
+    if (!val && val !== 0) return '';
+    return `<div class="detail-row"><span class="detail-row-label">${label}</span><span class="detail-row-val${hi?' hi':''}">${val}</span></div>`;
+  }
 
-  // Rooms
+  bd.innerHTML =
+    dr('Job Type', j.typeLabel||j.job_type, false) +
+    dr('Labor', '$'+(laborTotal||0).toLocaleString(), true) +
+    (laborRate ? dr('Labor Rate', '$'+parseFloat(laborRate).toFixed(2)+'/sq ft', false) : '') +
+    (sealerCost ? dr('Sealer', '$'+Math.round(sealerCost).toLocaleString(), false) : '') +
+    (polyCost   ? dr('Polyurethane', '$'+Math.round(polyCost).toLocaleString(), false) : '') +
+    (supplies   ? dr('Supplies', '$'+Math.round(supplies).toLocaleString(), false) : '') +
+    (customMats ? dr('Custom Materials', customMats, false) : '') +
+    (matTotal   ? dr('Materials Total', '$'+Math.round(matTotal).toLocaleString(), false) : '') +
+    dr('Units', sqftLabel, false) +
+    (wasteSqft  ? dr('Waste (materials)', wasteSqft+' sq ft', false) : '') +
+    (perSqft    ? dr('Price / sq ft', '$'+perSqft, false) : '');
+
+  // ── FLOORING SPEC ──
+  const flooringEl = document.getElementById('dp-flooring');
+  const flooringTitle = document.getElementById('dp-flooring-title');
+  if (flooringSpecies || flooringWidth || flooringThick) {
+    flooringTitle.style.display = 'block';
+    flooringEl.innerHTML =
+      dr('Species', flooringSpecies, true) +
+      (flooringWidth ? dr('Width', flooringWidth, false) : '') +
+      (flooringThick ? dr('Thickness', flooringThick, false) : '') +
+      (flooringNotes ? dr('Notes', flooringNotes, false) : '');
+  } else {
+    flooringTitle.style.display = 'none';
+    flooringEl.innerHTML = '';
+  }
+
+  // ── FINISH ──
+  const finishEl = document.getElementById('dp-finish');
+  const finishTitle = document.getElementById('dp-finish-title');
+  if (finishType || finishNotes) {
+    finishTitle.style.display = 'block';
+    finishEl.innerHTML =
+      (finishType  ? dr('Finish Type', finishType, false)   : '') +
+      (finishNotes ? dr('Notes', finishNotes, false) : '');
+  } else {
+    finishTitle.style.display = 'none';
+    finishEl.innerHTML = '';
+  }
+
+  // ── STAIR DETAIL ──
+  const stairEl = document.getElementById('dp-stair-detail');
+  const stairTitle = document.getElementById('dp-stair-title');
+  if (j.type === 'stairs' || (j.typeLabel||'').toLowerCase().includes('stair')) {
+    stairTitle.style.display = 'block';
+    stairEl.innerHTML =
+      dr('Treads', j.stair_treads||j.stairTreads||0, false) +
+      (stairRisers ? dr('Risers', stairRisers, false) : '') +
+      (treadWidth  ? dr('Tread Width', treadWidth, false) : '') +
+      (riserWidth  ? dr('Riser Width', riserWidth, false) : '') +
+      (stairNotes  ? dr('Notes', stairNotes, false) : '');
+  } else {
+    stairTitle.style.display = 'none';
+    stairEl.innerHTML = '';
+  }
+
+  // ── CLIENT INFO ──
+  document.getElementById('dp-client-info').innerHTML =
+    dr('Name', j.client, false) +
+    (j.city  ? dr('City',  j.city,  false) : '') +
+    (j.phone ? dr('Phone', j.phone, false) : '');
+
+  // ── ROOMS ──
   const roomsTitle = document.getElementById('dp-rooms-title');
   const roomsEl    = document.getElementById('dp-rooms');
-  if (j.rooms) {
+  const roomsStr   = j.rooms || j.rooms_summary || '';
+  if (roomsStr) {
     roomsTitle.style.display = 'block';
-    roomsEl.innerHTML = j.rooms.split('|').map(r => r.trim()).filter(Boolean).map(r =>
-      `<div class="detail-row"><span class="detail-row-label">${r}</span></div>`
-    ).join('');
+    roomsEl.innerHTML = roomsStr.split('|').map(r => r.trim()).filter(Boolean).map(r => {
+      const parts = r.split('[remove:');
+      const name  = parts[0].trim();
+      const rem   = parts[1] ? ' — Remove: ' + parts[1].replace(']','').trim() : '';
+      return `<div class="detail-row"><span class="detail-row-label">${name}</span><span class="detail-row-val" style="font-size:11px;color:var(--mist);">${rem}</span></div>`;
+    }).join('');
   } else {
     roomsTitle.style.display = 'none';
     roomsEl.innerHTML = '';
+  }
+
+  // ── PHOTOS ──
+  const photosTitle = document.getElementById('dp-photos-title');
+  const photosEl    = document.getElementById('dp-photos');
+  const photoCount  = parseInt(j.photo_count||j.photoCount||0);
+  if (photoCount > 0 && j._photos) {
+    photosTitle.style.display = 'block';
+    photosEl.innerHTML = '';
+    const grid = document.createElement('div');
+    grid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:8px;';
+    (j._photos.general||[]).forEach(p => {
+      const img = document.createElement('img');
+      img.src = p.dataUrl;
+      img.style.cssText = 'width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;cursor:pointer;';
+      img.onclick = () => window.open(p.dataUrl, '_blank');
+      grid.appendChild(img);
+    });
+    photosEl.appendChild(grid);
+  } else if (photoCount > 0) {
+    photosTitle.style.display = 'block';
+    photosEl.innerHTML = `<div style="font-size:12px;color:var(--mist);padding:8px 0;">${photoCount} photo${photoCount!==1?'s':''} on file — photos are stored on the device where the estimate was created.</div>`;
+  } else {
+    photosTitle.style.display = 'none';
+    photosEl.innerHTML = '';
   }
 
   document.getElementById('detailOverlay').classList.add('open');
