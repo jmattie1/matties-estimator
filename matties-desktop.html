@@ -34,7 +34,6 @@
   --radius:       8px;
   --ease:         0.18s ease;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 14px; }
 body {
@@ -45,7 +44,6 @@ body {
   display: flex;
   -webkit-font-smoothing: antialiased;
 }
-
 /* ── SIDEBAR ── */
 .sidebar {
   width: var(--sidebar-w);
@@ -58,7 +56,6 @@ body {
   top: 0; left: 0; bottom: 0;
   z-index: 100;
 }
-
 .sidebar-brand {
   padding: 28px 20px 24px;
   border-bottom: 1px solid rgba(244,239,228,0.08);
@@ -87,7 +84,6 @@ body {
   color: rgba(244,239,228,0.25);
   margin-top: 6px;
 }
-
 .sidebar-nav {
   flex: 1;
   padding: 16px 0;
@@ -119,7 +115,6 @@ body {
 .nav-item:hover { background: rgba(244,239,228,0.06); color: rgba(244,239,228,0.85); }
 .nav-item.active { background: rgba(139,26,26,0.15); color: var(--stock); border-left-color: var(--crimson); }
 .nav-icon { font-size: 15px; width: 20px; text-align: center; }
-
 .sidebar-footer {
   padding: 16px 20px;
   border-top: 1px solid rgba(244,239,228,0.08);
@@ -129,7 +124,6 @@ body {
   line-height: 1.6;
 }
 .sidebar-footer strong { color: rgba(244,239,228,0.4); }
-
 /* ── MAIN CONTENT ── */
 .main {
   margin-left: var(--sidebar-w);
@@ -138,7 +132,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-
 .topbar {
   background: var(--white);
   border-bottom: 1px solid var(--stock-mid);
@@ -179,16 +172,13 @@ body {
 .topbar-btn.primary:hover { background: var(--crimson-dark); }
 .topbar-btn.ghost { background: transparent; color: var(--slate); border: 1px solid var(--stock-mid); }
 .topbar-btn.ghost:hover { border-color: var(--navy); color: var(--navy); }
-
 .content {
   flex: 1;
   padding: 32px;
 }
-
 /* ── SCREENS ── */
 .screen { display: none; }
 .screen.active { display: block; }
-
 /* ── STAT CARDS ── */
 .stat-grid {
   display: grid;
@@ -234,7 +224,6 @@ body {
 }
 .stat-card.crimson .stat-sub,
 .stat-card.navy .stat-sub { color: rgba(244,239,228,0.5); }
-
 /* ── SECTION HEADER ── */
 .section-header {
   display: flex;
@@ -253,7 +242,6 @@ body {
   color: var(--mist);
   margin-top: 2px;
 }
-
 /* ── TABLE ── */
 .table-wrap {
   background: var(--white);
@@ -301,7 +289,6 @@ tbody tr:hover { background: var(--stock); }
 .badge-booked      { background: var(--gold-fade); color: var(--gold); }
 .badge-in-progress { background: var(--crimson-fade); color: var(--crimson); }
 .badge-complete    { background: var(--success-fade); color: var(--success); }
-
 /* ── CHARTS ── */
 .charts-grid {
   display: grid;
@@ -333,7 +320,6 @@ tbody tr:hover { background: var(--stock); }
 .bar-fill.navy { background: var(--navy); }
 .bar-fill.gold { background: var(--gold); }
 .bar-val { font-family: var(--font-display); font-size: 13px; font-weight: 700; color: var(--crimson); width: 60px; text-align: right; flex-shrink: 0; }
-
 .pipeline-list { display: flex; flex-direction: column; gap: 8px; }
 .pipeline-row {
   display: flex;
@@ -347,7 +333,6 @@ tbody tr:hover { background: var(--stock); }
 .pipeline-status { font-family: var(--font-ui); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
 .pipeline-count { font-size: 11px; color: var(--mist); margin-top: 2px; }
 .pipeline-val { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--navy); }
-
 /* ── PERIOD TABS ── */
 .period-tabs {
   display: flex;
@@ -371,7 +356,6 @@ tbody tr:hover { background: var(--stock); }
   transition: all var(--ease);
 }
 .period-tab.active { background: var(--white); color: var(--crimson); box-shadow: var(--shadow-sm); }
-
 /* ── DETAIL PANEL ── */
 .detail-overlay {
   display: none;
@@ -424,7 +408,6 @@ tbody tr:hover { background: var(--stock); }
 .detail-row-val.hi { color: var(--crimson); }
 .detail-section-title { font-family: var(--font-ui); font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mist); margin: 18px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--stock-mid); }
 .detail-actions { display: flex; flex-direction: column; gap: 8px; padding: 0 28px 28px; }
-
 /* ── BUTTONS ── */
 .btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -441,7 +424,6 @@ tbody tr:hover { background: var(--stock); }
 .btn-outline:hover { border-color: var(--navy); }
 .btn-gold { background: var(--gold); color: var(--white); }
 .btn-success { background: var(--success); color: var(--white); }
-
 /* ── SEARCH + FILTER ── */
 .toolbar { display: flex; gap: 10px; margin-bottom: 14px; align-items: center; }
 .search-input {
@@ -462,7 +444,6 @@ tbody tr:hover { background: var(--stock); }
   transition: all var(--ease);
 }
 .filter-select:focus { border-color: var(--crimson); }
-
 /* ── CLIENT CARDS ── */
 .client-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
 .client-card {
@@ -482,7 +463,6 @@ tbody tr:hover { background: var(--stock); }
 .client-name { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
 .client-detail { font-size: 11px; color: var(--mist); }
 .client-total { font-family: var(--font-display); font-size: 16px; font-weight: 800; color: var(--crimson); margin-top: 8px; }
-
 /* ── EMPTY STATE ── */
 .empty-state {
   text-align: center; padding: 60px 20px;
@@ -492,7 +472,6 @@ tbody tr:hover { background: var(--stock); }
 .empty-icon { font-size: 48px; margin-bottom: 16px; }
 .empty-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
 .empty-text { font-size: 13px; color: var(--mist); line-height: 1.6; max-width: 400px; margin: 0 auto 20px; }
-
 /* ── CONNECT BANNER ── */
 .connect-banner {
   background: var(--navy);
@@ -515,7 +494,6 @@ tbody tr:hover { background: var(--stock); }
 }
 .connect-input:focus { border-color: rgba(244,239,228,0.5); background: rgba(244,239,228,0.15); }
 .connect-input::placeholder { color: rgba(244,239,228,0.3); }
-
 /* ── STATUS EDITOR ── */
 .status-select {
   font-family: var(--font-ui); font-size: 9px; font-weight: 700;
@@ -523,7 +501,6 @@ tbody tr:hover { background: var(--stock); }
   padding: 5px 10px; border-radius: 3px; border: none;
   cursor: pointer; outline: none;
 }
-
 /* ── TOAST ── */
 .toast {
   position: fixed; bottom: 24px; right: 24px;
@@ -537,13 +514,11 @@ tbody tr:hover { background: var(--stock); }
 }
 .toast.show { opacity: 1; }
 .toast.success { background: var(--success); }
-
 @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
 .screen.active { animation: fadeUp 0.3s ease both; }
 </style>
 </head>
 <body>
-
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-brand">
@@ -580,10 +555,8 @@ tbody tr:hover { background: var(--stock); }
     License No. 969033
   </div>
 </aside>
-
 <!-- MAIN -->
 <main class="main">
-
   <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-title" id="topbarTitle">Dashboard</div>
@@ -592,19 +565,15 @@ tbody tr:hover { background: var(--stock); }
       <button class="topbar-btn primary" onclick="showScreen('quickbooks')">Export to QuickBooks</button>
     </div>
   </div>
-
   <div class="content">
-
     <!-- ══ SCREEN: DASHBOARD ══ -->
     <div class="screen active" id="screen-dashboard">
-
       <!-- Period tabs -->
       <div class="period-tabs">
         <div class="period-tab active" id="dtab-month"  onclick="setDashPeriod('month')">This Month</div>
         <div class="period-tab"        id="dtab-year"   onclick="setDashPeriod('year')">This Year</div>
         <div class="period-tab"        id="dtab-all"    onclick="setDashPeriod('all')">All Time</div>
       </div>
-
       <!-- Stat cards -->
       <div class="stat-grid">
         <div class="stat-card crimson">
@@ -628,7 +597,6 @@ tbody tr:hover { background: var(--stock); }
           <div class="stat-sub">estimates not yet booked</div>
         </div>
       </div>
-
       <!-- Charts -->
       <div class="charts-grid">
         <div class="chart-card">
@@ -644,7 +612,6 @@ tbody tr:hover { background: var(--stock); }
           </div>
         </div>
       </div>
-
       <!-- Recent estimates -->
       <div class="section-header">
         <div>
@@ -667,7 +634,6 @@ tbody tr:hover { background: var(--stock); }
         </table>
       </div>
     </div>
-
     <!-- ══ SCREEN: ALL ESTIMATES ══ -->
     <div class="screen" id="screen-estimates">
       <div class="toolbar">
@@ -702,7 +668,6 @@ tbody tr:hover { background: var(--stock); }
         </table>
       </div>
     </div>
-
     <!-- ══ SCREEN: CLIENTS ══ -->
     <div class="screen" id="screen-clients">
       <div class="toolbar">
@@ -716,7 +681,6 @@ tbody tr:hover { background: var(--stock); }
         </div>
       </div>
     </div>
-
     <!-- ══ SCREEN: QUICKBOOKS EXPORT ══ -->
     <div class="screen" id="screen-quickbooks">
       <div style="max-width:700px;">
@@ -726,7 +690,6 @@ tbody tr:hover { background: var(--stock); }
             <div class="section-sub">Generate a CSV formatted for QuickBooks Online import</div>
           </div>
         </div>
-
         <div class="chart-card" style="margin-bottom:16px;">
           <div class="chart-title">Export Options</div>
           <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
@@ -738,7 +701,6 @@ tbody tr:hover { background: var(--stock); }
             </label>
           </div>
         </div>
-
         <div class="chart-card" style="margin-bottom:16px;">
           <div class="chart-title">Filter by Status</div>
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
@@ -756,7 +718,6 @@ tbody tr:hover { background: var(--stock); }
             </label>
           </div>
         </div>
-
         <div class="chart-card" style="margin-bottom:20px;">
           <div class="chart-title">QB Column Mapping</div>
           <div style="font-size:12px;color:var(--mist);line-height:1.9;margin-top:4px;">
@@ -772,12 +733,10 @@ tbody tr:hover { background: var(--stock); }
             <strong style="color:var(--navy);">Amount</strong> → Estimate total
           </div>
         </div>
-
         <div style="display:flex;gap:10px;">
           <button class="btn btn-crimson" style="width:auto;padding:12px 28px;" onclick="exportQB()">⬇ Download QB CSV</button>
           <button class="btn btn-outline" style="width:auto;padding:12px 20px;" onclick="previewQB()">Preview First 3 Rows</button>
         </div>
-
         <div id="qb-preview" style="display:none;margin-top:20px;">
           <div class="chart-title" style="margin-bottom:10px;">Preview</div>
           <div style="background:var(--navy-dark);border-radius:var(--radius);padding:16px;overflow-x:auto;">
@@ -786,13 +745,11 @@ tbody tr:hover { background: var(--stock); }
         </div>
       </div>
     </div>
-
     <!-- ══ SCREEN: SETTINGS ══ -->
     <div class="screen" id="screen-settings">
       <div style="max-width:600px;">
         <div class="section-title" style="margin-bottom:6px;">Google Sheet Connection</div>
         <div class="section-sub" style="margin-bottom:20px;">Connect to the same Sheet your phone app writes to</div>
-
         <div class="chart-card" style="margin-bottom:16px;">
           <div class="chart-title">Sheet URL</div>
           <div style="display:flex;gap:10px;margin-top:8px;">
@@ -804,12 +761,10 @@ tbody tr:hover { background: var(--stock); }
             This is the same Web App URL from your Apps Script deployment. The desktop app reads your estimates directly from the Sheet.
           </div>
         </div>
-
         <div class="chart-card" style="margin-bottom:16px;" id="connection-status-card">
           <div class="chart-title">Connection Status</div>
           <div id="connection-status" style="font-size:13px;color:var(--mist);margin-top:6px;">Not connected</div>
         </div>
-
         <div class="chart-card">
           <div class="chart-title">Your Details</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
@@ -827,16 +782,14 @@ tbody tr:hover { background: var(--stock); }
             </div>
             <div>
               <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Vendor Email</div>
-              <div style="font-size:12px;color:var(--navy);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fc95929a939b989fbc9b9d90909994998e98899a9a85d29f9391">[email&#160;protected]</a></div>
+              <div style="font-size:12px;color:var(--navy);">johnmattie@gmail.com</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </div><!-- /content -->
 </main>
-
 <!-- DETAIL PANEL -->
 <div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">
   <div class="detail-panel" onclick="event.stopPropagation()">
@@ -848,7 +801,6 @@ tbody tr:hover { background: var(--stock); }
     <div class="detail-body">
       <div class="detail-total" id="dp-total"></div>
       <div class="detail-total-label">Estimate Total</div>
-
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
         <div style="font-family:var(--font-ui);font-size:9px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);">Status</div>
         <select class="status-select badge-estimate" id="dp-status" onchange="updateDetailStatus()">
@@ -858,25 +810,18 @@ tbody tr:hover { background: var(--stock); }
           <option value="complete">Complete</option>
         </select>
       </div>
-
       <div class="detail-section-title">Cost Breakdown</div>
       <div id="dp-breakdown"></div>
-
-      <div class="detail-section-title">Client Info</div>
-      <div id="dp-client-info"></div>
-
       <div class="detail-section-title" id="dp-rooms-title" style="display:none;">Rooms</div>
       <div id="dp-rooms"></div>
-
       <div class="detail-section-title" id="dp-flooring-title" style="display:none;">Flooring Spec</div>
       <div id="dp-flooring"></div>
-
       <div class="detail-section-title" id="dp-finish-title" style="display:none;">Finish</div>
       <div id="dp-finish"></div>
-
       <div class="detail-section-title" id="dp-stair-title" style="display:none;">Stair Details</div>
       <div id="dp-stair-detail"></div>
-
+      <div class="detail-section-title">Client Info</div>
+      <div id="dp-client-info"></div>
       <div class="detail-section-title" id="dp-photos-title" style="display:none;">Photos</div>
       <div id="dp-photos"></div>
     </div>
@@ -887,11 +832,9 @@ tbody tr:hover { background: var(--stock); }
     </div>
   </div>
 </div>
-
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ══════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════
@@ -900,7 +843,6 @@ let filteredEstimates = [];
 let dashPeriod = 'month';
 let currentDetailIdx = null;
 let sheetUrl = '';
-
 // ══════════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════════
@@ -911,7 +853,6 @@ const screenTitles = {
   'quickbooks':'QuickBooks Export',
   'settings':  'Connection Settings',
 };
-
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + id).classList.add('active');
@@ -923,7 +864,6 @@ function showScreen(id) {
   if (id === 'estimates') renderEstimatesTable(filteredEstimates.length ? filteredEstimates : allEstimates);
   if (id === 'clients')   renderClients();
 }
-
 // ══════════════════════════════════════════════
 // SHEET CONNECTION
 // ══════════════════════════════════════════════
@@ -936,7 +876,6 @@ function saveSheetUrl() {
     '<span style="color:var(--success);">✓ Connected — click Refresh Data to load estimates</span>';
   showToast('✓ URL Saved', 'success');
 }
-
 function loadSettings() {
   try {
     const saved = localStorage.getItem('mattie_desktop_sheet');
@@ -948,7 +887,6 @@ function loadSettings() {
     }
   } catch(e){}
 }
-
 // ══════════════════════════════════════════════
 // LOAD DATA FROM SHEET
 // Reads the Google Sheet directly via fetch
@@ -959,18 +897,14 @@ async function loadFromSheet() {
     showScreen('settings');
     return;
   }
-
   showToast('Loading estimates…', '');
-
   try {
     // Fetch sheet as CSV (published sheet) or via Apps Script GET endpoint
     const url = sheetUrl.includes('exec')
       ? sheetUrl + '?action=getAll'
       : sheetUrl;
-
     const resp = await fetch(url);
     const text = await resp.text();
-
     // Try JSON first
     try {
       const data = JSON.parse(text);
@@ -982,13 +916,11 @@ async function loadFromSheet() {
         return;
       }
     } catch(e) {}
-
     // Fall back to CSV parse
     allEstimates = parseCSV(text);
     filteredEstimates = [...allEstimates];
     renderAll();
     showToast('✓ Loaded ' + allEstimates.length + ' estimates', 'success');
-
   } catch(err) {
     showToast('⚠ Could not load — check URL', '');
     console.error(err);
@@ -996,7 +928,6 @@ async function loadFromSheet() {
     loadDemoData();
   }
 }
-
 function parseCSV(text) {
   const lines = text.trim().split('\n');
   if (lines.length < 2) return [];
@@ -1025,7 +956,6 @@ function parseCSV(text) {
     return obj;
   }).filter(r => r.client);
 }
-
 function typeFromLabel(label) {
   if (!label) return 'sf';
   const l = label.toLowerCase();
@@ -1033,7 +963,6 @@ function typeFromLabel(label) {
   if (l.includes('stair'))   return 'stairs';
   return 'sf';
 }
-
 function loadDemoData() {
   allEstimates = [
     { _idx:0, client:'Peterson Residence', city:'Santa Rosa', phone:'(707) 555-0101', typeLabel:'Sand & Finish', type:'sf', sqft:620, total:4495, laborTotal:2790, status:'complete', date:'Mar 15, 2026', perSqft:'7.25', wasteSqft:0, rooms:'Living Room 420sqft | Hallway 200sqft' },
@@ -1046,13 +975,11 @@ function loadDemoData() {
   renderAll();
   showToast('Showing demo data — connect Sheet for live data', '');
 }
-
 function renderAll() {
   renderDashboard();
   renderEstimatesTable(allEstimates);
   renderClients();
 }
-
 // ══════════════════════════════════════════════
 // DASHBOARD
 // ══════════════════════════════════════════════
@@ -1063,7 +990,6 @@ function setDashPeriod(period) {
   });
   renderDashboard();
 }
-
 function getForPeriod(period) {
   const now = new Date();
   return allEstimates.filter(j => {
@@ -1074,24 +1000,20 @@ function getForPeriod(period) {
     return true;
   });
 }
-
 function renderDashboard() {
   const jobs    = getForPeriod(dashPeriod);
   const totalRev = jobs.reduce((a, j) => a + (j.total || 0), 0);
   const avgJob   = jobs.length ? Math.round(totalRev / jobs.length) : 0;
   const unbooked = allEstimates.filter(j => j.status === 'estimate').reduce((a,j) => a+(j.total||0),0);
-
   // Simple margin estimate: 35% average
   const estProfit = Math.round(totalRev * 0.35);
   const margin    = totalRev > 0 ? 35 : 0;
-
   document.getElementById('d-revenue').textContent   = '$' + totalRev.toLocaleString();
   document.getElementById('d-job-count').textContent = jobs.length + ' job' + (jobs.length !== 1 ? 's' : '');
   document.getElementById('d-avg').textContent       = '$' + avgJob.toLocaleString();
   document.getElementById('d-margin').textContent    = margin + '%';
   document.getElementById('d-profit').textContent    = '$' + estProfit.toLocaleString() + ' est. profit';
   document.getElementById('d-unbooked').textContent  = '$' + unbooked.toLocaleString();
-
   // Type breakdown chart
   const types = [
     { key: 'sf',      label: 'Sand & Finish', color: '' },
@@ -1113,7 +1035,6 @@ function renderDashboard() {
       </div>`;
   });
   if (!typeChart.innerHTML) typeChart.innerHTML = '<div style="font-size:12px;color:var(--mist);">No jobs in this period</div>';
-
   // Pipeline
   const pipe = document.getElementById('d-pipeline');
   pipe.innerHTML = '';
@@ -1133,7 +1054,6 @@ function renderDashboard() {
       </div>`;
   });
   if (!pipe.innerHTML) pipe.innerHTML = '<div style="font-size:12px;color:var(--mist);">No pipeline data</div>';
-
   // Recent table
   const tbody = document.getElementById('d-recent-tbody');
   const recent = [...allEstimates].slice(0, 10);
@@ -1151,7 +1071,6 @@ function renderDashboard() {
       <td><span class="td-badge badge-${(j.status||'estimate').replace(' ','-')}">${j.status||'estimate'}</span></td>
     </tr>`).join('');
 }
-
 // ══════════════════════════════════════════════
 // ESTIMATES TABLE
 // ══════════════════════════════════════════════
@@ -1175,7 +1094,6 @@ function renderEstimatesTable(data) {
       <td><span class="td-badge badge-${(j.status||'estimate').replace(' ','-')}">${j.status||'estimate'}</span></td>
     </tr>`).join('');
 }
-
 function filterEstimates() {
   const search = document.getElementById('est-search').value.toLowerCase();
   const type   = document.getElementById('est-type-filter').value;
@@ -1188,7 +1106,6 @@ function filterEstimates() {
   });
   renderEstimatesTable(filteredEstimates);
 }
-
 // ══════════════════════════════════════════════
 // CLIENTS
 // ══════════════════════════════════════════════
@@ -1202,10 +1119,8 @@ function renderClients(filter = '') {
     clientMap[key].jobs.push(j);
     clientMap[key].total += (j.total || 0);
   });
-
   let clients = Object.values(clientMap);
   if (filter) clients = clients.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
-
   if (!clients.length) {
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
       <div class="empty-icon">👥</div>
@@ -1214,7 +1129,6 @@ function renderClients(filter = '') {
     </div>`;
     return;
   }
-
   const avatarColors = ['', 'crimson', '', 'crimson', ''];
   grid.innerHTML = clients.sort((a,b) => b.total - a.total).map((c, i) => `
     <div class="client-card">
@@ -1225,11 +1139,9 @@ function renderClients(filter = '') {
       <div class="client-total">$${c.total.toLocaleString()}</div>
     </div>`).join('');
 }
-
 function filterClients() {
   renderClients(document.getElementById('client-search').value);
 }
-
 // ══════════════════════════════════════════════
 // DETAIL PANEL
 // ══════════════════════════════════════════════
@@ -1237,15 +1149,12 @@ function openDetail(idx) {
   const j = allEstimates.find(e => e._idx === idx);
   if (!j) return;
   currentDetailIdx = idx;
-
   document.getElementById('dp-client').textContent = j.client + (j.city ? ', ' + j.city : '');
   document.getElementById('dp-meta').textContent   = j.typeLabel + ' · ' + j.date;
   document.getElementById('dp-total').textContent  = '$' + (j.total||0).toLocaleString();
-
   const statusSel = document.getElementById('dp-status');
   statusSel.value = j.status || 'estimate';
   updateStatusSelectStyle(statusSel);
-
   // ── COST BREAKDOWN ──
   const bd = document.getElementById('dp-breakdown');
   const sqftLabel = j.type === 'stairs'
@@ -1270,12 +1179,10 @@ function openDetail(idx) {
   const treadWidth  = j.tread_width  ||j.treadWidth ||'';
   const riserWidth  = j.riser_width  ||j.riserWidth ||'';
   const stairRisers = parseInt(j.stair_risers||j.stairRisers||0);
-
   function dr(label, val, hi) {
     if (!val && val !== 0) return '';
     return `<div class="detail-row"><span class="detail-row-label">${label}</span><span class="detail-row-val${hi?' hi':''}">${val}</span></div>`;
   }
-
   bd.innerHTML =
     dr('Job Type', j.typeLabel||j.job_type, false) +
     dr('Labor', '$'+(laborTotal||0).toLocaleString(), true) +
@@ -1288,7 +1195,6 @@ function openDetail(idx) {
     dr('Units', sqftLabel, false) +
     (wasteSqft  ? dr('Waste (materials)', wasteSqft+' sq ft', false) : '') +
     (perSqft    ? dr('Price / sq ft', '$'+perSqft, false) : '');
-
   // ── FLOORING SPEC ──
   const flooringEl = document.getElementById('dp-flooring');
   const flooringTitle = document.getElementById('dp-flooring-title');
@@ -1303,7 +1209,6 @@ function openDetail(idx) {
     flooringTitle.style.display = 'none';
     flooringEl.innerHTML = '';
   }
-
   // ── FINISH ──
   const finishEl = document.getElementById('dp-finish');
   const finishTitle = document.getElementById('dp-finish-title');
@@ -1316,7 +1221,6 @@ function openDetail(idx) {
     finishTitle.style.display = 'none';
     finishEl.innerHTML = '';
   }
-
   // ── STAIR DETAIL ──
   const stairEl = document.getElementById('dp-stair-detail');
   const stairTitle = document.getElementById('dp-stair-title');
@@ -1332,13 +1236,11 @@ function openDetail(idx) {
     stairTitle.style.display = 'none';
     stairEl.innerHTML = '';
   }
-
   // ── CLIENT INFO ──
   document.getElementById('dp-client-info').innerHTML =
     dr('Name', j.client, false) +
     (j.city  ? dr('City',  j.city,  false) : '') +
     (j.phone ? dr('Phone', j.phone, false) : '');
-
   // ── ROOMS ──
   const roomsTitle = document.getElementById('dp-rooms-title');
   const roomsEl    = document.getElementById('dp-rooms');
@@ -1355,7 +1257,6 @@ function openDetail(idx) {
     roomsTitle.style.display = 'none';
     roomsEl.innerHTML = '';
   }
-
   // ── PHOTOS ──
   const photosTitle = document.getElementById('dp-photos-title');
   const photosEl    = document.getElementById('dp-photos');
@@ -1380,25 +1281,20 @@ function openDetail(idx) {
     photosTitle.style.display = 'none';
     photosEl.innerHTML = '';
   }
-
   document.getElementById('detailOverlay').classList.add('open');
 }
-
 function updateStatusSelectStyle(sel) {
   const colors = { estimate:'badge-estimate', booked:'badge-booked', 'in progress':'badge-in-progress', complete:'badge-complete' };
   sel.className = 'status-select ' + (colors[sel.value] || 'badge-estimate');
 }
-
 function updateDetailStatus() {
   const sel = document.getElementById('dp-status');
   updateStatusSelectStyle(sel);
   const j = allEstimates.find(e => e._idx === currentDetailIdx);
   if (j) { j.status = sel.value; renderEstimatesTable(filteredEstimates.length ? filteredEstimates : allEstimates); renderDashboard(); }
 }
-
 function closeDetailPanel() { document.getElementById('detailOverlay').classList.remove('open'); }
 function closeDetail(e) { if (e.target === document.getElementById('detailOverlay')) closeDetailPanel(); }
-
 // ══════════════════════════════════════════════
 // QUICKBOOKS CSV EXPORT
 // ══════════════════════════════════════════════
@@ -1408,16 +1304,13 @@ function getQBStatuses() {
     return el && el.checked;
   });
 }
-
 function buildQBRows(jobs, type) {
   const isInvoice = type === 'invoices';
   const rows = [];
   const header = isInvoice
     ? ['InvoiceNo','Customer','InvoiceDate','DueDate','Terms','Item','ItemDescription','ItemQuantity','ItemRate','ItemAmount','TaxCode','Amount']
     : ['EstimateNo','Customer','EstimateDate','ExpiryDate','Item','ItemDescription','ItemQuantity','ItemRate','ItemAmount','Amount'];
-
   rows.push(header);
-
   jobs.forEach((j, i) => {
     const num     = 'MATT-' + String(i + 1).padStart(3, '0');
     const sqftLabel = j.type === 'stairs' ? (j.stairTreads||0) : (j.sqft||0);
@@ -1426,7 +1319,6 @@ function buildQBRows(jobs, type) {
     const dueDate   = addDays(j.date, 30);
     const rooms     = j.rooms ? ' — ' + j.rooms.replace(/\|/g, ',') : '';
     const desc      = j.typeLabel + ' · ' + sqftLabel + ' ' + sqftUnit + rooms;
-
     if (isInvoice) {
       rows.push([num, j.client, j.date, dueDate, 'Net 30', j.typeLabel, desc, sqftLabel, rate, j.laborTotal||0, 'NON', j.total||0]);
       if ((j.total||0) - (j.laborTotal||0) > 0) {
@@ -1438,15 +1330,12 @@ function buildQBRows(jobs, type) {
   });
   return rows;
 }
-
 function addDays(dateStr, days) {
   try { const d = new Date(dateStr); d.setDate(d.getDate() + days); return d.toLocaleDateString('en-US'); } catch(e) { return ''; }
 }
-
 function rowsToCSV(rows) {
   return rows.map(r => r.map(v => '"' + String(v||'').replace(/"/g,'""') + '"').join(',')).join('\n');
 }
-
 function exportQB() {
   const type     = document.querySelector('input[name="qb-type"]:checked').value;
   const statuses = getQBStatuses();
@@ -1456,7 +1345,6 @@ function exportQB() {
   downloadCSV(csv, 'matties-' + type + '-qb.csv');
   showToast('✓ Downloaded ' + jobs.length + ' records', 'success');
 }
-
 function previewQB() {
   const type     = document.querySelector('input[name="qb-type"]:checked').value;
   const statuses = getQBStatuses();
@@ -1466,7 +1354,6 @@ function previewQB() {
   document.getElementById('qb-preview-content').textContent = preview;
   document.getElementById('qb-preview').style.display = 'block';
 }
-
 function exportSingleQB() {
   const j = allEstimates.find(e => e._idx === currentDetailIdx);
   if (!j) return;
@@ -1475,7 +1362,6 @@ function exportSingleQB() {
   downloadCSV(csv, 'mattie-' + (j.client||'estimate').replace(/\s/g,'-').toLowerCase() + '-qb.csv');
   showToast('✓ QB export downloaded', 'success');
 }
-
 function exportAllCSV() {
   if (!allEstimates.length) { showToast('⚠ No data to export', ''); return; }
   const headers = ['Date','Client','City','Phone','Job Type','Sq Ft','Labor Total','Materials','Total','$/sqft','Status'];
@@ -1488,7 +1374,6 @@ function exportAllCSV() {
   downloadCSV(rowsToCSV(rows), 'matties-all-estimates.csv');
   showToast('✓ CSV downloaded', 'success');
 }
-
 function exportFilteredCSV() {
   const data = filteredEstimates.length ? filteredEstimates : allEstimates;
   if (!data.length) { showToast('⚠ No data to export', ''); return; }
@@ -1502,7 +1387,6 @@ function exportFilteredCSV() {
   downloadCSV(rowsToCSV(rows), 'matties-estimates-filtered.csv');
   showToast('✓ CSV downloaded', 'success');
 }
-
 function downloadCSV(csv, filename) {
   const blob = new Blob([csv], { type: 'text/csv' });
   const url  = URL.createObjectURL(blob);
@@ -1510,9 +1394,7 @@ function downloadCSV(csv, filename) {
   a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
 }
-
 function printEstimate() { window.print(); }
-
 // ══════════════════════════════════════════════
 // TOAST
 // ══════════════════════════════════════════════
@@ -1522,8 +1404,6 @@ function showToast(msg, type) {
   t.className = 'toast' + (type === 'success' ? ' success' : '') + ' show';
   setTimeout(() => t.classList.remove('show'), 2500);
 }
-
-// ═════════════════════════════════════
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
