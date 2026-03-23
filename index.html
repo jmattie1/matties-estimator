@@ -281,6 +281,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
       <div class="back-btn" onclick="goTo('screen-home')">← Back</div>
       <div class="hero-brand" style="font-size:41px;">New Estimate</div>
       <div class="hero-sub">Client info · Job type · Rooms</div>
+      <button onclick="newEstimate()" style="margin-top:10px;padding:10px 28px;font-family:var(--font-ui);font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:var(--white);color:var(--navy);border:none;border-radius:var(--radius-md);cursor:pointer;">🔄 Clear / New Estimate</button>
     </div>
     <div class="scroll">
       <div style="height:36px;"></div>
@@ -1639,6 +1640,11 @@ function saveToSheet() {
       try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(err){}
     }
     document.body.removeChild(form);
+    // Auto-reset form after successful save
+    setTimeout(function() {
+      newEstimate();
+      showToast('Ready for next estimate', 'success');
+    }, 1500);
   };
 
   form.submit();
@@ -1649,6 +1655,7 @@ function saveToSheet() {
 // UTILITIES
 // ══════════════════════════════════════════════
 function newEstimate() {
+  lastEstimate = null;
   rooms.length = 0;
   roomCounter = 0;
   currentType = 'sf';
