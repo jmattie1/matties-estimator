@@ -509,7 +509,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
 
       <div class="action-stack" style="margin-bottom:10px;">
         <button class="btn btn-success-fill" id="saveBtn" onclick="saveToSheet()">💾 Save to Google Sheets</button>
-        <button class="btn btn-primary" id="quoteBtn" onclick="requestVendorQuote()" style="display:none;">📧 Request Vendor Quote</button>
+        <button class="btn btn-primary" id="quoteBtn" onclick="requestVendorQuote()" style="display:none;">📧 Request Pricing</button>
         <button class="btn btn-navy" onclick="newEstimate()">📐 New Estimate</button>
         <button class="btn btn-outline" onclick="window.print()">🖨 Print / PDF</button>
       </div>
@@ -3026,7 +3026,7 @@ function renderReports() {
 // ══════════════════════════════════════════════
 // VENDOR QUOTE EMAIL
 // ══════════════════════════════════════════════
-const VENDOR_EMAIL = 'infogdc@galleherduffy.com';
+const VENDOR_EMAIL = 'ros.branch@galleherduffy.com';
 
 function requestVendorQuote() {
   if (!lastEstimate) return;
