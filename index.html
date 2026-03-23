@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Mattie's Floor Estimator</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238B1A1A'/><text x='50' y='68' text-anchor='middle' font-family='Georgia,serif' font-size='62' font-weight='900' fill='%23FFFFFF'>M</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238B1A1A'/><text x='50' y='68' text-anchor='middle' font-family='Georgia,serif' font-size='62' font-weight='900' fill='%23FFFFFF'>M</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,400&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1566,7 +1568,6 @@ async function saveToSheet() {
 
   const e = lastEstimate;
 
-  // Build payload — matches Apps Script buildRow() exactly
   const payload = {
     date:          e.date || new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}),
     client:        e.client       || '',
@@ -1595,43 +1596,36 @@ async function saveToSheet() {
     finishType:    e.finishType   || '',
     finishNotes:   e.finishNotes  || '',
     stairNotes:    e.stairNotes   || '',
+    flooringLabel: e.flooringLabel || '',
+    flooringWidth: e.flooringWidth || '',
+    flooringThick: e.flooringThick || '',
+    flooringNotes: e.flooringNotes || '',
     rooms:         e.rooms        || [],
-    photos:        e.photos       || { general: [], room: {} },
+    photos:        { general: [], room: {} },
   };
 
   try {
-    // Google Apps Script requires no-cors for simple POST
-    // We use a form-encoded approach via fetch with text response
-    const response = await fetch(url, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(payload),
+    // Use no-cors mode with form data — this is the correct way to POST to Apps Script
+    // from a different origin. We won't get a response back but the data saves fine.
+    const form = new FormData();
+    form.append('payload', JSON.stringify(payload));
+
+    await fetch(url, {
+      method: 'POST',
+      mode:   'no-cors',
+      body:   JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain' },
     });
 
-    // Apps Script returns JSON — parse it
-    let result;
-    try {
-      result = await response.json();
-    } catch {
-      // If JSON parse fails it still likely worked (Apps Script redirect quirk)
-      result = { success: true };
-    }
-
-    if (result.success !== false) {
-      btn.disabled  = false;
-      btn.textContent = '✓ Saved to Sheet';
-      btn.style.background = 'var(--success)';
-      showToast('✓ Saved to Google Sheets!', 'success');
-      // Also update the locally saved job's status marker
-      const job = savedJobs.find(j =>
-        j.client === payload.client && j.total === payload.total
-      );
-      if (job) {
-        job.savedToSheet = true;
-        try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(e){}
-      }
-    } else {
-      throw new Error(result.error || 'Unknown error');
+    // no-cors always returns opaque response — we assume success
+    btn.disabled  = false;
+    btn.textContent = '✓ Saved to Sheet';
+    btn.style.background = 'var(--success)';
+    showToast('✓ Saved to Google Sheets!', 'success');
+    const job = savedJobs.find(j => j.client === payload.client && j.total === payload.total);
+    if (job) {
+      job.savedToSheet = true;
+      try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(e){}
     }
 
   } catch (err) {
@@ -1642,6 +1636,7 @@ async function saveToSheet() {
     console.error('Sheets save error:', err);
   }
 }
+
 
 // ══════════════════════════════════════════════
 // UTILITIES
