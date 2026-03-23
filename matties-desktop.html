@@ -1221,11 +1221,11 @@ function openDetail(idx) {
   const wasteSqft  = parseInt(j.waste_sq_ft||j.wasteSqft||0);
   const perSqft    = j.price_per_sq_ft||j.perSqft||'';
   const customMats = j.custom_materials||j.customMaterials||'';
-  const flooringSpecies = j.flooring_species||j.flooringLabel||'';
-  const flooringWidth   = j.flooring_width ||j.flooringWidth||'';
-  const flooringThick   = j.flooring_thickness||j.flooringThick||'';
-  const flooringNotes   = j.flooring_notes ||j.flooringNotes||'';
-  const matFinish       = j.material_finish||j.matFinish||'';
+  const flooringSpecies = j.flooringSpecies||j.flooring_species||j.flooringLabel||'';
+  const flooringWidth   = j.flooringWidth||j.flooring_width||'';
+  const flooringThick   = j.flooringThickness||j.flooring_thickness||j.flooringThick||'';
+  const flooringNotes   = j.flooringNotes||j.flooring_notes||'';
+  const matFinish       = j.matFinish||j.material_finish||'';
   const finishType  = j.finish_type  ||j.finishType ||'';
   const finishNotes = j.finish_notes ||j.finishNotes||'';
   const stairNotes  = j.stair_notes  ||j.stairNotes ||'';
@@ -1240,10 +1240,6 @@ function openDetail(idx) {
     dr('Job Type', j.typeLabel||j.job_type, false) +
     dr('Labor', '$'+(laborTotal||0).toLocaleString(), true) +
     (laborRate ? dr('Labor Rate', '$'+parseFloat(laborRate).toFixed(2)+'/sq ft', false) : '') +
-    (sealerCost ? dr('Sealer', '$'+Math.round(sealerCost).toLocaleString(), false) : '') +
-    (polyCost   ? dr('Polyurethane', '$'+Math.round(polyCost).toLocaleString(), false) : '') +
-    (supplies   ? dr('Supplies', '$'+Math.round(supplies).toLocaleString(), false) : '') +
-    (customMats ? dr('Custom Materials', customMats, false) : '') +
     (matTotal   ? dr('Materials Total', '$'+Math.round(matTotal).toLocaleString(), false) : '') +
     dr('Units', sqftLabel, false) +
     (wasteSqft  ? dr('Waste (materials)', wasteSqft+' sq ft', false) : '') +
