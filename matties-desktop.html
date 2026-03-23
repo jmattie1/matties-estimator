@@ -826,12 +826,15 @@ tbody tr:hover { background: var(--stock); }
       <div id="dp-photos"></div>
     </div>
     <div class="detail-actions">
+      <button class="btn btn-crimson" onclick="editEstimate()">✏️ Edit Estimate</button>
       <button class="btn btn-gold" onclick="exportSingleQB()">💼 Export to QuickBooks</button>
       <button class="btn btn-crimson" onclick="printEstimate()">🖨 Print Estimate</button>
       <button class="btn btn-outline" onclick="closeDetailPanel()">Close</button>
     </div>
   </div>
 </div>
+<!-- EDIT OVERLAY -->
+<div id="editOverlay" onclick="closeEdit()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1100;justify-content:center;align-items:center;"></div>
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 <script>
@@ -904,6 +907,7 @@ function normalizeEstimate(row, idx) {
   Object.keys(row).forEach(k => { r[k.toLowerCase().replace(/ /g,'_')] = row[k]; });
   return {
     _idx: idx,
+    _row: row._row || (idx + 2),  // actual Sheet row number for updates
     client:      row['Client'] || r.client || '',
     city:        row['City'] || r.city || '',
     phone:       row['Phone'] || r.phone || '',
@@ -1338,7 +1342,123 @@ function updateDetailStatus() {
   const sel = document.getElementById('dp-status');
   updateStatusSelectStyle(sel);
   const j = allEstimates.find(e => e._idx === currentDetailIdx);
-  if (j) { j.status = sel.value; renderEstimatesTable(filteredEstimates.length ? filteredEstimates : allEstimates); renderDashboard(); }
+  if (j) {
+    j.status = sel.value;
+    renderEstimatesTable(filteredEstimates.length ? filteredEstimates : allEstimates);
+    renderDashboard();
+    // Push status change to Google Sheet
+    if (sheetUrl && j._row) {
+      pushToSheet({ action: 'updateStatus', _row: j._row, status: sel.value });
+    }
+  }
+}
+// ── PUSH DATA TO SHEET ──
+async function pushToSheet(payload) {
+  if (!sheetUrl) { showToast('⚠ No Sheet URL configured', ''); return; }
+  try {
+    const resp = await fetch(sheetUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload),
+      redirect: 'follow',
+    });
+    const text = await resp.text();
+    const data = JSON.parse(text);
+    if (data.success) {
+      showToast('✓ Updated in Sheet', 'success');
+    } else {
+      showToast('⚠ ' + (data.error || 'Update failed'), '');
+    }
+  } catch(err) {
+    showToast('⚠ Could not reach Sheet', '');
+    console.error(err);
+  }
+}
+// ── EDIT ESTIMATE (full edit) ──
+function editEstimate() {
+  const j = allEstimates.find(e => e._idx === currentDetailIdx);
+  if (!j) return;
+  const overlay = document.getElementById('editOverlay');
+  overlay.innerHTML = `
+    <div style="background:var(--white);max-width:600px;width:95%;max-height:90vh;overflow-y:auto;border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:28px;" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <h2 style="font-family:var(--font-display);font-size:22px;margin:0;">Edit Estimate</h2>
+        <button onclick="closeEdit()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--mist);">✕</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Client</label><input id="edit-client" value="${j.client||''}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">City</label><input id="edit-city" value="${j.city||''}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Phone</label><input id="edit-phone" value="${j.phone||''}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Job Type</label><select id="edit-type" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;">
+          <option ${(j.typeLabel||'').includes('Sand')?'selected':''}>Sand & Finish</option>
+          <option ${(j.typeLabel||'').includes('Install')?'selected':''}>New Installation</option>
+          <option ${(j.typeLabel||'').includes('Stair')?'selected':''}>Stair Work</option>
+        </select></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Status</label><select id="edit-status" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;">
+          <option ${j.status==='estimate'?'selected':''}>estimate</option>
+          <option ${j.status==='booked'?'selected':''}>booked</option>
+          <option ${j.status==='in progress'?'selected':''}>in progress</option>
+          <option ${j.status==='complete'?'selected':''}>complete</option>
+        </select></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Sq Ft</label><input id="edit-sqft" type="number" value="${j.sqft||0}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Labor Total</label><input id="edit-labor" type="number" value="${j.laborTotal||0}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Estimate Total</label><input id="edit-total" type="number" value="${j.total||0}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Finish Type</label><input id="edit-finish" value="${j.finishType||''}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Rooms</label><input id="edit-rooms" value="${j.rooms||''}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button onclick="saveEdit()" style="flex:1;padding:12px;background:var(--crimson);color:var(--white);border:none;border-radius:6px;font-family:var(--font-ui);font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">Save Changes</button>
+        <button onclick="closeEdit()" style="flex:1;padding:12px;background:var(--stock-dark);color:var(--navy);border:none;border-radius:6px;font-family:var(--font-ui);font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">Cancel</button>
+      </div>
+    </div>`;
+  overlay.style.display = 'flex';
+}
+function closeEdit() {
+  document.getElementById('editOverlay').style.display = 'none';
+}
+async function saveEdit() {
+  const j = allEstimates.find(e => e._idx === currentDetailIdx);
+  if (!j) return;
+  // Read edited values
+  j.client    = document.getElementById('edit-client').value.trim();
+  j.city      = document.getElementById('edit-city').value.trim();
+  j.phone     = document.getElementById('edit-phone').value.trim();
+  j.typeLabel = document.getElementById('edit-type').value;
+  j.type      = typeFromLabel(j.typeLabel);
+  j.status    = document.getElementById('edit-status').value;
+  j.sqft      = parseFloat(document.getElementById('edit-sqft').value) || 0;
+  j.laborTotal= parseFloat(document.getElementById('edit-labor').value) || 0;
+  j.total     = parseFloat(document.getElementById('edit-total').value) || 0;
+  j.finishType= document.getElementById('edit-finish').value.trim();
+  j.rooms     = document.getElementById('edit-rooms').value.trim();
+  j.perSqft   = j.sqft > 0 ? (j.total / j.sqft).toFixed(2) : '';
+  // Push full update to Sheet
+  if (sheetUrl && j._row) {
+    await pushToSheet({
+      action: 'update', _row: j._row,
+      date: j.date, client: j.client, phone: j.phone, city: j.city,
+      typeLabel: j.typeLabel, status: j.status,
+      sqft: j.sqft, rawSqft: j.sqft, wasteSqft: j.wasteSqft || 0,
+      totalSqft: j.totalSqft || j.sqft,
+      stairTreads: j.stairTreads || 0, stairRisers: j.stairRisers || 0,
+      treadWidth: j.treadWidth || '', riserWidth: j.riserWidth || '',
+      laborRate: j.laborRate || 0, laborTotal: j.laborTotal,
+      sealerCoats: j.sealerCoats || 0, sealerCost: j.sealerCost || 0,
+      polyCoats: j.polyCoats || 0, polyCost: j.polyCost || 0,
+      suppliesCost: j.suppliesCost || 0,
+      customMatLines: [], customMaterials: j.customMaterials || '',
+      materialsTotal: j.materialsTotal || 0,
+      total: j.total, perSqft: j.perSqft,
+      finishType: j.finishType, finishNotes: j.finishNotes || '',
+      stairNotes: j.stairNotes || '',
+      flooringLabel: j.flooringSpecies || '', flooringWidth: j.flooringWidth || '',
+      flooringThick: j.flooringThickness || '', flooringNotes: j.flooringNotes || '',
+      rooms: j.rooms, photos: { general: [], room: {} },
+    });
+  }
+  closeEdit();
+  closeDetailPanel();
+  renderAll();
 }
 function closeDetailPanel() { document.getElementById('detailOverlay').classList.remove('open'); }
 function closeDetail(e) { if (e.target === document.getElementById('detailOverlay')) closeDetailPanel(); }
