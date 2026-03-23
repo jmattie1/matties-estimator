@@ -939,6 +939,7 @@ function normalizeEstimate(row, idx) {
     matFinish:   row['Material Finish'] || r.material_finish || '',
     rooms:       row['Rooms'] || r.rooms || '',
     photoCount:  parseInt(row['Photo Count'] || r.photo_count || 0),
+    photoFolderId: row['Photo Folder ID'] || r.photo_folder_id || '',
     status:      (row['Status'] || r.status || 'estimate').toLowerCase(),
     date:        formatSheetDate(row['Date'] || r.date || ''),
   };
@@ -1311,19 +1312,11 @@ function openDetail(idx) {
   const photosTitle = document.getElementById('dp-photos-title');
   const photosEl    = document.getElementById('dp-photos');
   const photoCount  = parseInt(j.photo_count||j.photoCount||0);
-  if (photoCount > 0 && j._photos) {
+  const folderId    = j.photoFolderId||j.photo_folder_id||'';
+  if (folderId) {
     photosTitle.style.display = 'block';
-    photosEl.innerHTML = '';
-    const grid = document.createElement('div');
-    grid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:8px;';
-    (j._photos.general||[]).forEach(p => {
-      const img = document.createElement('img');
-      img.src = p.dataUrl;
-      img.style.cssText = 'width:100%;aspect-ratio:1;object-fit:cover;border-radius:4px;cursor:pointer;';
-      img.onclick = () => window.open(p.dataUrl, '_blank');
-      grid.appendChild(img);
-    });
-    photosEl.appendChild(grid);
+    photosEl.innerHTML = '<div style="font-size:12px;color:var(--mist);padding:8px 0;">Loading photos from Drive…</div>';
+    loadDrivePhotos(folderId, photosEl);
   } else if (photoCount > 0) {
     photosTitle.style.display = 'block';
     photosEl.innerHTML = `<div style="font-size:12px;color:var(--mist);padding:8px 0;">${photoCount} photo${photoCount!==1?'s':''} on file — photos are stored on the device where the estimate was created.</div>`;
@@ -1351,6 +1344,40 @@ function updateDetailStatus() {
     }
   }
 }
+// ── LOAD PHOTOS FROM DRIVE ──
+async function loadDrivePhotos(folderId, container) {
+  try {
+    const url = sheetUrl + '?action=getPhotos&folderId=' + encodeURIComponent(folderId);
+    const resp = await fetch(url, { redirect: 'follow' });
+    const data = await resp.json();
+    if (data.photos && data.photos.length) {
+      const grid = document.createElement('div');
+      grid.style.cssText = 'display:grid;grid-template-columns:repeat(3,1fr);gap:8px;';
+      data.photos.forEach(p => {
+        const thumb = document.createElement('div');
+        thumb.style.cssText = 'position:relative;aspect-ratio:1;border-radius:6px;overflow:hidden;background:#EAE2D2;cursor:pointer;';
+        thumb.innerHTML = `<img src="${p.url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%22 y=%2255%22 text-anchor=%22middle%22 font-size=%2240%22>📷</text></svg>'">
+          <div style="position:absolute;bottom:0;left:0;right:0;padding:3px 6px;background:rgba(28,42,74,0.6);font-size:10px;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.label||''}</div>`;
+        thumb.onclick = () => window.open(p.fullUrl, '_blank');
+        grid.appendChild(thumb);
+      });
+      container.innerHTML = '';
+      container.appendChild(grid);
+      // Add "Open folder" link
+      const link = document.createElement('a');
+      link.href = 'https://drive.google.com/drive/folders/' + folderId;
+      link.target = '_blank';
+      link.style.cssText = 'display:block;text-align:center;margin-top:8px;font-size:11px;color:var(--crimson);';
+      link.textContent = '📁 Open folder in Google Drive';
+      container.appendChild(link);
+    } else {
+      container.innerHTML = '<div style="font-size:12px;color:var(--mist);padding:8px 0;">No photos found in Drive folder.</div>';
+    }
+  } catch(err) {
+    container.innerHTML = `<div style="font-size:12px;color:var(--mist);padding:8px 0;">Could not load photos. <a href="https://drive.google.com/drive/folders/${folderId}" target="_blank" style="color:var(--crimson);">Open in Drive</a></div>`;
+  }
+}
+
 // ── PUSH DATA TO SHEET ──
 async function pushToSheet(payload) {
   if (!sheetUrl) { showToast('⚠ No Sheet URL configured', ''); return; }
