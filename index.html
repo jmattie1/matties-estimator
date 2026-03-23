@@ -1,0 +1,2629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mattie's Floor Estimator</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238B1A1A'/><text x='50' y='68' text-anchor='middle' font-family='Georgia,serif' font-size='62' font-weight='900' fill='%23FFFFFF'>M</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%238B1A1A'/><text x='50' y='68' text-anchor='middle' font-family='Georgia,serif' font-size='62' font-weight='900' fill='%23FFFFFF'>M</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,400&family=Oswald:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --crimson:      #8B1A1A;
+  --crimson-dark: #6B1212;
+  --crimson-fade: rgba(139,26,26,0.08);
+  --navy:         #1C2A4A;
+  --navy-dark:    #111828;
+  --navy-fade:    rgba(28,42,74,0.07);
+  --stock:        #F4EFE4;
+  --stock-dark:   #EAE2D2;
+  --stock-mid:    #D9CFBC;
+  --white:        #FFFFFF;
+  --slate:        #4A4A45;
+  --mist:         #7A7A72;
+  --gold:         #B8860B;
+  --success:      #2D5A3A;
+  --success-fade: rgba(45,90,58,0.09);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-ui:      'Oswald', sans-serif;
+  --font-body:    'Lato', sans-serif;
+  --radius-sm: 8px; --radius-md: 14px; --radius-lg: 20px; --radius-pill: 100px;
+  --shadow-sm: 0 2px 8px rgba(28,42,74,0.08);
+  --shadow-md: 0 6px 24px rgba(28,42,74,0.12);
+  --shadow-lg: 0 12px 40px rgba(28,42,74,0.18);
+  --ease: 0.18s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:128%;}
+body{background:var(--stock);font-family:var(--font-body);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* ── APP SHELL — full screen ── */
+.app{width:100%;min-height:100vh;max-width:480px;margin:0 auto;background:var(--stock);overflow:hidden;position:relative;display:flex;flex-direction:column;}
+.app::before{display:none;}
+.status-bar{display:none;}
+
+
+/* ── SCREENS ── */
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:100vh;}
+.screen.active{display:flex;}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:80px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;height:68px;background:var(--white);border-top:1px solid var(--stock-mid);display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;z-index:20;box-shadow:0 -4px 20px rgba(28,42,74,0.08);}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 14px;border-radius:var(--radius-pill);transition:all var(--ease);}
+.nav-item.active{background:var(--crimson-fade);}
+.nav-icon{font-size:29px;line-height:1;}
+.nav-label{font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mist);}
+.nav-item.active .nav-label{color:var(--crimson);}
+
+/* ── HERO HEADER ── */
+.hero{background:var(--navy);padding:28px 22px 44px;position:relative;overflow:hidden;flex-shrink:0;}
+.hero::after{content:'';position:absolute;bottom:-28px;left:-20px;right:-20px;height:56px;background:var(--stock);border-radius:50%;}
+.hero-eyebrow{font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:rgba(244,239,228,0.45);margin-bottom:5px;}
+.hero-brand{font-family:var(--font-display);font-size:51px;font-weight:900;color:var(--crimson);letter-spacing:0.04em;line-height:1;}
+.hero-sub{font-family:var(--font-ui);font-size:16px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(244,239,228,0.6);margin-top:3px;}
+.hero-title{font-family:var(--font-display);font-size:35px;font-weight:800;color:var(--white);line-height:1.1;margin-top:4px;}
+.hero-meta{font-family:var(--font-ui);font-size:15px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.4);margin-top:6px;}
+.back-btn{font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.5);cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-bottom:12px;transition:color var(--ease);}
+.back-btn:hover{color:var(--stock);}
+
+/* ── CARDS ── */
+.card{background:var(--white);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-sm);margin:0 16px 12px;border:1.5px solid var(--stock-mid);transition:all var(--ease);}
+.card.active-card{border-color:var(--crimson);}
+.card-label{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--mist);margin-bottom:10px;}
+
+/* ── FORM FIELDS ── */
+.field-group{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.field-group:last-child{margin-bottom:0;}
+.field-row{display:flex;gap:8px;}
+.field-row .field-group{flex:1;}
+label.fl{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--navy);}
+input.fi,select.fi{background:var(--stock);border:1.5px solid var(--stock-mid);border-radius:var(--radius-sm);padding:9px 11px;font-family:var(--font-body);font-size:21px;color:var(--navy);outline:none;transition:all var(--ease);width:100%;}
+input.fi:focus,select.fi:focus{border-color:var(--crimson);background:var(--white);box-shadow:0 0 0 3px rgba(139,26,26,0.10);}
+input.fi::placeholder{color:var(--mist);font-weight:300;}
+input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size:25px;font-weight:700;}
+.dim-row{display:flex;align-items:center;gap:8px;}
+.dim-x{font-family:var(--font-ui);font-size:22px;font-weight:600;color:var(--mist);}
+.dim-unit{font-family:var(--font-ui);font-size:16px;font-weight:600;color:var(--mist);text-transform:uppercase;}
+.dim-sqft{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--crimson);margin-left:auto;}
+
+/* ── TYPE CHIPS ── */
+.type-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 16px;margin-bottom:12px;}
+.type-chip{background:var(--white);border:1.5px solid var(--stock-mid);border-radius:var(--radius-sm);padding:10px 12px;cursor:pointer;transition:all var(--ease);text-align:center;}
+.type-chip.selected{background:var(--crimson-fade);border-color:var(--crimson);}
+.type-chip-icon{font-size:29px;display:block;margin-bottom:4px;}
+.type-chip-label{font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate);}
+.type-chip.selected .type-chip-label{color:var(--crimson);}
+
+/* ── SECTION DIVIDER ── */
+.sdiv{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--mist);padding:0 16px;margin:14px 0 8px;display:flex;align-items:center;gap:10px;}
+.sdiv::after{content:'';flex:1;height:1px;background:var(--stock-mid);}
+
+/* ── BUTTONS ── */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;font-family:var(--font-ui);font-size:19px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;border:none;border-radius:var(--radius-pill);padding:14px 24px;cursor:pointer;transition:all var(--ease);width:100%;}
+.btn-primary{background:var(--crimson);color:var(--stock);}
+.btn-primary:hover{background:var(--crimson-dark);box-shadow:0 6px 20px rgba(139,26,26,0.28);transform:translateY(-1px);}
+.btn-primary:active{transform:translateY(0);}
+.btn-navy{background:var(--navy);color:var(--stock);}
+.btn-navy:hover{background:var(--navy-dark);transform:translateY(-1px);}
+.btn-outline{background:transparent;color:var(--navy);border:2px solid var(--stock-mid);}
+.btn-outline:hover{border-color:var(--navy);}
+.btn-ghost{background:var(--stock-dark);color:var(--slate);border:1.5px dashed var(--stock-mid);}
+.btn-ghost:hover{border-color:var(--crimson);color:var(--crimson);background:var(--crimson-fade);}
+.btn-success-fill{background:var(--success);color:white;}
+.btn-success-fill:hover{background:#1e3d28;transform:translateY(-1px);}
+.btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
+.action-stack{display:flex;flex-direction:column;gap:10px;padding:0 16px;}
+
+/* ── NOTICE ── */
+.notice{background:var(--success-fade);border-radius:var(--radius-sm);padding:10px 14px;margin:0 16px 12px;display:flex;align-items:flex-start;gap:8px;}
+.notice-icon{font-size:21px;margin-top:1px;}
+.notice-text{font-size:18px;color:var(--success);line-height:1.5;}
+.notice-text strong{font-weight:700;}
+.notice.warn{background:rgba(184,134,11,0.09);}
+.notice.warn .notice-text{color:#7a5800;}
+
+/* ── RESULTS ── */
+.total-pill{background:var(--white);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow-md);margin:0 16px 14px;display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--stock-mid);}
+.total-label{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--mist);margin-bottom:3px;}
+.total-amount{font-family:var(--font-display);font-size:55px;font-weight:900;color:var(--crimson);line-height:1;}
+.total-right{text-align:right;}
+.total-sqft-num{font-family:var(--font-display);font-size:32px;font-weight:800;color:var(--navy);}
+.total-sqft-label{font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);}
+.breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--stock);}
+.breakdown-row:last-child{border-bottom:none;padding-bottom:0;}
+.breakdown-row:first-child{padding-top:0;}
+.b-name{font-family:var(--font-body);font-size:19px;color:var(--navy);}
+.b-detail{font-size:16px;color:var(--mist);}
+.b-val{font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--slate);}
+.b-val.hi{color:var(--crimson);}
+.b-total-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0 0;margin-top:4px;border-top:1.5px solid var(--stock-mid);}
+.b-total-label{font-family:var(--font-ui);font-size:18px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);}
+.b-total-val{font-family:var(--font-display);font-size:32px;font-weight:900;color:var(--crimson);}
+.room-chips{display:flex;flex-wrap:wrap;gap:7px;padding:0 16px;margin-bottom:14px;}
+.room-chip{background:var(--navy-fade);border-radius:var(--radius-pill);padding:5px 12px;display:flex;align-items:center;gap:6px;}
+.rc-name{font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--navy);}
+.rc-val{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--crimson);}
+
+/* ── SETTINGS SCREEN ── */
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--stock);}
+.settings-row:last-child{border-bottom:none;}
+.settings-label{font-size:19px;color:var(--navy);font-weight:400;}
+.settings-label small{display:block;font-size:16px;color:var(--mist);margin-top:1px;}
+.settings-input{background:var(--stock);border:1.5px solid var(--stock-mid);border-radius:6px;padding:7px 10px;font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--crimson);text-align:right;width:90px;outline:none;transition:all var(--ease);}
+.settings-input:focus{border-color:var(--crimson);background:var(--white);box-shadow:0 0 0 3px rgba(139,26,26,0.10);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:var(--stock);font-family:var(--font-ui);font-size:18px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:12px 24px;border-radius:var(--radius-pill);box-shadow:var(--shadow-lg);opacity:0;transition:all 0.3s ease;pointer-events:none;white-space:nowrap;z-index:100;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.success{background:var(--success);}
+
+/* ── HOME ── */
+.greeting{font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--navy);margin-bottom:3px;}
+.greeting-sub{font-size:18px;color:var(--mist);margin-bottom:20px;}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;margin-bottom:24px;}
+.quick-card{background:var(--white);border-radius:var(--radius-md);padding:16px 14px;box-shadow:var(--shadow-sm);cursor:pointer;transition:all var(--ease);border:1.5px solid transparent;}
+.quick-card:hover{border-color:var(--crimson);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.quick-card.hl{background:var(--crimson);color:var(--white);}
+.q-icon{font-size:35px;margin-bottom:8px;display:block;}
+.q-label{font-family:var(--font-ui);font-size:18px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);display:block;margin-bottom:2px;}
+.quick-card.hl .q-label{color:rgba(255,255,255,0.9);}
+.q-desc{font-size:16px;color:var(--mist);}
+.quick-card.hl .q-desc{color:rgba(255,255,255,0.6);}
+.recent-item{display:flex;align-items:center;gap:12px;background:var(--white);margin:0 16px 9px;padding:12px 14px;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);cursor:pointer;transition:all var(--ease);}
+.recent-item:hover{transform:translateX(3px);box-shadow:var(--shadow-md);}
+.r-avatar{width:38px;height:38px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:21px;font-weight:900;color:var(--stock);flex-shrink:0;}
+.r-avatar.cr{background:var(--crimson);}
+.r-info{flex:1;}
+.r-name{font-size:21px;font-weight:700;color:var(--navy);margin-bottom:1px;}
+.r-detail{font-size:16px;color:var(--mist);}
+.r-amount{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--crimson);}
+.sec-title{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--mist);margin-bottom:10px;padding:0 16px;}
+
+/* stair input */
+.stair-row{display:flex;align-items:center;gap:10px;margin-top:6px;}
+.stair-label{font-size:19px;color:var(--navy);}
+.stair-counter{display:flex;align-items:center;gap:0;}
+.stair-btn{width:32px;height:32px;background:var(--stock-dark);border:1.5px solid var(--stock-mid);border-radius:6px;font-size:25px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--navy);transition:all var(--ease);font-family:var(--font-ui);font-weight:700;}
+.stair-btn:hover{background:var(--crimson-fade);border-color:var(--crimson);color:var(--crimson);}
+.stair-num{font-family:var(--font-display);font-size:29px;font-weight:800;color:var(--crimson);width:40px;text-align:center;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.screen.active .hero,.screen.active .scroll{animation:fadeUp 0.3s ease both;}
+
+/* ── PHOTO SYSTEM ── */
+.photo-section{padding:0 16px;margin-bottom:12px;}
+.photo-add-row{display:flex;gap:8px;margin-bottom:10px;}
+.photo-btn{display:flex;align-items:center;justify-content:center;gap:6px;flex:1;padding:11px 10px;border-radius:var(--radius-sm);font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all var(--ease);border:1.5px solid var(--stock-mid);background:var(--white);color:var(--navy);}
+.photo-btn:hover{border-color:var(--crimson);color:var(--crimson);background:var(--crimson-fade);}
+.photo-btn .pb-icon{font-size:25px;}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+.photo-thumb{position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;background:var(--stock-dark);border:1.5px solid var(--stock-mid);}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-thumb-del{position:absolute;top:3px;right:3px;width:20px;height:20px;background:rgba(28,42,74,0.75);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:white;line-height:1;transition:background var(--ease);}
+.photo-thumb-del:hover{background:var(--crimson);}
+.photo-thumb-label{position:absolute;bottom:0;left:0;right:0;padding:3px 5px;background:rgba(28,42,74,0.6);font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.photo-empty{grid-column:1/-1;text-align:center;padding:16px;font-size:18px;color:var(--mist);font-style:italic;}
+
+/* lightbox */
+.lightbox{display:none;position:fixed;inset:0;background:rgba(17,24,40,0.95);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+.lightbox.open{display:flex;}
+.lightbox img{max-width:90%;max-height:75vh;border-radius:var(--radius-md);object-fit:contain;box-shadow:var(--shadow-lg);}
+.lightbox-caption{font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(244,239,228,0.6);}
+.lightbox-close{position:absolute;top:16px;right:20px;font-size:39px;color:rgba(244,239,228,0.7);cursor:pointer;transition:color var(--ease);}
+.lightbox-close:hover{color:var(--stock);}
+.lightbox-nav{display:flex;gap:16px;margin-top:4px;}
+.lb-nav-btn{font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(244,239,228,0.6);cursor:pointer;padding:6px 14px;border-radius:var(--radius-pill);border:1px solid rgba(244,239,228,0.2);transition:all var(--ease);}
+.lb-nav-btn:hover{color:var(--stock);border-color:rgba(244,239,228,0.5);}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- STATUS BAR (swapped per screen via JS) -->
+  <div class="status-bar" id="statusBar">
+    <span class="time">9:41</span>
+    <div style="display:flex;gap:5px;font-size:16px;">●●● WiFi 🔋</div>
+  </div>
+
+  <!-- ══ SCREEN: HOME ══ -->
+  <div class="screen active" id="screen-home">
+    <div class="scroll">
+      <div class="hero" style="padding-top:10px;">
+        <div class="hero-eyebrow">Petaluma, California</div>
+        <div class="hero-brand">MATTIE'S</div>
+        <div class="hero-sub">Hardwood Flooring</div>
+      </div>
+      <div style="padding:36px 16px 0;">
+        <div class="greeting">Good morning, John.</div>
+        <div class="greeting-sub">Tap New Estimate to get started.</div>
+      </div>
+      <div class="quick-grid">
+        <div class="quick-card hl" onclick="goTo('screen-estimate')">
+          <span class="q-icon">📐</span>
+          <span class="q-label">New Estimate</span>
+          <div class="q-desc">Measure & price a job</div>
+        </div>
+        <div class="quick-card" onclick="goTo('screen-settings')">
+          <span class="q-icon">⚙️</span>
+          <span class="q-label">My Rates</span>
+          <div class="q-desc">Labor & material rates</div>
+        </div>
+        <div class="quick-card" onclick="goTo('screen-jobs')">
+          <span class="q-icon">📋</span>
+          <span class="q-label">My Jobs</span>
+          <div class="q-desc" id="jobsQuickDesc">No estimates yet</div>
+        </div>
+        <div class="quick-card" onclick="goTo('screen-reports')">
+          <span class="q-icon">📊</span>
+          <span class="q-label">Reports</span>
+          <div class="q-desc">Revenue & margins</div>
+        </div>
+      </div>
+      <div class="sec-title">Recent Estimates</div>
+      <div id="recentEstimatesList">
+        <div style="padding:16px 16px 0;font-size:19px;color:var(--mist);font-style:italic;">No estimates saved yet. Calculate one to get started.</div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="goTo('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+      <div class="nav-item" onclick="goTo('screen-estimate')"><div class="nav-icon">📐</div><div class="nav-label">Estimate</div></div>
+      <div class="nav-item" onclick="goTo('screen-materials')"><div class="nav-icon">🪵</div><div class="nav-label">Materials</div></div>
+      <div class="nav-item" onclick="goTo('screen-settings')"><div class="nav-icon">⚙️</div><div class="nav-label">Rates</div></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: ESTIMATE BUILDER ══ -->
+  <div class="screen" id="screen-estimate">
+    <div class="hero" style="padding-top:10px;">
+      <div class="back-btn" onclick="goTo('screen-home')">← Back</div>
+      <div class="hero-brand" style="font-size:41px;">New Estimate</div>
+      <div class="hero-sub">Client info · Job type · Rooms</div>
+    </div>
+    <div class="scroll">
+      <div style="height:36px;"></div>
+
+      <!-- Client Info -->
+      <div class="sdiv">Client Info</div>
+      <div class="card">
+        <div class="field-group">
+          <label class="fl">Client Name</label>
+          <input class="fi" id="clientName" type="text" placeholder="e.g. Sarah Peterson">
+        </div>
+        <div class="field-row">
+          <div class="field-group">
+            <label class="fl">Phone</label>
+            <input class="fi" id="clientPhone" type="tel" placeholder="(707) 555-0100">
+          </div>
+          <div class="field-group">
+            <label class="fl">City</label>
+            <input class="fi" id="clientCity" type="text" placeholder="Santa Rosa">
+          </div>
+        </div>
+      </div>
+
+      <!-- Job Type -->
+      <div class="sdiv">Job Type</div>
+      <div class="type-grid" id="jobTypeGrid">
+        <div class="type-chip selected" data-type="sf" onclick="selectType(this,'sf')">
+          <span class="type-chip-icon">🪵</span>
+          <div class="type-chip-label">Sand & Finish</div>
+        </div>
+        <div class="type-chip" data-type="install" onclick="selectType(this,'install')">
+          <span class="type-chip-icon">📦</span>
+          <div class="type-chip-label">New Install</div>
+        </div>
+        <div class="type-chip" data-type="stairs" onclick="selectType(this,'stairs')">
+          <span class="type-chip-icon">🪜</span>
+          <div class="type-chip-label">Stair Work</div>
+        </div>
+      </div>
+
+      <!-- ROOM MEASUREMENTS (hidden for stairs) -->
+      <div id="roomSection">
+        <div class="sdiv">Room Measurements</div>
+        <div id="roomList"></div>
+
+        <!-- Live sq ft total -->
+        <div id="sqftTotalBox" style="display:none;margin:0 16px 12px;background:var(--navy);border-radius:var(--radius-md);padding:14px 18px;display:none;justify-content:space-between;align-items:center;">
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(244,239,228,0.55);">Total Sq Ft</div>
+          <div style="font-family:var(--font-display);font-size:45px;font-weight:900;color:var(--white);line-height:1;" id="sqftTotalNum">0</div>
+        </div>
+        <!-- Waste total (install only) -->
+        <div id="sqftWasteBox" style="display:none;margin:-4px 16px 12px;background:var(--stock-dark);border-radius:var(--radius-md);padding:10px 18px;justify-content:space-between;align-items:center;">
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);">+ 7% Waste</div>
+          <div style="font-family:var(--font-display);font-size:25px;font-weight:700;color:var(--mist);" id="sqftWasteNum">0 sq ft</div>
+        </div>
+
+        <div style="padding:0 16px;margin-bottom:12px;">
+          <button class="btn btn-ghost" onclick="addRoom()">＋ Add Room</button>
+        </div>
+        <div class="notice">
+          <div class="notice-icon">ℹ️</div>
+          <div class="notice-text">Enter actual measured sq ft. <strong>7% waste</strong> is added to flooring material order quantity only — not to labor.</div>
+        </div>
+      </div>
+
+      <!-- STAIR SECTION (shown for stairs) -->
+      <div id="stairSection" style="display:none;">
+        <div class="sdiv">Stair Details</div>
+        <div class="card">
+          <!-- Treads row -->
+          <div style="margin-bottom:14px;">
+            <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:8px;">Treads</div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="stair-counter">
+                <button class="stair-btn" onclick="changeStairs('treads',-1)">−</button>
+                <div class="stair-num" id="stairTreads">12</div>
+                <button class="stair-btn" onclick="changeStairs('treads',1)">＋</button>
+              </div>
+              <div style="flex:1;">
+                <label class="fl" style="margin-bottom:3px;display:block;">Width</label>
+                <input class="fi" id="treadWidth" type="text" placeholder='e.g. 3¼" or 4"' style="font-size:21px;">
+              </div>
+            </div>
+          </div>
+          <!-- Risers row -->
+          <div style="margin-bottom:14px;padding-top:12px;border-top:1px solid var(--stock);">
+            <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:8px;">Risers</div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="stair-counter">
+                <button class="stair-btn" onclick="changeStairs('risers',-1)">−</button>
+                <div class="stair-num" id="stairRisers">13</div>
+                <button class="stair-btn" onclick="changeStairs('risers',1)">＋</button>
+              </div>
+              <div style="flex:1;">
+                <label class="fl" style="margin-bottom:3px;display:block;">Width</label>
+                <input class="fi" id="riserWidth" type="text" placeholder='e.g. 7½"' style="font-size:21px;">
+              </div>
+            </div>
+          </div>
+          <!-- Rate + Notes -->
+          <div style="padding-top:10px;border-top:1px solid var(--stock);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);">Rate per tread</div>
+              <div style="font-family:var(--font-display);font-size:25px;font-weight:800;color:var(--crimson);" id="stairRateDisplay">$0</div>
+            </div>
+            <div class="field-group" style="margin-bottom:0;">
+              <label class="fl">Notes</label>
+              <textarea class="fi" id="stairNotes" placeholder="e.g. Glue down, paint grade risers, match existing stain…" style="min-height:68px;resize:vertical;font-size:21px;"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Finish Schedule -->
+      <div class="sdiv">Finish</div>
+      <div class="card">
+        <div class="field-group">
+          <label class="fl">Finish Type</label>
+          <select class="fi" id="finishType">
+            <option value="Natural">Natural</option>
+            <option value="Stained">Stained</option>
+          </select>
+        </div>
+        <div class="field-group" style="margin-top:4px;">
+          <label class="fl">Notes</label>
+          <textarea class="fi" id="finishNotes" placeholder="e.g. Jacobean stain, match existing trim color, 2 coats poly…" style="min-height:72px;resize:vertical;"></textarea>
+        </div>
+      </div>
+
+      <!-- JOB PHOTOS -->
+      <div class="sdiv">Job Photos</div>
+      <div class="card" style="padding:14px 16px;">
+        <div class="card-label" style="margin-bottom:8px;">General Site Photos</div>
+        <div class="photo-add-row">
+          <div class="photo-btn" onclick="triggerPhoto('camera','general')"><span class="pb-icon">📷</span>Camera</div>
+          <div class="photo-btn" onclick="triggerPhoto('library','general')"><span class="pb-icon">🖼</span>Library</div>
+        </div>
+        <div class="photo-grid" id="generalPhotoGrid"><div class="photo-empty">No photos yet</div></div>
+      </div>
+
+      <div style="height:16px;"></div>
+      <div class="action-stack">
+        <button class="btn btn-primary" onclick="calculate()">Calculate Estimate →</button>
+      </div>
+      <div style="height:24px;"></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+      <div class="nav-item active" onclick="goTo('screen-estimate')"><div class="nav-icon">📐</div><div class="nav-label">Estimate</div></div>
+      <div class="nav-item" onclick="goTo('screen-materials')"><div class="nav-icon">🪵</div><div class="nav-label">Materials</div></div>
+      <div class="nav-item" onclick="goTo('screen-settings')"><div class="nav-icon">⚙️</div><div class="nav-label">Rates</div></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: RESULTS ══ -->
+  <div class="screen" id="screen-results">
+    <div class="hero" style="padding-top:10px;padding-bottom:44px;" id="resultsHero">
+      <div class="back-btn" onclick="goTo('screen-estimate')" style="color:var(--stock);opacity:1;font-size:18px;font-weight:700;margin-bottom:14px;">← Back to Estimate</div>
+      <div class="hero-meta" id="resultsClient"></div>
+      <div class="hero-title" id="resultsTitle"></div>
+      <div class="hero-meta" id="resultsMeta" style="margin-top:6px;"></div>
+    </div>
+    <div class="scroll">
+      <div style="height:36px;"></div>
+      <!-- Total pill -->
+      <div class="total-pill">
+        <div>
+          <div class="total-label">Estimated Total</div>
+          <div class="total-amount" id="rTotal">$0</div>
+        </div>
+        <div class="total-right">
+          <div class="total-sqft-num" id="rSqft">0</div>
+          <div class="total-sqft-label" id="rSqftLabel">sq ft total</div>
+        </div>
+      </div>
+
+      <!-- Room chips -->
+      <div class="room-chips" id="rRoomChips"></div>
+
+      <!-- Breakdown card -->
+      <div class="sdiv">Cost Breakdown</div>
+      <div class="card" style="padding:14px 16px;">
+        <div id="breakdownRows"></div>
+        <div class="b-total-row">
+          <div class="b-total-label">Estimate Total</div>
+          <div class="b-total-val" id="rTotalBottom">$0</div>
+        </div>
+      </div>
+
+      <!-- Per sq ft summary -->
+      <div class="card" id="perSqftCard" style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div class="card-label" style="margin-bottom:3px;">Price Per Sq Ft</div>
+          <div style="font-size:18px;color:var(--mist);" id="perSqftDetail"></div>
+        </div>
+        <div style="font-family:var(--font-display);font-size:41px;font-weight:800;color:var(--navy);" id="rPerSqft">$0</div>
+      </div>
+
+      <!-- Flooring Material Order (shown when flooring spec exists) -->
+      <div id="flooringOrderCard" style="display:none;">
+        <div class="sdiv">Flooring Order</div>
+        <div class="card" style="padding:14px 16px;">
+          <div id="flooringOrderContent"></div>
+        </div>
+      </div>
+
+      <div class="notice">
+        <div class="notice-icon">✓</div>
+        <div class="notice-text">Estimate valid <strong>30 days</strong> from today. Final price subject to site inspection. License No. 969033.</div>
+      </div>
+
+      <!-- PHOTOS ON RESULTS -->
+      <div class="sdiv">Job Photos</div>
+      <div class="card" style="padding:14px 16px;margin-bottom:10px;">
+        <div class="photo-add-row">
+          <div class="photo-btn" onclick="triggerPhoto('camera','general')"><span class="pb-icon">📷</span>Camera</div>
+          <div class="photo-btn" onclick="triggerPhoto('library','general')"><span class="pb-icon">🖼</span>Library</div>
+        </div>
+        <div class="photo-grid" id="resultsPhotoGrid"><div class="photo-empty">No photos added yet</div></div>
+      </div>
+
+      <div class="action-stack" style="margin-bottom:10px;">
+        <button class="btn btn-success-fill" id="saveBtn" onclick="saveToSheet()">💾 Save to Google Sheets</button>
+        <button class="btn btn-primary" id="quoteBtn" onclick="requestVendorQuote()" style="display:none;">📧 Request Vendor Quote</button>
+        <button class="btn btn-navy" onclick="newEstimate()">📐 New Estimate</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨 Print / PDF</button>
+      </div>
+      <div style="height:24px;"></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+      <div class="nav-item active"><div class="nav-icon">📐</div><div class="nav-label">Estimate</div></div>
+      <div class="nav-item" onclick="goTo('screen-materials')"><div class="nav-icon">🪵</div><div class="nav-label">Materials</div></div>
+      <div class="nav-item" onclick="goTo('screen-settings')"><div class="nav-icon">⚙️</div><div class="nav-label">Rates</div></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: SETTINGS / RATES ══ -->
+  <div class="screen" id="screen-settings">
+    <div class="hero" style="padding-top:10px;padding-bottom:44px;">
+      <div class="back-btn" onclick="goTo('screen-home')">← Back</div>
+      <div class="hero-brand" style="font-size:41px;">My Rates</div>
+      <div class="hero-sub">Labor & Material Costs</div>
+    </div>
+    <div class="scroll">
+      <div style="height:36px;"></div>
+
+      <div class="sdiv">Labor Rates (per sq ft)</div>
+      <div class="card">
+        <div class="settings-row">
+          <div class="settings-label">Sand & Finish<small>Per sq ft</small></div>
+          <input class="settings-input" id="rate_sf" type="number" step="0.25" value="7.25">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">New Installation<small>Per sq ft</small></div>
+          <input class="settings-input" id="rate_install" type="number" step="0.25" value="6.00">
+        </div>
+        <div class="settings-row" style="border-bottom:none;">
+          <div class="settings-label">Stair Work<small>Per tread (flat)</small></div>
+          <input class="settings-input" id="rate_stairs" type="number" step="5" value="125">
+        </div>
+      </div>
+
+      <div class="sdiv">Material Costs</div>
+      <div class="card">
+        <div class="settings-row">
+          <div class="settings-label">Sealer<small>Cost per gallon</small></div>
+          <input class="settings-input" id="cost_sealer_gal" type="number" step="5" value="95">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Sealer coverage<small>Sq ft per gallon</small></div>
+          <input class="settings-input" id="cov_sealer" type="number" step="10" value="500">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Polyurethane<small>Cost per gallon</small></div>
+          <input class="settings-input" id="cost_poly_gal" type="number" step="5" value="130">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Poly coat 1 coverage<small>Sq ft per gallon</small></div>
+          <input class="settings-input" id="cov_poly1" type="number" step="10" value="500">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Poly coat 2+ coverage<small>Sq ft per gallon</small></div>
+          <input class="settings-input" id="cov_poly2" type="number" step="10" value="650">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Material markup<small>Percentage over cost</small></div>
+          <input class="settings-input" id="markup" type="number" step="5" value="25">
+        </div>
+        <div class="settings-row" style="border-bottom:none;">
+          <div class="settings-label">Supplies flat rate<small>Sandpaper, tack cloth, etc.</small></div>
+          <input class="settings-input" id="supplies_flat" type="number" step="5" value="85">
+        </div>
+      </div>
+
+      <div class="sdiv">Custom Materials</div>
+      <div class="card" style="padding:14px 16px;">
+        <div style="font-size:18px;color:var(--mist);margin-bottom:12px;line-height:1.5;">Add any material with a description and cost per sq ft. These are calculated against total sq ft (with waste) and added to every estimate.</div>
+        <div id="customMaterialsList"></div>
+        <button class="btn btn-ghost" style="margin-top:8px;font-size:16px;padding:10px;" onclick="addCustomMaterial()">＋ Add Material</button>
+      </div>
+
+      <div class="sdiv">Crew Costs (for profit calc)</div>
+      <div class="card">
+        <div style="font-size:18px;color:var(--mist);margin-bottom:4px;line-height:1.6;">
+          What you <em>pay</em> the crew — not what you charge.<br>
+          Based on: <strong style="color:var(--navy);">Lead $40/hr + Helper $35/hr = $75/hr combined</strong>
+        </div>
+        <div style="background:var(--stock);border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:16px;color:var(--slate);line-height:1.8;">
+          <strong>S&amp;F:</strong> 40 hrs × $75 ÷ 1,000 sq ft = $3.00/sq ft<br>
+          <strong>Install:</strong> 25 hrs × $75 ÷ 1,000 sq ft = $1.88/sq ft<br>
+          <strong>Stairs:</strong> ~35 min × $75/hr = $44/tread<br>
+          <em>Edit below if your actual hours differ.</em>
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Sand & Finish<small>Crew cost per sq ft</small></div>
+          <input class="settings-input" id="cost_sf" type="number" step="0.25" value="3.00">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">New Installation<small>Crew cost per sq ft</small></div>
+          <input class="settings-input" id="cost_install" type="number" step="0.25" value="1.88">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Stair Work<small>Crew cost per tread</small></div>
+          <input class="settings-input" id="cost_stairs" type="number" step="5" value="44">
+        </div>
+        <div class="settings-row" style="border-bottom:none;">
+          <div class="settings-label">Overhead<small>% of job revenue (~$4,500/mo)</small></div>
+          <input class="settings-input" id="overhead_pct" type="number" step="1" value="18">
+        </div>
+      </div>
+
+      <div class="sdiv">Google Sheets</div>
+      <div class="card">
+        <div class="field-group">
+          <label class="fl">Sheet URL (paste when ready)</label>
+          <input class="fi" id="sheetUrl" type="url" placeholder="https://docs.google.com/spreadsheets/...">
+        </div>
+        <div style="font-size:18px;color:var(--mist);margin-top:6px;line-height:1.5;">When connected, estimates save as one row with full material detail columns. <strong style="color:var(--navy);">Setup guide coming soon.</strong></div>
+      </div>
+
+      <div style="height:16px;"></div>
+      <div class="action-stack">
+        <button class="btn btn-primary" onclick="saveSettings()">Save Rates</button>
+      </div>
+      <div style="height:24px;"></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+      <div class="nav-item" onclick="goTo('screen-estimate')"><div class="nav-icon">📐</div><div class="nav-label">Estimate</div></div>
+      <div class="nav-item" onclick="goTo('screen-materials')"><div class="nav-icon">🪵</div><div class="nav-label">Materials</div></div>
+      <div class="nav-item active" onclick="goTo('screen-settings')"><div class="nav-icon">⚙️</div><div class="nav-label">Rates</div></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: MY JOBS ══ -->
+  <div class="screen" id="screen-jobs">
+    <div class="hero" style="padding-top:10px;padding-bottom:44px;">
+      <div class="back-btn" onclick="goTo('screen-home')">← Home</div>
+      <div class="hero-brand" style="font-size:41px;">My Jobs</div>
+      <div class="hero-sub">Saved Estimates</div>
+    </div>
+    <div class="scroll">
+      <div style="height:36px;"></div>
+
+      <!-- Filter chips -->
+      <div style="display:flex;gap:8px;padding:0 16px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;">
+        <div class="species-pill selected" id="filter-all"    onclick="filterJobs('all')">All</div>
+        <div class="species-pill"          id="filter-sf"     onclick="filterJobs('sf')">Sand & Finish</div>
+        <div class="species-pill"          id="filter-install"onclick="filterJobs('install')">New Install</div>
+        <div class="species-pill"          id="filter-stairs" onclick="filterJobs('stairs')">Stairs</div>
+      </div>
+
+      <div id="jobsList">
+        <div style="padding:24px 16px;text-align:center;font-size:21px;color:var(--mist);font-style:italic;">
+          No estimates saved yet.<br>Calculate an estimate to see it here.
+        </div>
+      </div>
+
+      <div style="height:24px;"></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+      <div class="nav-item" onclick="goTo('screen-estimate')"><div class="nav-icon">📐</div><div class="nav-label">Estimate</div></div>
+      <div class="nav-item" onclick="goTo('screen-materials')"><div class="nav-icon">🪵</div><div class="nav-label">Materials</div></div>
+      <div class="nav-item" onclick="goTo('screen-settings')"><div class="nav-icon">⚙️</div><div class="nav-label">Rates</div></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: MATERIALS ══ -->
+  <div class="screen" id="screen-materials">
+    <div class="hero" style="padding-top:10px;padding-bottom:44px;">
+      <div class="back-btn" onclick="goTo('screen-estimate')">← Back</div>
+      <div class="hero-brand" style="font-size:41px;">Materials</div>
+      <div class="hero-sub">Flooring · Vents · Reducers</div>
+    </div>
+    <div class="scroll">
+      <div style="height:36px;"></div>
+
+      <!-- ── FLOORING ── -->
+      <div class="sdiv">Flooring</div>
+      <div class="card">
+        <div class="card-label">Species / Type</div>
+        <div class="field-group">
+          <label class="fl">Material</label>
+          <select class="fi" id="mat_flooring_type" onchange="toggleFlooringOther()">
+            <option value="">— Select —</option>
+            <option value="Red Oak">Red Oak</option>
+            <option value="White Oak">White Oak</option>
+            <option value="Maple">Maple</option>
+            <option value="Engineered">Engineered</option>
+            <option value="Laminate">Laminate</option>
+            <option value="LVP">LVP</option>
+            <option value="other">Other…</option>
+          </select>
+        </div>
+        <div class="field-group" id="flooringOtherGroup" style="display:none;">
+          <label class="fl">Specify Material</label>
+          <input class="fi" id="mat_flooring_other" type="text" placeholder="e.g. Brazilian Cherry">
+        </div>
+        <div class="field-row" style="margin-top:4px;">
+          <div class="field-group">
+            <label class="fl">Width</label>
+            <input class="fi" id="mat_flooring_width" type="text" placeholder='e.g. 3¼"'>
+          </div>
+          <div class="field-group">
+            <label class="fl">Thickness</label>
+            <input class="fi" id="mat_flooring_thickness" type="text" placeholder='e.g. ¾"'>
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:4px;">
+          <div class="field-group">
+            <label class="fl">My Cost / sq ft</label>
+            <input class="fi" id="mat_flooring_cost" type="number" step="0.25" placeholder="e.g. 4.50" min="0">
+          </div>
+          <div class="field-group">
+            <label class="fl">Client Price / sq ft</label>
+            <input class="fi" id="mat_flooring_price" type="text" placeholder="Auto" readonly
+              style="background:var(--stock-dark);color:var(--crimson);font-family:var(--font-display);font-weight:700;cursor:default;">
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--mist);margin-top:4px;">
+          Client price = your cost + <span id="mat_markup_pct">25</span>% markup. Applied to order qty (sq ft + waste).
+        </div>
+        <div class="field-group" style="margin-top:8px;">
+          <label class="fl">Grade / Notes</label>
+          <input class="fi" id="mat_flooring_notes" type="text" placeholder="e.g. Select grade, pre-finished">
+        </div>
+      </div>
+
+      <!-- ── FLOOR VENTS ── -->
+      <div class="sdiv">Floor Vents</div>
+      <div class="card">
+        <div class="card-label" style="margin-bottom:10px;">Vent Species & Size</div>
+        <div class="field-group">
+          <label class="fl">Species</label>
+          <select class="fi" id="vent_species" onchange="toggleVentOther()">
+            <option value="">— Select —</option>
+            <option value="Red Oak">Red Oak</option>
+            <option value="White Oak">White Oak</option>
+            <option value="Maple">Maple</option>
+            <option value="other">Other…</option>
+          </select>
+        </div>
+        <div class="field-group" id="ventOtherGroup" style="display:none;">
+          <label class="fl">Specify Species</label>
+          <input class="fi" id="vent_species_other" type="text" placeholder="e.g. Walnut">
+        </div>
+        <div class="field-group">
+          <label class="fl">Size</label>
+          <select class="fi" id="vent_size" onchange="toggleVentSizeOther()">
+            <option value="">— Select —</option>
+            <option value='4×10'>4 × 10</option>
+            <option value='4×12'>4 × 12</option>
+            <option value='4×4'>4 × 4</option>
+            <option value="other">Other / Custom…</option>
+          </select>
+        </div>
+        <div class="field-group" id="ventSizeOtherGroup" style="display:none;">
+          <label class="fl">Specify Size</label>
+          <input class="fi" id="vent_size_other" type="text" placeholder='e.g. 4×14 or 6×10'>
+        </div>
+        <div class="field-row" style="margin-top:4px;">
+          <div class="field-group">
+            <label class="fl">Quantity</label>
+            <input class="fi" id="vent_qty" type="number" min="0" placeholder="0">
+          </div>
+          <div class="field-group">
+            <label class="fl">Unit Cost</label>
+            <input class="fi" id="vent_cost" type="number" min="0" step="0.01" placeholder="$0.00">
+          </div>
+        </div>
+        <div class="field-group" style="margin-top:4px;">
+          <label class="fl">Notes</label>
+          <input class="fi" id="vent_notes" type="text" placeholder="e.g. Match stain to floor">
+        </div>
+        <!-- Vent total display -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--stock);">
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);">Vent Subtotal</div>
+          <div style="font-family:var(--font-display);font-size:29px;font-weight:800;color:var(--crimson);" id="ventSubtotal">$0.00</div>
+        </div>
+      </div>
+
+      <!-- ── REDUCERS ── -->
+      <div class="sdiv">Reducers</div>
+      <div id="reducerList"></div>
+      <div style="padding:0 16px;margin-bottom:12px;">
+        <button class="btn btn-ghost" onclick="addReducer()">＋ Add Reducer</button>
+      </div>
+
+      <!-- ── MATERIALS SUMMARY ── -->
+      <div class="sdiv">Summary</div>
+      <div class="card" style="padding:14px 16px;">
+        <div id="matSummaryRows">
+          <div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">Fill in materials above to see summary</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;margin-top:8px;border-top:1.5px solid var(--stock-mid);">
+          <div style="font-family:var(--font-ui);font-size:18px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);">Materials Total</div>
+          <div style="font-family:var(--font-display);font-size:35px;font-weight:900;color:var(--crimson);" id="matGrandTotal">$0.00</div>
+        </div>
+      </div>
+
+      <div style="height:24px;"></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+      <div class="nav-item" onclick="goTo('screen-estimate')"><div class="nav-icon">📐</div><div class="nav-label">Estimate</div></div>
+      <div class="nav-item active"><div class="nav-icon">🪵</div><div class="nav-label">Materials</div></div>
+      <div class="nav-item" onclick="goTo('screen-settings')"><div class="nav-icon">⚙️</div><div class="nav-label">Rates</div></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: JOB DETAIL ══ -->
+  <div class="screen" id="screen-job-detail">
+    <div class="hero" style="padding-top:10px;padding-bottom:44px;" id="detailHero">
+      <div class="back-btn" onclick="goTo('screen-jobs')">← My Jobs</div>
+      <div class="hero-meta" id="detailDate"></div>
+      <div class="hero-title" id="detailClient"></div>
+      <div class="hero-meta" id="detailMeta" style="margin-top:4px;"></div>
+    </div>
+    <div class="scroll">
+      <div style="height:36px;"></div>
+
+      <!-- Total pill -->
+      <div class="total-pill">
+        <div>
+          <div class="total-label">Estimate Total</div>
+          <div class="total-amount" id="detailTotal">$0</div>
+        </div>
+        <div class="total-right">
+          <div class="total-sqft-num" id="detailSqft">0</div>
+          <div class="total-sqft-label" id="detailSqftLabel">sq ft</div>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;">
+        <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--mist);">Status</div>
+        <div id="detailStatusBadge" onclick="cycleDetailStatus()" style="font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border-radius:3px;cursor:pointer;"></div>
+      </div>
+
+      <!-- Room chips -->
+      <div class="room-chips" id="detailRoomChips"></div>
+
+      <!-- Breakdown -->
+      <div class="sdiv">Cost Breakdown</div>
+      <div class="card" style="padding:14px 16px;">
+        <div id="detailBreakdownRows"></div>
+        <div class="b-total-row">
+          <div class="b-total-label">Estimate Total</div>
+          <div class="b-total-val" id="detailTotalBottom">$0</div>
+        </div>
+      </div>
+
+      <!-- Per sq ft -->
+      <div class="card" id="detailPerSqftCard" style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div class="card-label" style="margin-bottom:3px;">Price Per Sq Ft</div>
+          <div style="font-size:18px;color:var(--mist);" id="detailPerSqftDetail"></div>
+        </div>
+        <div style="font-family:var(--font-display);font-size:41px;font-weight:800;color:var(--navy);" id="detailPerSqft"></div>
+      </div>
+
+      <!-- Client info -->
+      <div class="sdiv">Client</div>
+      <div class="card">
+        <div id="detailClientInfo"></div>
+      </div>
+
+      <!-- Photos -->
+      <div id="detailPhotosSection" style="display:none;">
+        <div class="sdiv">Job Photos</div>
+        <div class="card" style="padding:14px 16px;">
+          <div class="card-label" style="margin-bottom:8px;">General Site Photos</div>
+          <div class="photo-grid" id="detailGeneralGrid"></div>
+        </div>
+        <div id="detailRoomPhotosList"></div>
+      </div>
+
+      <!-- Notice -->
+      <div class="notice">
+        <div class="notice-icon">✓</div>
+        <div class="notice-text">Estimate valid <strong>30 days</strong> from issue date. License No. 969033.</div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-stack" style="margin-bottom:10px;">
+        <button class="btn btn-navy" id="detailDeleteBtn">🗑 Delete Estimate</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨 Print / PDF</button>
+      </div>
+      <div style="height:24px;"></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+      <div class="nav-item" onclick="goTo('screen-estimate')"><div class="nav-icon">📐</div><div class="nav-label">Estimate</div></div>
+      <div class="nav-item" onclick="goTo('screen-materials')"><div class="nav-icon">🪵</div><div class="nav-label">Materials</div></div>
+      <div class="nav-item" onclick="goTo('screen-settings')"><div class="nav-icon">⚙️</div><div class="nav-label">Rates</div></div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: REPORTS ══ -->
+  <div class="screen" id="screen-reports">
+    <div class="hero" style="padding-top:10px;padding-bottom:44px;">
+      <div class="back-btn" onclick="goTo('screen-home')">← Home</div>
+      <div class="hero-brand" style="font-size:41px;">Reports</div>
+      <div class="hero-sub">Revenue · Margin · Pipeline</div>
+    </div>
+    <div class="scroll">
+      <div style="height:36px;"></div>
+
+      <!-- Period tabs -->
+      <div style="display:flex;background:var(--stock-dark);border-radius:var(--radius-pill);padding:4px;margin:0 16px 20px;gap:4px;">
+        <div class="tab active" id="rptTab-month"  onclick="setReportPeriod('month')">This Month</div>
+        <div class="tab"        id="rptTab-year"   onclick="setReportPeriod('year')">This Year</div>
+        <div class="tab"        id="rptTab-all"    onclick="setReportPeriod('all')">All Time</div>
+      </div>
+
+      <!-- Revenue + Margin pills -->
+      <div style="display:flex;gap:10px;padding:0 16px;margin-bottom:14px;">
+        <div style="flex:1;background:var(--white);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-sm);border:1.5px solid var(--stock-mid);">
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Est. Revenue</div>
+          <div style="font-family:var(--font-display);font-size:45px;font-weight:900;color:var(--crimson);line-height:1;" id="rptRevenue">$0</div>
+          <div style="font-size:16px;color:var(--mist);margin-top:3px;" id="rptJobCount">0 jobs</div>
+        </div>
+        <div style="flex:1;background:var(--white);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-sm);border:1.5px solid var(--stock-mid);">
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:4px;">Est. Margin</div>
+          <div style="font-family:var(--font-display);font-size:45px;font-weight:900;color:var(--success);line-height:1;" id="rptMargin">0%</div>
+          <div style="font-size:16px;color:var(--mist);margin-top:3px;" id="rptProfit">$0 profit</div>
+        </div>
+      </div>
+
+      <!-- Avg job value -->
+      <div style="background:var(--navy);border-radius:var(--radius-md);padding:14px 18px;margin:0 16px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.5);margin-bottom:3px;">Avg Job Value</div>
+          <div style="font-family:var(--font-display);font-size:39px;font-weight:800;color:var(--white);line-height:1;" id="rptAvgJob">$0</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(244,239,228,0.5);margin-bottom:3px;">Unbooked Value</div>
+          <div style="font-family:var(--font-display);font-size:39px;font-weight:800;color:var(--gold);line-height:1;" id="rptUnbooked">$0</div>
+        </div>
+      </div>
+
+      <!-- Job type breakdown -->
+      <div class="sdiv">By Job Type</div>
+      <div class="card" style="padding:14px 16px;" id="rptTypeBreakdown">
+        <div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">No data yet</div>
+      </div>
+
+      <!-- Pipeline -->
+      <div class="sdiv">Estimate Pipeline</div>
+      <div class="card" style="padding:14px 16px;" id="rptPipeline">
+        <div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">No data yet</div>
+      </div>
+
+      <!-- Cost basis breakdown -->
+      <div class="sdiv">Cost Basis</div>
+      <div class="card" style="padding:14px 16px;">
+        <div style="font-size:16px;color:var(--mist);margin-bottom:10px;line-height:1.6;">Based on your rates: Lead $40 + Helper $35 = $75/hr combined · 18% overhead</div>
+        <div id="rptCostBasis"></div>
+      </div>
+
+      <div style="height:24px;"></div>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('screen-home')"><div class="nav-icon">🏠</div><div class="nav-label">Home</div></div>
+      <div class="nav-item" onclick="goTo('screen-estimate')"><div class="nav-icon">📐</div><div class="nav-label">Estimate</div></div>
+      <div class="nav-item" onclick="goTo('screen-materials')"><div class="nav-icon">🪵</div><div class="nav-label">Materials</div></div>
+      <div class="nav-item" onclick="goTo('screen-settings')"><div class="nav-icon">⚙️</div><div class="nav-label">Rates</div></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- HIDDEN FILE INPUTS -->
+  <input type="file" id="photoCamera"  accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(event,'camera')">
+  <input type="file" id="photoLibrary" accept="image/*" style="display:none" onchange="handlePhoto(event,'library')" multiple>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <div class="lightbox-close" onclick="closeLightbox()">×</div>
+    <img id="lbImg" src="" alt="">
+    <div class="lightbox-caption" id="lbCaption"></div>
+    <div class="lightbox-nav" onclick="event.stopPropagation()">
+      <div class="lb-nav-btn" onclick="lbNav(-1)">← Prev</div>
+      <div class="lb-nav-btn" onclick="lbNav(1)">Next →</div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+let currentType = 'sf';
+let stairTreads = 12;
+let stairRisers = 13;
+let roomCounter = 0;
+let lastEstimate = null;
+
+const rooms = []; // {id, name, sqft}
+
+// ══════════════════════════════════════════════
+// CUSTOM MATERIALS
+// ══════════════════════════════════════════════
+let customMaterials = []; // {id, desc, costPerSqft}
+let matCounter = 0;
+
+function addCustomMaterial(desc='', cost='') {
+  const id = ++matCounter;
+  customMaterials.push({id, desc, costPerSqft: cost});
+  renderCustomMaterials();
+}
+
+function removeCustomMaterial(id) {
+  customMaterials = customMaterials.filter(m => m.id !== id);
+  renderCustomMaterials();
+}
+
+function renderCustomMaterials() {
+  const list = document.getElementById('customMaterialsList');
+  if (!list) return;
+  list.innerHTML = '';
+  customMaterials.forEach(mat => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:8px;align-items:center;margin-bottom:8px;';
+    row.innerHTML = `
+      <input class="fi" type="text" placeholder="Description (e.g. Stain)" value="${mat.desc}"
+        style="flex:2;font-size:19px;"
+        oninput="updateMat(${mat.id},'desc',this.value)" />
+      <div style="display:flex;align-items:center;gap:4px;flex:1;">
+        <span style="font-family:var(--font-ui);font-size:18px;color:var(--mist);">$/sqft</span>
+        <input class="fi" type="number" min="0" step="0.01" placeholder="0.00" value="${mat.costPerSqft}"
+          style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--crimson);text-align:right;"
+          oninput="updateMat(${mat.id},'costPerSqft',this.value)" />
+      </div>
+      <span onclick="removeCustomMaterial(${mat.id})"
+        style="cursor:pointer;color:var(--mist);font-size:29px;line-height:1;flex-shrink:0;padding:2px 4px;transition:color 0.15s;"
+        onmouseover="this.style.color='var(--crimson)'" onmouseout="this.style.color='var(--mist)'">×</span>`;
+    list.appendChild(row);
+  });
+}
+
+function updateMat(id, field, val) {
+  const m = customMaterials.find(m => m.id === id);
+  if (m) m[field] = val;
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const sb = document.getElementById('statusBar');
+  if (id === 'screen-results') {
+    sb.style.background = 'var(--navy)';
+    sb.style.color = 'rgba(244,239,228,0.8)';
+  } else {
+    sb.style.background = '';
+    sb.style.color = '';
+  }
+  if (id === 'screen-jobs')    renderJobsList();
+  if (id === 'screen-reports') renderReports();
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+}
+
+// ══════════════════════════════════════════════
+// RATES (with localStorage persistence)
+// ══════════════════════════════════════════════
+function getRates() {
+  return {
+    sf:           parseFloat(document.getElementById('rate_sf').value)       || 7.25,
+    install:      parseFloat(document.getElementById('rate_install').value)  || 6.00,
+    stairs:       parseFloat(document.getElementById('rate_stairs').value)   || 125,
+    sealerGal:    parseFloat(document.getElementById('cost_sealer_gal').value) || 95,
+    covSealer:    parseFloat(document.getElementById('cov_sealer').value)    || 500,
+    polyGal:      parseFloat(document.getElementById('cost_poly_gal').value) || 130,
+    covPoly1:     parseFloat(document.getElementById('cov_poly1').value)     || 500,
+    covPoly2:     parseFloat(document.getElementById('cov_poly2').value)     || 650,
+    markup:       parseFloat(document.getElementById('markup').value)        || 25,
+    supplies:     parseFloat(document.getElementById('supplies_flat').value) || 85,
+    // Crew costs for margin calculation
+    costSf:       parseFloat(document.getElementById('cost_sf').value)       || 3.00,
+    costInstall:  parseFloat(document.getElementById('cost_install').value)  || 1.88,
+    costStairs:   parseFloat(document.getElementById('cost_stairs').value)   || 44,
+    overheadPct:  parseFloat(document.getElementById('overhead_pct').value)  || 18,
+    sheetUrl:     document.getElementById('sheetUrl').value.trim(),
+  };
+}
+
+function saveSettings() {
+  const r = getRates();
+  r.customMaterials = customMaterials.filter(m => m.desc && parseFloat(m.costPerSqft) > 0);
+  try { localStorage.setItem('mattie_rates', JSON.stringify(r)); } catch(e){}
+  showToast('✓ Rates Saved', 'success');
+}
+
+function loadSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('mattie_rates') || '{}');
+    const map = {
+      rate_sf:'sf', rate_install:'install', rate_stairs:'stairs',
+      cost_sealer_gal:'sealerGal', cov_sealer:'covSealer',
+      cost_poly_gal:'polyGal', cov_poly1:'covPoly1', cov_poly2:'covPoly2',
+      markup:'markup', supplies_flat:'supplies',
+      cost_sf:'costSf', cost_install:'costInstall',
+      cost_stairs:'costStairs', overhead_pct:'overheadPct',
+    };
+    Object.entries(map).forEach(([id, key]) => {
+      if (saved[key] != null) document.getElementById(id).value = saved[key];
+    });
+    if (saved.sheetUrl) document.getElementById('sheetUrl').value = saved.sheetUrl;
+    if (saved.customMaterials && saved.customMaterials.length) {
+      saved.customMaterials.forEach(m => addCustomMaterial(m.desc, m.costPerSqft));
+    }
+  } catch(e){}
+}
+
+// ══════════════════════════════════════════════
+// JOB TYPE
+// ══════════════════════════════════════════════
+function selectType(el, type) {
+  document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  currentType = type;
+  const isStairs  = type === 'stairs';
+  const isInstall = type === 'install';
+  document.getElementById('roomSection').style.display  = isStairs ? 'none' : 'block';
+  document.getElementById('stairSection').style.display = isStairs ? 'block' : 'none';
+  // Show/hide tear-up row on every existing room card
+  document.querySelectorAll('.room-tearup-row').forEach(row => {
+    row.style.display = isInstall ? 'block' : 'none';
+  });
+  updateStairDisplay();
+  updateSqftTotal();
+}
+
+// ══════════════════════════════════════════════
+// ROOMS
+// ══════════════════════════════════════════════
+const roomNames = ['Living Room','Bedroom','Dining Room','Hallway','Kitchen','Master Bedroom','Office','Family Room'];
+
+function addRoom(name='', sqft='') {
+  const id = ++roomCounter;
+  const rname = name || roomNames[rooms.length % roomNames.length];
+  rooms.push({id, name: rname, sqft: sqft||'', removeType:'', removeOther:''});
+  renderRooms();
+}
+
+function removeRoom(id) {
+  const idx = rooms.findIndex(r => r.id === id);
+  if (idx > -1) rooms.splice(idx, 1);
+  renderRooms();
+  updateSqftTotal();
+}
+
+function renderRooms() {
+  const list = document.getElementById('roomList');
+  const existingCards = list.querySelectorAll('.room-card');
+  // Full rebuild only when card count changes (add/remove)
+  if (existingCards.length !== rooms.length) {
+    list.innerHTML = '';
+    rooms.forEach(room => buildRoomCard(list, room));
+  }
+  // Always sync active-card border without touching inputs
+  list.querySelectorAll('.room-card').forEach((card, i) => {
+    const sqft = parseFloat(rooms[i].sqft) || 0;
+    card.classList.toggle('active-card', sqft > 0);
+  });
+}
+
+function buildRoomCard(list, room) {
+  const div = document.createElement('div');
+  div.className = 'card room-card';
+  div.dataset.roomId = room.id;
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <input class="fi" type="text"
+        style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--navy);background:transparent;border:none;padding:0;width:auto;flex:1;"
+        value="${room.name}" onchange="updateRoomName(${room.id}, this.value)" />
+      <span onclick="removeRoom(${room.id})"
+        style="cursor:pointer;color:var(--mist);font-size:25px;line-height:1;padding:2px 6px;border-radius:4px;transition:all 0.15s ease;"
+        onmouseover="this.style.color='var(--crimson)'" onmouseout="this.style.color='var(--mist)'">×</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <input class="fi" type="number" min="1" placeholder="Enter sq ft" value="${room.sqft}"
+        style="font-family:var(--font-display);font-size:29px;font-weight:700;text-align:center;flex:1;"
+        oninput="updateRoomSqft(${room.id}, this.value)" />
+      <div style="font-family:var(--font-ui);font-size:18px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mist);">sq ft</div>
+    </div>
+    <div class="room-tearup-row" style="display:${currentType === 'install' ? 'block' : 'none'};">
+      <div style="border-top:1px solid var(--stock);padding-top:10px;margin-bottom:10px;">
+        <label class="fl" style="margin-bottom:4px;display:block;">Material to Remove</label>
+        <select class="fi" onchange="updateRoomRemove(${room.id}, this.value)">
+          <option value="">— Select —</option>
+          <option value="Carpet"     ${room.removeType==='Carpet'      ?'selected':''}>Carpet</option>
+          <option value="Tile"       ${room.removeType==='Tile'        ?'selected':''}>Tile</option>
+          <option value="Wood"       ${room.removeType==='Wood'        ?'selected':''}>Wood</option>
+          <option value="Engineered" ${room.removeType==='Engineered'  ?'selected':''}>Engineered</option>
+          <option value="Laminate"   ${room.removeType==='Laminate'    ?'selected':''}>Laminate</option>
+          <option value="Vinyl / LVP"${room.removeType==='Vinyl / LVP' ?'selected':''}>Vinyl / LVP</option>
+          <option value="Particle Board"${room.removeType==='Particle Board'?'selected':''}>Particle Board</option>
+          <option value="other"      ${room.removeType==='other'       ?'selected':''}>Other…</option>
+        </select>
+        <input class="fi" type="text" placeholder="Specify material…" value="${room.removeOther}"
+          style="margin-top:6px;display:${room.removeType==='other'?'block':'none'};"
+          id="removeOther-${room.id}"
+          oninput="updateRoomRemoveOther(${room.id}, this.value)" />
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--stock);padding-top:10px;">
+      <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);margin-bottom:7px;">Room Photos</div>
+      <div class="photo-add-row" style="margin-bottom:8px;">
+        <div class="photo-btn" onclick="triggerPhoto('camera','room',${room.id})"><span class="pb-icon">📷</span>Camera</div>
+        <div class="photo-btn" onclick="triggerPhoto('library','room',${room.id})"><span class="pb-icon">🖼</span>Library</div>
+      </div>
+      <div class="photo-grid" id="roomPhotoGrid-${room.id}"><div class="photo-empty">No photos</div></div>
+    </div>`;
+  list.appendChild(div);
+}
+
+// Updates sqft in state without re-rendering the DOM
+function updateRoomSqft(id, val) {
+  const r = rooms.find(r => r.id === id);
+  if (r) {
+    r.sqft = val;
+    const card = [...document.querySelectorAll('.room-card')].find(c => parseInt(c.dataset.roomId) === id);
+    if (card) card.classList.toggle('active-card', parseFloat(val) > 0);
+    updateSqftTotal();
+  }
+}
+
+function updateSqftTotal() {
+  const rawSqft = rooms.reduce((acc, room) => acc + calcRoomSqft(room), 0);
+  const totalBox = document.getElementById('sqftTotalBox');
+  const wasteBox = document.getElementById('sqftWasteBox');
+  const totalNum = document.getElementById('sqftTotalNum');
+
+  if (!totalBox) return;
+
+  if (rawSqft > 0) {
+    totalBox.style.display = 'flex';
+    totalNum.textContent = rawSqft.toLocaleString() + ' sq ft';
+  } else {
+    totalBox.style.display = 'none';
+  }
+  // Waste box never shows here — waste is materials ordering only
+  if (wasteBox) wasteBox.style.display = 'none';
+}
+
+function updateRoomRemove(id, val) {
+  const r = rooms.find(r => r.id === id);
+  if (r) {
+    r.removeType = val;
+    const otherInput = document.getElementById(`removeOther-${id}`);
+    if (otherInput) otherInput.style.display = val === 'other' ? 'block' : 'none';
+  }
+}
+
+function updateRoomRemoveOther(id, val) {
+  const r = rooms.find(r => r.id === id);
+  if (r) r.removeOther = val;
+}
+
+function calcRoomSqft(room) {
+  return parseFloat(room.sqft) || 0;
+}
+
+function updateRoom(id, field, val) {
+  const r = rooms.find(r => r.id === id);
+  if (r) { r[field] = val; renderRooms(); }
+}
+
+function updateRoomName(id, val) {
+  const r = rooms.find(r => r.id === id);
+  if (r) r.name = val;
+}
+
+// ══════════════════════════════════════════════
+// STAIRS
+// ══════════════════════════════════════════════
+function changeStairs(field, delta) {
+  if (field === 'treads') {
+    stairTreads = Math.max(1, stairTreads + delta);
+    document.getElementById('stairTreads').textContent = stairTreads;
+  } else {
+    stairRisers = Math.max(0, stairRisers + delta);
+    document.getElementById('stairRisers').textContent = stairRisers;
+  }
+  updateStairDisplay();
+}
+
+function updateStairDisplay() {
+  const r = getRates();
+  document.getElementById('stairRateDisplay').textContent = '$' + r.stairs.toFixed(0);
+}
+
+// ══════════════════════════════════════════════
+// CALCULATION ENGINE
+// ══════════════════════════════════════════════
+function calculate() {
+  const r = getRates();
+  const client      = document.getElementById('clientName').value.trim() || 'Client';
+  const phone       = document.getElementById('clientPhone').value.trim();
+  const city        = document.getElementById('clientCity').value.trim();
+  const finishType  = document.getElementById('finishType').value;
+  const finishNotes = document.getElementById('finishNotes').value.trim();
+
+  let result = {};
+
+  if (currentType === 'stairs') {
+    const treadWidth = document.getElementById('treadWidth').value.trim();
+    const riserWidth = document.getElementById('riserWidth').value.trim();
+    const stairNotes = document.getElementById('stairNotes').value.trim();
+    const laborTotal = stairTreads * r.stairs;
+    result = {
+      type: 'stairs',
+      typeLabel: 'Stair Work',
+      client, phone, city,
+      stairTreads, stairRisers,
+      treadWidth, riserWidth, stairNotes,
+      stairCount: stairTreads,
+      laborRate: r.stairs,
+      laborTotal,
+      materialsTotal: 0,
+      sealerCost: 0,
+      polyCost: 0,
+      suppliesCost: 0,
+      total: laborTotal,
+      perSqft: 0,
+      rooms: [],
+      finishType, finishNotes,
+    };
+  } else {
+    // Total raw sqft — labor is ALWAYS based on actual measured sq ft, no waste
+    const rawSqft = rooms.reduce((acc, room) => acc + calcRoomSqft(room), 0);
+    if (rawSqft === 0) { showToast('⚠ Add at least one room', ''); return; }
+
+    // Waste is for materials ordering only — NOT applied to labor
+    const wasteSqft  = currentType === 'install' ? Math.round(rawSqft * 0.07) : 0;
+    const orderSqft  = rawSqft + wasteSqft; // sq ft to ORDER flooring material
+    const totalSqft  = rawSqft;             // sq ft for labor calculation
+
+    // Labor — based on actual measured sq ft only
+    const laborRate  = r[currentType] || r.sf;
+    const laborTotal = rawSqft * laborRate;
+
+    // Use default coat counts from rates for finish material calculation
+    const sealerCoats = 1;
+    const polyCoats   = 2;
+
+    // Finish materials — sealer and poly based on actual sq ft
+    const mk = 1 + (r.markup / 100);
+    let sealerCost = 0;
+    if (sealerCoats > 0) {
+      const sealerGals = Math.ceil(rawSqft / r.covSealer) * sealerCoats;
+      sealerCost = sealerGals * r.sealerGal * mk;
+    }
+
+    let polyCost = 0;
+    if (polyCoats >= 1) {
+      const gals1 = Math.ceil(rawSqft / r.covPoly1);
+      polyCost += gals1 * r.polyGal * mk;
+    }
+    if (polyCoats >= 2) {
+      const gals2 = Math.ceil(rawSqft / r.covPoly2) * (polyCoats - 1);
+      polyCost += gals2 * r.polyGal * mk;
+    }
+
+    const suppliesCost = r.supplies;
+
+    // Custom materials — based on actual sq ft
+    const customMatLines = customMaterials
+      .filter(m => m.desc && parseFloat(m.costPerSqft) > 0)
+      .map(m => ({desc: m.desc, costPerSqft: parseFloat(m.costPerSqft), total: parseFloat(m.costPerSqft) * rawSqft}));
+    const customMatTotal = customMatLines.reduce((a, m) => a + m.total, 0);
+
+    // Grab flooring material spec from Materials tab
+    const flooringType  = document.getElementById('mat_flooring_type')?.value || '';
+    const flooringOther = document.getElementById('mat_flooring_other')?.value.trim() || '';
+    const flooringLabel = flooringType === 'other' ? flooringOther : flooringType;
+    const flooringWidth = document.getElementById('mat_flooring_width')?.value.trim() || '';
+    const flooringThick = document.getElementById('mat_flooring_thickness')?.value.trim() || '';
+    const flooringNotes = document.getElementById('mat_flooring_notes')?.value.trim() || '';
+
+    // Flooring material cost — cost per sqft + markup × order qty (raw + waste)
+    const flooringCostPerSqft = parseFloat(document.getElementById('mat_flooring_cost')?.value) || 0;
+    const flooringMarkup      = 1 + ((r.markup || 25) / 100);
+    const flooringClientRate  = flooringCostPerSqft * flooringMarkup;
+    const orderSqftForCost    = currentType === 'install' ? rawSqft + wasteSqft : rawSqft;
+    const flooringMaterialCost = flooringClientRate * orderSqftForCost;
+
+    const materialsTotal = sealerCost + polyCost + suppliesCost + customMatTotal + flooringMaterialCost;
+    const total          = laborTotal + materialsTotal;
+    const perSqft        = rawSqft > 0 ? total / rawSqft : 0;
+
+    const typeLabels = {sf:'Sand & Finish', install:'New Installation'};
+
+    result = {
+      type: currentType,
+      typeLabel: typeLabels[currentType] || 'Estimate',
+      client, phone, city,
+      rawSqft, wasteSqft, orderSqft, totalSqft,
+      laborRate, laborTotal,
+      sealerCoats, polyCoats,
+      sealerCost, polyCost, suppliesCost,
+      customMatLines, customMatTotal,
+      materialsTotal, total, perSqft,
+      finishType, finishNotes,
+      flooringLabel, flooringWidth, flooringThick, flooringNotes,
+      flooringCostPerSqft, flooringClientRate, flooringMaterialCost,
+      rooms: rooms.map(r => ({name: r.name, sqft: calcRoomSqft(r), removeType: r.removeType, removeOther: r.removeOther})),
+    };
+  }
+
+  lastEstimate = result;
+  saveJobLocally(result);
+  renderResults(result);
+  renderGeneralPhotos();
+  goTo('screen-results');
+}
+
+// ══════════════════════════════════════════════
+// RENDER RESULTS
+// ══════════════════════════════════════════════
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+function fmt2(n) { return '$' + n.toFixed(2); }
+
+function renderResults(e) {
+  document.getElementById('resultsClient').textContent = e.client + (e.city ? ' · ' + e.city : '');
+  document.getElementById('resultsTitle').textContent = e.typeLabel + ' Estimate';
+  document.getElementById('resultsMeta').textContent =
+    e.type === 'stairs'
+      ? e.stairTreads + ' treads · ' + (e.stairRisers||0) + ' risers · $' + e.laborRate + '/tread'
+      : e.typeLabel + ' · ' + e.rawSqft + ' sq ft' + (e.finishType ? ' · ' + e.finishType : '');
+  document.getElementById('rTotal').textContent = fmt(e.total);
+  document.getElementById('rTotalBottom').textContent = fmt(e.total);
+
+  if (e.type === 'stairs') {
+    document.getElementById('rSqft').textContent = e.stairTreads || e.stairCount || 0;
+    document.getElementById('rSqftLabel').textContent = 'steps';
+    document.getElementById('perSqftCard').style.display = 'none';
+    document.getElementById('rRoomChips').innerHTML = '';
+  } else {
+    document.getElementById('rSqft').textContent = e.totalSqft;
+    document.getElementById('rSqftLabel').textContent = 'sq ft total';
+    document.getElementById('rPerSqft').textContent = fmt2(e.perSqft);
+    document.getElementById('perSqftDetail').textContent = e.rawSqft + ' sq ft + ' + e.wasteSqft + ' waste';
+    document.getElementById('perSqftCard').style.display = 'flex';
+
+    // Room chips
+    const chips = document.getElementById('rRoomChips');
+    chips.innerHTML = '';
+    e.rooms.forEach(r => {
+      if (r.sqft > 0) chips.innerHTML += `<div class="room-chip"><span class="rc-name">${r.name}</span><span class="rc-val">${r.sqft}</span></div>`;
+    });
+    if (e.wasteSqft > 0) {
+      chips.innerHTML += `<div class="room-chip"><span class="rc-name">+7% Waste (materials)</span><span class="rc-val">${e.wasteSqft}</span></div>`;
+    }
+  }
+
+  // Breakdown rows
+  const rows = document.getElementById('breakdownRows');
+  rows.innerHTML = '';
+
+  if (e.type === 'stairs') {
+    rows.innerHTML += row('Tread Labor', e.stairTreads + ' treads × ' + fmt(e.laborRate), e.laborTotal, true);
+    if (e.stairRisers > 0) rows.innerHTML += row('Risers', e.stairRisers + ' risers (included)', 0, false);
+    if (e.treadWidth) rows.innerHTML += `<div class="breakdown-row"><div><div class="b-name">Tread Width</div></div><div class="b-val">${e.treadWidth}</div></div>`;
+    if (e.riserWidth) rows.innerHTML += `<div class="breakdown-row"><div><div class="b-name">Riser Width</div></div><div class="b-val">${e.riserWidth}</div></div>`;
+    if (e.stairNotes) rows.innerHTML += `<div class="breakdown-row"><div><div class="b-name">Notes</div><div class="b-detail">${e.stairNotes}</div></div><div class="b-val">—</div></div>`;
+  } else {
+    rows.innerHTML += row('Labor — ' + e.typeLabel, e.rawSqft + ' sq ft × ' + fmt2(e.laborRate) + '/sqft', e.laborTotal, true);
+    if (e.sealerCoats > 0 && e.sealerCost > 0)
+      rows.innerHTML += row('Sealer (' + e.sealerCoats + ' coat)', 'Material + markup', e.sealerCost, false);
+    if (e.polyCost > 0)
+      rows.innerHTML += row('Polyurethane (' + e.polyCoats + ' coats)', 'Material + markup', e.polyCost, false);
+    rows.innerHTML += row('Supplies & sandpaper', 'Flat rate', e.suppliesCost, false);
+    if (e.flooringMaterialCost > 0) {
+      rows.innerHTML += row(
+        'Flooring — ' + (e.flooringLabel || 'Material'),
+        '$' + (e.flooringClientRate||0).toFixed(2) + '/sq ft × ' + (e.orderSqft || e.rawSqft) + ' sq ft',
+        e.flooringMaterialCost, false
+      );
+    }
+    if (e.customMatLines && e.customMatLines.length) {
+      e.customMatLines.forEach(m => {
+        rows.innerHTML += row(m.desc, fmt2(m.costPerSqft) + '/sq ft × ' + e.rawSqft + ' sq ft', m.total, false);
+      });
+    }
+    if (e.finishNotes) {
+      rows.innerHTML += `<div class="breakdown-row"><div><div class="b-name">Finish — ${e.finishType||'Natural'}</div><div class="b-detail">${e.finishNotes}</div></div><div class="b-val">—</div></div>`;
+    }
+  }
+
+  // Show vendor quote button only when flooring species is specified
+  const quoteBtn = document.getElementById('quoteBtn');
+  if (quoteBtn) quoteBtn.style.display = e.flooringLabel ? 'flex' : 'none';
+
+  // Flooring order card
+  const orderCard = document.getElementById('flooringOrderCard');
+  const orderContent = document.getElementById('flooringOrderContent');
+  if (orderCard && orderContent && e.flooringLabel) {
+    orderCard.style.display = 'block';
+    const orderQty = e.orderSqft || e.rawSqft;
+    orderContent.innerHTML = `
+      <div class="breakdown-row" style="padding-top:0;">
+        <div><div class="b-name">Species / Type</div></div>
+        <div class="b-val hi">${e.flooringLabel}</div>
+      </div>
+      ${e.flooringWidth ? `<div class="breakdown-row"><div><div class="b-name">Width</div></div><div class="b-val">${e.flooringWidth}</div></div>` : ''}
+      ${e.flooringThick ? `<div class="breakdown-row"><div><div class="b-name">Thickness</div></div><div class="b-val">${e.flooringThick}</div></div>` : ''}
+      ${e.flooringCostPerSqft > 0 ? `
+      <div class="breakdown-row">
+        <div><div class="b-name">My Cost</div></div>
+        <div class="b-val">$${e.flooringCostPerSqft.toFixed(2)}/sq ft</div>
+      </div>
+      <div class="breakdown-row">
+        <div><div class="b-name">Client Price</div></div>
+        <div class="b-val hi">$${(e.flooringClientRate||0).toFixed(2)}/sq ft</div>
+      </div>` : ''}
+      <div class="breakdown-row">
+        <div>
+          <div class="b-name">Order Quantity</div>
+          <div class="b-detail">${e.rawSqft} sq ft measured${e.wasteSqft > 0 ? ' + ' + e.wasteSqft + ' sq ft waste (7%)' : ''}</div>
+        </div>
+        <div class="b-val hi">${orderQty} sq ft</div>
+      </div>
+      ${e.flooringMaterialCost > 0 ? `
+      <div class="breakdown-row">
+        <div><div class="b-name">Material Total</div></div>
+        <div class="b-val hi">$${Math.round(e.flooringMaterialCost).toLocaleString()}</div>
+      </div>` : ''}
+      ${e.flooringNotes ? `<div class="breakdown-row" style="border-bottom:none;"><div><div class="b-name">Notes</div><div class="b-detail">${e.flooringNotes}</div></div><div class="b-val">—</div></div>` : ''}`;
+  } else if (orderCard) {
+    orderCard.style.display = 'none';
+  }
+}
+
+function row(name, detail, val, highlight) {
+  return `<div class="breakdown-row">
+    <div><div class="b-name">${name}</div><div class="b-detail">${detail}</div></div>
+    <div class="b-val ${highlight ? 'hi' : ''}">${fmt(val)}</div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════
+// GOOGLE SHEETS SAVE
+// ══════════════════════════════════════════════
+function saveToSheet() {
+  const url = document.getElementById('sheetUrl').value.trim();
+  if (!url) {
+    showToast('⚠ Add Sheet URL in Rates first', '');
+    goTo('screen-settings');
+    return;
+  }
+  if (!lastEstimate) { showToast('⚠ No estimate to save', ''); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Saving…';
+
+  const e = lastEstimate;
+
+  const payload = {
+    date:          e.date || new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}),
+    client:        e.client       || '',
+    phone:         e.phone        || '',
+    city:          e.city         || '',
+    typeLabel:     e.typeLabel    || '',
+    status:        'estimate',
+    sqft:          e.rawSqft      || 0,
+    rawSqft:       e.rawSqft      || 0,
+    wasteSqft:     e.wasteSqft    || 0,
+    totalSqft:     e.totalSqft    || e.rawSqft || 0,
+    stairTreads:   e.stairTreads  || e.stairCount || 0,
+    stairRisers:   e.stairRisers  || 0,
+    treadWidth:    e.treadWidth   || '',
+    riserWidth:    e.riserWidth   || '',
+    laborRate:     e.laborRate    || 0,
+    laborTotal:    Math.round(e.laborTotal    || 0),
+    sealerCoats:   e.sealerCoats  || 0,
+    sealerCost:    Math.round(e.sealerCost    || 0),
+    polyCoats:     e.polyCoats    || 0,
+    polyCost:      Math.round(e.polyCost      || 0),
+    suppliesCost:  Math.round(e.suppliesCost  || 0),
+    customMatLines: e.customMatLines || [],
+    total:         Math.round(e.total         || 0),
+    perSqft:       e.perSqft ? parseFloat(e.perSqft).toFixed(2) : '',
+    finishType:    e.finishType   || '',
+    finishNotes:   e.finishNotes  || '',
+    stairNotes:    e.stairNotes   || '',
+    flooringLabel: e.flooringLabel || '',
+    flooringWidth: e.flooringWidth || '',
+    flooringThick: e.flooringThick || '',
+    flooringNotes: e.flooringNotes || '',
+    rooms:         e.rooms        || [],
+    photos:        { general: [], room: {} },
+  };
+
+  // Use hidden iframe + form POST — works on all browsers including Safari iOS
+  const iframeName = 'hidden_save_frame';
+  let iframe = document.getElementById(iframeName);
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.name = iframeName;
+    iframe.id   = iframeName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+
+  const form = document.createElement('form');
+  form.method  = 'POST';
+  form.action  = url;
+  form.target  = iframeName;
+  form.style.display = 'none';
+
+  const input = document.createElement('input');
+  input.type  = 'hidden';
+  input.name  = 'payload';
+  input.value = JSON.stringify(payload);
+  form.appendChild(input);
+  document.body.appendChild(form);
+
+  iframe.onload = function() {
+    btn.disabled = false;
+    btn.textContent = '✓ Saved to Sheet';
+    btn.style.background = 'var(--success)';
+    showToast('✓ Saved to Google Sheets!', 'success');
+    const job = savedJobs.find(j => j.client === payload.client && j.total === payload.total);
+    if (job) {
+      job.savedToSheet = true;
+      try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(err){}
+    }
+    document.body.removeChild(form);
+  };
+
+  form.submit();
+}
+
+
+// ══════════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════════
+function newEstimate() {
+  rooms.length = 0;
+  roomCounter = 0;
+  currentType = 'sf';
+  document.getElementById('clientName').value = '';
+  document.getElementById('clientPhone').value = '';
+  document.getElementById('clientCity').value = '';
+  document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('selected'));
+  document.querySelector('[data-type="sf"]').classList.add('selected');
+  document.getElementById('roomSection').style.display = 'block';
+  document.getElementById('stairSection').style.display = 'none';
+  document.getElementById('saveBtn').textContent = '💾 Save to Google Sheets';
+  document.getElementById('saveBtn').style.background = '';
+  stairTreads = 12;
+  stairRisers = 13;
+  document.getElementById('stairTreads').textContent = 12;
+  document.getElementById('stairRisers').textContent = 13;
+  document.getElementById('treadWidth').value = '';
+  document.getElementById('riserWidth').value = '';
+  document.getElementById('stairNotes').value = '';
+  document.getElementById('finishType').selectedIndex = 0;
+  document.getElementById('finishNotes').value = '';
+  renderRooms();
+  resetPhotos();
+  resetMaterials();
+  goTo('screen-estimate');
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type === 'success' ? ' success' : '') + ' show';
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ══════════════════════════════════════════════
+// MATERIALS SCREEN
+// ══════════════════════════════════════════════
+let reducers = [];
+let reducerCounter = 0;
+
+// ── Flooring "Other" toggle ──
+function toggleFlooringOther() {
+  const sel = document.getElementById('mat_flooring_type').value;
+  document.getElementById('flooringOtherGroup').style.display = sel === 'other' ? 'block' : 'none';
+}
+
+// ── Flooring cost → live client price preview ──
+function updateFlooringClientPrice() {
+  const cost = parseFloat(document.getElementById('mat_flooring_cost')?.value) || 0;
+  const markup = parseFloat(document.getElementById('markup')?.value) || 25;
+  const priceEl = document.getElementById('mat_flooring_price');
+  const pctEl   = document.getElementById('mat_markup_pct');
+  if (pctEl) pctEl.textContent = markup;
+  if (priceEl) {
+    if (cost > 0) {
+      const clientPrice = cost * (1 + markup / 100);
+      priceEl.value = '$' + clientPrice.toFixed(2) + '/sq ft';
+    } else {
+      priceEl.value = '';
+      priceEl.placeholder = 'Auto';
+    }
+  }
+}
+
+// ── Vent species "Other" toggle ──
+function toggleVentOther() {
+  const sel = document.getElementById('vent_species').value;
+  document.getElementById('ventOtherGroup').style.display = sel === 'other' ? 'block' : 'none';
+  calcVentSubtotal();
+}
+
+// ── Vent size "Other" toggle ──
+function toggleVentSizeOther() {
+  const sel = document.getElementById('vent_size').value;
+  document.getElementById('ventSizeOtherGroup').style.display = sel === 'other' ? 'block' : 'none';
+}
+
+// ── Vent subtotal ──
+function calcVentSubtotal() {
+  const qty  = parseFloat(document.getElementById('vent_qty').value)  || 0;
+  const cost = parseFloat(document.getElementById('vent_cost').value) || 0;
+  const sub  = qty * cost;
+  document.getElementById('ventSubtotal').textContent = '$' + sub.toFixed(2);
+  calcMaterialsTotal();
+}
+// Wire vent qty/cost inputs
+document.addEventListener('DOMContentLoaded', () => {
+  ['vent_qty','vent_cost'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', calcVentSubtotal);
+  });
+  const floorCost = document.getElementById('mat_flooring_cost');
+  if (floorCost) floorCost.addEventListener('input', updateFlooringClientPrice);
+});
+
+// ── Reducers ──
+function addReducer() {
+  const id = ++reducerCounter;
+  reducers.push({id, size:'', qty:'', unitCost:'', notes:''});
+  renderReducers();
+}
+
+function removeReducer(id) {
+  reducers = reducers.filter(r => r.id !== id);
+  renderReducers();
+  calcMaterialsTotal();
+}
+
+function renderReducers() {
+  const list = document.getElementById('reducerList');
+  list.innerHTML = '';
+  reducers.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.style.marginBottom = '10px';
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-family:var(--font-ui);font-size:16px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--navy);">Reducer #${reducers.indexOf(r)+1}</div>
+        <span onclick="removeReducer(${r.id})" style="cursor:pointer;color:var(--mist);font-size:25px;padding:2px 6px;border-radius:4px;transition:all 0.15s ease;" onmouseover="this.style.color='var(--crimson)'" onmouseout="this.style.color='var(--mist)'">×</span>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="fl">Size / Type</label>
+          <input class="fi" type="text" placeholder='e.g. T-Molding 3"' value="${r.size}"
+            oninput="updateReducer(${r.id},'size',this.value)">
+        </div>
+        <div class="field-group">
+          <label class="fl">Qty</label>
+          <input class="fi" type="number" min="0" placeholder="0" value="${r.qty}"
+            oninput="updateReducer(${r.id},'qty',this.value)">
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:4px;">
+        <div class="field-group">
+          <label class="fl">Unit Cost</label>
+          <input class="fi" type="number" min="0" step="0.01" placeholder="$0.00" value="${r.unitCost}"
+            oninput="updateReducer(${r.id},'unitCost',this.value)">
+        </div>
+        <div class="field-group">
+          <label class="fl" style="display:flex;justify-content:space-between;">
+            <span>Subtotal</span>
+          </label>
+          <div class="fi" style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--crimson);background:var(--stock);cursor:default;" id="reducerSub-${r.id}">
+            ${r.qty && r.unitCost ? '$' + (parseFloat(r.qty)*parseFloat(r.unitCost)).toFixed(2) : '—'}
+          </div>
+        </div>
+      </div>
+      <div class="field-group" style="margin-top:4px;">
+        <label class="fl">Notes</label>
+        <input class="fi" type="text" placeholder="e.g. Transition at hallway to tile" value="${r.notes}"
+          oninput="updateReducer(${r.id},'notes',this.value)">
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function updateReducer(id, field, val) {
+  const r = reducers.find(r => r.id === id);
+  if (!r) return;
+  r[field] = val;
+  // Update subtotal display in place
+  const subEl = document.getElementById(`reducerSub-${id}`);
+  if (subEl) {
+    const qty = parseFloat(r.qty) || 0;
+    const cost = parseFloat(r.unitCost) || 0;
+    subEl.textContent = qty && cost ? '$' + (qty*cost).toFixed(2) : '—';
+  }
+  calcMaterialsTotal();
+}
+
+// ── Grand total ──
+function calcMaterialsTotal() {
+  const ventQty  = parseFloat(document.getElementById('vent_qty')?.value)  || 0;
+  const ventCost = parseFloat(document.getElementById('vent_cost')?.value) || 0;
+  const ventTotal = ventQty * ventCost;
+
+  const reducerTotal = reducers.reduce((acc, r) => {
+    return acc + ((parseFloat(r.qty)||0) * (parseFloat(r.unitCost)||0));
+  }, 0);
+
+  const grand = ventTotal + reducerTotal;
+  const grandEl = document.getElementById('matGrandTotal');
+  if (grandEl) grandEl.textContent = '$' + grand.toFixed(2);
+
+  // Update summary rows
+  renderMatSummary(ventTotal, reducerTotal, grand);
+}
+
+function renderMatSummary(ventTotal, reducerTotal, grand) {
+  const el = document.getElementById('matSummaryRows');
+  if (!el) return;
+
+  const flooringType = document.getElementById('mat_flooring_type')?.value;
+  const flooringLabel = flooringType === 'other'
+    ? (document.getElementById('mat_flooring_other')?.value || 'Custom')
+    : flooringType;
+  const width = document.getElementById('mat_flooring_width')?.value;
+  const thickness = document.getElementById('mat_flooring_thickness')?.value;
+
+  let html = '';
+
+  if (flooringLabel) {
+    html += sumRow('🪵 Flooring',
+      [flooringLabel, width, thickness].filter(Boolean).join(' · '),
+      null);
+  }
+  if (ventTotal > 0) {
+    const ventSpecies = document.getElementById('vent_species')?.value === 'other'
+      ? document.getElementById('vent_species_other')?.value : document.getElementById('vent_species')?.value;
+    const ventSize = document.getElementById('vent_size')?.value === 'other'
+      ? document.getElementById('vent_size_other')?.value : document.getElementById('vent_size')?.value;
+    const ventQty = document.getElementById('vent_qty')?.value;
+    html += sumRow('🔲 Floor Vents',
+      [ventSpecies, ventSize, ventQty ? ventQty + ' pcs' : ''].filter(Boolean).join(' · '),
+      ventTotal);
+  }
+  reducers.forEach((r, i) => {
+    const sub = (parseFloat(r.qty)||0) * (parseFloat(r.unitCost)||0);
+    if (sub > 0 || r.size) {
+      html += sumRow(`↔ Reducer ${i+1}`, r.size || '—', sub > 0 ? sub : null);
+    }
+  });
+
+  if (!html) {
+    html = '<div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">Fill in materials above to see summary</div>';
+  }
+  el.innerHTML = html;
+}
+
+function sumRow(name, detail, val) {
+  return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--stock);">
+    <div>
+      <div style="font-size:19px;color:var(--navy);font-weight:400;">${name}</div>
+      <div style="font-size:16px;color:var(--mist);">${detail}</div>
+    </div>
+    <div style="font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--slate);">${val != null ? '$'+val.toFixed(2) : '—'}</div>
+  </div>`;
+}
+
+// Reset materials on new estimate
+function resetMaterials() {
+  reducers = [];
+  reducerCounter = 0;
+  ['mat_flooring_type','mat_flooring_other','mat_flooring_width','mat_flooring_thickness',
+   'mat_flooring_notes','vent_species','vent_species_other','vent_size','vent_size_other',
+   'vent_qty','vent_cost','vent_notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.nodeName === 'SELECT' ? el.selectedIndex = 0 : el.value = ''; }
+  });
+  const floorCostEl = document.getElementById('mat_flooring_cost');
+  if (floorCostEl) floorCostEl.value = '';
+  const floorPriceEl = document.getElementById('mat_flooring_price');
+  if (floorPriceEl) floorPriceEl.value = '';
+  document.getElementById('flooringOtherGroup').style.display = 'none';
+  document.getElementById('ventOtherGroup').style.display = 'none';
+  document.getElementById('ventSizeOtherGroup').style.display = 'none';
+  document.getElementById('ventSubtotal').textContent = '$0.00';
+  renderReducers();
+  calcMaterialsTotal();
+}
+
+// ══════════════════════════════════════════════
+// PHOTO SYSTEM
+// ══════════════════════════════════════════════
+// photoStore: { general: [{id, dataUrl, label}], room: {roomId: [{id, dataUrl, label}]} }
+const photoStore = { general: [], room: {} };
+let photoTarget = { type: 'general', roomId: null };
+let lbPhotos = []; // flat array for lightbox navigation
+let lbIndex  = 0;
+
+function triggerPhoto(source, type, roomId = null) {
+  photoTarget = { type, roomId };
+  if (source === 'camera') {
+    document.getElementById('photoCamera').value = '';
+    document.getElementById('photoCamera').click();
+  } else {
+    document.getElementById('photoLibrary').value = '';
+    document.getElementById('photoLibrary').click();
+  }
+}
+
+function handlePhoto(event, source) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const photo = {
+        id: Date.now() + Math.random(),
+        dataUrl: e.target.result,
+        label: photoTarget.type === 'room'
+          ? (rooms.find(r => r.id === photoTarget.roomId)?.name || 'Room')
+          : 'Site Photo'
+      };
+      if (photoTarget.type === 'room' && photoTarget.roomId) {
+        if (!photoStore.room[photoTarget.roomId]) photoStore.room[photoTarget.roomId] = [];
+        photoStore.room[photoTarget.roomId].push(photo);
+        renderRoomPhotos(photoTarget.roomId);
+      } else {
+        photoStore.general.push(photo);
+        renderGeneralPhotos();
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderGeneralPhotos() {
+  // Render in both estimate builder and results screens
+  ['generalPhotoGrid', 'resultsPhotoGrid'].forEach(gridId => {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    renderPhotoGrid(grid, photoStore.general, 'general', null);
+  });
+}
+
+function renderRoomPhotos(roomId) {
+  const grid = document.getElementById(`roomPhotoGrid-${roomId}`);
+  if (!grid) return;
+  const photos = photoStore.room[roomId] || [];
+  renderPhotoGrid(grid, photos, 'room', roomId);
+}
+
+function renderPhotoGrid(grid, photos, type, roomId) {
+  if (!photos.length) {
+    grid.innerHTML = '<div class="photo-empty">No photos yet</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  photos.forEach((photo, idx) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb';
+    thumb.innerHTML = `
+      <img src="${photo.dataUrl}" alt="${photo.label}" onclick="openLightbox('${type}',${roomId},${idx})">
+      <div class="photo-thumb-label">${photo.label}</div>
+      <div class="photo-thumb-del" onclick="deletePhoto(event,'${type}',${roomId},${photo.id})">×</div>`;
+    grid.appendChild(thumb);
+  });
+}
+
+function deletePhoto(event, type, roomId, photoId) {
+  event.stopPropagation();
+  if (type === 'room' && roomId) {
+    photoStore.room[roomId] = (photoStore.room[roomId] || []).filter(p => p.id !== photoId);
+    renderRoomPhotos(roomId);
+  } else {
+    photoStore.general = photoStore.general.filter(p => p.id !== photoId);
+    renderGeneralPhotos();
+  }
+}
+
+function openLightbox(type, roomId, startIndex) {
+  // Build flat nav array from the relevant set
+  lbPhotos = type === 'room' && roomId
+    ? (photoStore.room[roomId] || [])
+    : photoStore.general;
+  lbIndex = startIndex;
+  showLbPhoto();
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function showLbPhoto() {
+  if (!lbPhotos.length) return;
+  const p = lbPhotos[lbIndex];
+  document.getElementById('lbImg').src = p.dataUrl;
+  document.getElementById('lbCaption').textContent = p.label + ' · ' + (lbIndex + 1) + ' of ' + lbPhotos.length;
+}
+
+function lbNav(dir) {
+  lbIndex = (lbIndex + dir + lbPhotos.length) % lbPhotos.length;
+  showLbPhoto();
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+// Reset photos on new estimate
+function resetPhotos() {
+  photoStore.general = [];
+  photoStore.room = {};
+  renderGeneralPhotos();
+}
+
+// ══════════════════════════════════════════════
+// JOBS / ESTIMATE HISTORY
+// ══════════════════════════════════════════════
+let savedJobs = [];
+let jobsFilter = 'all';
+
+function loadJobs() {
+  try {
+    savedJobs = JSON.parse(localStorage.getItem('mattie_jobs') || '[]');
+  } catch(e) { savedJobs = []; }
+}
+
+function saveJobLocally(estimate) {
+  loadJobs();
+  const job = {
+    id:          Date.now(),
+    date:        new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}),
+    client:      estimate.client,
+    city:        estimate.city || '',
+    phone:       estimate.phone || '',
+    type:        estimate.type,
+    typeLabel:   estimate.typeLabel,
+    sqft:        estimate.rawSqft || estimate.totalSqft || 0,
+    wasteSqft:   estimate.wasteSqft || 0,
+    totalSqft:   estimate.totalSqft || 0,
+    stairCount:  estimate.stairCount || 0,
+    total:       Math.round(estimate.total),
+    laborRate:   estimate.laborRate,
+    laborTotal:  Math.round(estimate.laborTotal || 0),
+    sealerCoats: estimate.sealerCoats || 0,
+    sealerCost:  Math.round(estimate.sealerCost || 0),
+    polyCoats:   estimate.polyCoats || 0,
+    polyCost:    Math.round(estimate.polyCost || 0),
+    suppliesCost:Math.round(estimate.suppliesCost || 0),
+    customMatLines: estimate.customMatLines || [],
+    perSqft:     estimate.perSqft ? estimate.perSqft.toFixed(2) : '',
+    rooms:       estimate.rooms || [],
+    status:      'estimate',
+    // Snapshot photos from memory at save time
+    photos: {
+      general: (photoStore.general || []).map(p => ({id: p.id, dataUrl: p.dataUrl, label: p.label})),
+      room:    Object.fromEntries(
+        Object.entries(photoStore.room || {}).map(([rid, arr]) => [
+          rid, arr.map(p => ({id: p.id, dataUrl: p.dataUrl, label: p.label}))
+        ])
+      ),
+    },
+  };
+  savedJobs.unshift(job);
+  try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(e){}
+  renderRecentEstimates();
+  updateJobsQuickDesc();
+}
+
+function deleteJob(id) {
+  savedJobs = savedJobs.filter(j => j.id !== id);
+  try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(e){}
+  renderJobsList();
+  renderRecentEstimates();
+  updateJobsQuickDesc();
+}
+
+function cycleJobStatus(id) {
+  const job = savedJobs.find(j => j.id === id);
+  if (!job) return;
+  const cycle = ['estimate','booked','in progress','complete'];
+  const idx = cycle.indexOf(job.status);
+  job.status = cycle[(idx + 1) % cycle.length];
+  try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(e){}
+  renderJobsList();
+}
+
+function filterJobs(type) {
+  jobsFilter = type;
+  document.querySelectorAll('[id^="filter-"]').forEach(el => el.classList.remove('selected'));
+  document.getElementById('filter-' + type)?.classList.add('selected');
+  renderJobsList();
+}
+
+function renderJobsList() {
+  const list = document.getElementById('jobsList');
+  if (!list) return;
+  const filtered = jobsFilter === 'all'
+    ? savedJobs
+    : savedJobs.filter(j => j.type === jobsFilter);
+
+  if (!filtered.length) {
+    list.innerHTML = `<div style="padding:24px 16px;text-align:center;font-size:21px;color:var(--mist);font-style:italic;">
+      ${jobsFilter === 'all' ? 'No estimates saved yet.<br>Calculate an estimate to see it here.' : 'No ' + jobsFilter + ' estimates saved.'}
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = '';
+  filtered.forEach(job => {
+    const initial = (job.client || '?')[0].toUpperCase();
+    const statusColors = {
+      'estimate':    'background:var(--navy-fade);color:var(--navy)',
+      'booked':      'background:rgba(184,134,11,0.12);color:var(--gold)',
+      'in progress': 'background:var(--crimson-fade);color:var(--crimson)',
+      'complete':    'background:var(--success-fade);color:var(--success)',
+    };
+    const statusStyle = statusColors[job.status] || statusColors['estimate'];
+    const detail = job.type === 'stairs'
+      ? (job.stairTreads || job.stairCount || 0) + ' treads'
+      : job.sqft + ' sq ft';
+
+    const div = document.createElement('div');
+    div.style.cssText = 'background:var(--white);margin:0 16px 10px;padding:14px;border-radius:var(--radius-md);box-shadow:var(--shadow-sm);border:1.5px solid var(--stock-mid);';
+    div.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:38px;height:38px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--stock);flex-shrink:0;">${initial}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:21px;font-weight:700;color:var(--navy);margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${job.client}</div>
+          <div style="font-size:16px;color:var(--mist);">${job.typeLabel} · ${detail}${job.city ? ' · ' + job.city : ''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--crimson);">$${job.total.toLocaleString()}</div>
+          <div style="font-size:15px;color:var(--mist);margin-top:1px;">${job.date}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid var(--stock);">
+        <div class="job-status-btn" style="font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:3px;cursor:pointer;transition:all 0.15s ease;${statusStyle}">
+          ${job.status} ›
+        </div>
+        <div style="display:flex;gap:8px;">
+          <div class="job-view-btn" style="font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);cursor:pointer;padding:4px 8px;border-radius:3px;border:1px solid var(--navy);transition:all 0.15s ease;">View</div>
+          <div class="job-delete-btn" style="font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--mist);cursor:pointer;padding:4px 8px;border-radius:3px;border:1px solid var(--stock-mid);transition:all 0.15s ease;">Delete</div>
+        </div>
+      </div>`;
+
+    // Wire events via addEventListener — avoids inline attribute issues with large IDs
+    div.querySelector('.job-status-btn').addEventListener('click', () => cycleJobStatus(job.id));
+    const viewBtn = div.querySelector('.job-view-btn');
+    viewBtn.addEventListener('click', () => openJobDetail(job.id));
+    viewBtn.addEventListener('mouseover', () => { viewBtn.style.background='var(--navy)'; viewBtn.style.color='var(--stock)'; });
+    viewBtn.addEventListener('mouseout',  () => { viewBtn.style.background=''; viewBtn.style.color='var(--navy)'; });
+    const delBtn = div.querySelector('.job-delete-btn');
+    delBtn.addEventListener('click', () => deleteJob(job.id));
+    delBtn.addEventListener('mouseover', () => { delBtn.style.color='var(--crimson)'; delBtn.style.borderColor='var(--crimson)'; });
+    delBtn.addEventListener('mouseout',  () => { delBtn.style.color='var(--mist)'; delBtn.style.borderColor='var(--stock-mid)'; });
+    list.appendChild(div);
+  });
+}
+
+function renderRecentEstimates() {
+  const container = document.getElementById('recentEstimatesList');
+  if (!container) return;
+  const recent = savedJobs.slice(0, 4);
+  if (!recent.length) {
+    container.innerHTML = '<div style="padding:16px 16px 0;font-size:19px;color:var(--mist);font-style:italic;">No estimates saved yet. Calculate one to get started.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  recent.forEach(job => {
+    const initial = (job.client || '?')[0].toUpperCase();
+    const detail = job.type === 'stairs' ? (job.stairTreads || job.stairCount || 0) + ' treads' : job.sqft + ' sq ft';
+    const div = document.createElement('div');
+    div.className = 'recent-item';
+    div.onclick = () => goTo('screen-jobs');
+    div.innerHTML = `
+      <div class="r-avatar">${initial}</div>
+      <div class="r-info">
+        <div class="r-name">${job.client}</div>
+        <div class="r-detail">${job.typeLabel} · ${detail}</div>
+      </div>
+      <div class="r-amount">$${job.total.toLocaleString()}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function updateJobsQuickDesc() {
+  const el = document.getElementById('jobsQuickDesc');
+  if (!el) return;
+  el.textContent = savedJobs.length
+    ? savedJobs.length + ' estimate' + (savedJobs.length !== 1 ? 's' : '') + ' saved'
+    : 'No estimates yet';
+}
+
+// ── Job Detail ──
+let detailJobId = null;
+
+function openJobDetail(id) {
+  const job = savedJobs.find(j => j.id === id);
+  if (!job) return;
+  detailJobId = id;
+
+  // Hero
+  document.getElementById('detailDate').textContent = job.date;
+  document.getElementById('detailClient').textContent = job.client + (job.city ? ', ' + job.city : '');
+  document.getElementById('detailMeta').textContent = job.typeLabel +
+    (job.type === 'stairs'
+      ? ' · ' + (job.stairTreads || job.stairCount || 0) + ' treads · ' + (job.stairRisers || 0) + ' risers'
+      : ' · ' + job.sqft + ' sq ft');
+
+  // Total pill
+  document.getElementById('detailTotal').textContent = '$' + job.total.toLocaleString();
+  document.getElementById('detailTotalBottom').textContent = '$' + job.total.toLocaleString();
+  if (job.type === 'stairs') {
+    document.getElementById('detailSqft').textContent = job.stairTreads || job.stairCount || 0;
+    document.getElementById('detailSqftLabel').textContent = 'steps';
+    document.getElementById('detailPerSqftCard').style.display = 'none';
+  } else {
+    document.getElementById('detailSqft').textContent = job.totalSqft || job.sqft;
+    document.getElementById('detailSqftLabel').textContent = 'sq ft total';
+    document.getElementById('detailPerSqft').textContent = job.perSqft ? '$' + job.perSqft : '—';
+    document.getElementById('detailPerSqftDetail').textContent = job.sqft + ' sq ft' + (job.wasteSqft ? ' + ' + job.wasteSqft + ' waste' : '');
+    document.getElementById('detailPerSqftCard').style.display = 'flex';
+  }
+
+  // Status badge
+  renderDetailStatus(job.status);
+
+  // Room chips
+  const chips = document.getElementById('detailRoomChips');
+  chips.innerHTML = '';
+  if (job.rooms && job.rooms.length) {
+    job.rooms.forEach(r => {
+      if (r.sqft > 0) chips.innerHTML += `<div class="room-chip"><span class="rc-name">${r.name}</span><span class="rc-val">${r.sqft}</span></div>`;
+    });
+    if (job.wasteSqft) chips.innerHTML += `<div class="room-chip"><span class="rc-name">+7% Waste</span><span class="rc-val">${job.wasteSqft}</span></div>`;
+  }
+
+  // Breakdown rows
+  const rows = document.getElementById('detailBreakdownRows');
+  rows.innerHTML = '';
+  if (job.type === 'stairs') {
+    rows.innerHTML += detailRow('Tread Labor', (job.stairTreads || job.stairCount || 0) + ' treads × $' + job.laborRate, job.laborTotal, true);
+    if (job.stairRisers > 0) rows.innerHTML += detailRow('Risers', job.stairRisers + ' risers (included)', 0, false);
+  } else {
+    const sqftUsed = job.totalSqft || job.sqft;
+    rows.innerHTML += detailRow('Labor — ' + job.typeLabel, sqftUsed + ' sq ft × $' + (job.laborRate||0).toFixed(2), job.laborTotal, true);
+    if (job.sealerCoats > 0 && job.sealerCost > 0)
+      rows.innerHTML += detailRow('Sealer (' + job.sealerCoats + ' coat)', 'Material + markup', job.sealerCost, false);
+    if (job.polyCost > 0)
+      rows.innerHTML += detailRow('Polyurethane (' + job.polyCoats + ' coats)', 'Material + markup', job.polyCost, false);
+    if (job.suppliesCost > 0)
+      rows.innerHTML += detailRow('Supplies & sandpaper', 'Flat rate', job.suppliesCost, false);
+    if (job.customMatLines && job.customMatLines.length) {
+      job.customMatLines.forEach(m => rows.innerHTML += detailRow(m.desc, '$' + m.costPerSqft.toFixed(2) + '/sq ft', m.total, false));
+    }
+  }
+
+  // Client info
+  document.getElementById('detailClientInfo').innerHTML = `
+    <div class="settings-row" style="border-bottom:1px solid var(--stock);">
+      <div class="settings-label">Name</div>
+      <div style="font-size:21px;color:var(--navy);font-weight:600;">${job.client}</div>
+    </div>
+    ${job.phone ? `<div class="settings-row" style="border-bottom:1px solid var(--stock);">
+      <div class="settings-label">Phone</div>
+      <div style="font-size:21px;color:var(--navy);">${job.phone}</div>
+    </div>` : ''}
+    ${job.city ? `<div class="settings-row" style="border-bottom:none;">
+      <div class="settings-label">City</div>
+      <div style="font-size:21px;color:var(--navy);">${job.city}</div>
+    </div>` : ''}`;
+
+  // Delete button
+  document.getElementById('detailDeleteBtn').onclick = () => {
+    deleteJob(id);
+    goTo('screen-jobs');
+  };
+
+  // Photos
+  const photos = job.photos || { general: [], room: {} };
+  const generalPhotos = photos.general || [];
+  const roomPhotos = photos.room || {};
+  const hasAnyPhotos = generalPhotos.length > 0 || Object.values(roomPhotos).some(a => a.length > 0);
+
+  document.getElementById('detailPhotosSection').style.display = hasAnyPhotos ? 'block' : 'none';
+
+  // General photos grid
+  const genGrid = document.getElementById('detailGeneralGrid');
+  if (generalPhotos.length) {
+    genGrid.innerHTML = '';
+    generalPhotos.forEach((photo, idx) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'photo-thumb';
+      thumb.innerHTML = `<img src="${photo.dataUrl}" alt="${photo.label}" style="cursor:pointer;">
+        <div class="photo-thumb-label">${photo.label}</div>`;
+      thumb.querySelector('img').addEventListener('click', () => {
+        lbPhotos = generalPhotos;
+        lbIndex = idx;
+        showLbPhoto();
+        document.getElementById('lightbox').classList.add('open');
+      });
+      genGrid.appendChild(thumb);
+    });
+  } else {
+    genGrid.innerHTML = '<div class="photo-empty">No general photos</div>';
+  }
+
+  // Per-room photo sections
+  const roomList = document.getElementById('detailRoomPhotosList');
+  roomList.innerHTML = '';
+  if (job.rooms && job.rooms.length) {
+    job.rooms.forEach(room => {
+      const roomPics = roomPhotos[room.id] || roomPhotos[String(room.id)] || [];
+      if (!roomPics.length) return;
+      const section = document.createElement('div');
+      section.innerHTML = `<div class="card" style="padding:14px 16px;margin-bottom:10px;">
+        <div class="card-label" style="margin-bottom:8px;">${room.name}</div>
+        <div class="photo-grid" id="detailRoomGrid-${room.id}"></div>
+      </div>`;
+      roomList.appendChild(section);
+      const grid = document.getElementById(`detailRoomGrid-${room.id}`);
+      roomPics.forEach((photo, idx) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'photo-thumb';
+        thumb.innerHTML = `<img src="${photo.dataUrl}" alt="${photo.label}" style="cursor:pointer;">
+          <div class="photo-thumb-label">${photo.label}</div>`;
+        thumb.querySelector('img').addEventListener('click', () => {
+          lbPhotos = roomPics;
+          lbIndex = idx;
+          showLbPhoto();
+          document.getElementById('lightbox').classList.add('open');
+        });
+        grid.appendChild(thumb);
+      });
+    });
+  }
+
+  goTo('screen-job-detail');
+}
+
+function detailRow(name, detail, val, highlight) {
+  return `<div class="breakdown-row">
+    <div><div class="b-name">${name}</div><div class="b-detail">${detail}</div></div>
+    <div class="b-val ${highlight ? 'hi' : ''}">$${Math.round(val).toLocaleString()}</div>
+  </div>`;
+}
+
+function renderDetailStatus(status) {
+  const colors = {
+    'estimate':    'background:var(--navy-fade);color:var(--navy)',
+    'booked':      'background:rgba(184,134,11,0.12);color:var(--gold)',
+    'in progress': 'background:var(--crimson-fade);color:var(--crimson)',
+    'complete':    'background:var(--success-fade);color:var(--success)',
+  };
+  const el = document.getElementById('detailStatusBadge');
+  el.textContent = status + ' ›';
+  el.style.cssText = (colors[status] || colors['estimate']) + ';font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:5px 14px;border-radius:3px;cursor:pointer;';
+}
+
+function cycleDetailStatus() {
+  const job = savedJobs.find(j => j.id === detailJobId);
+  if (!job) return;
+  const cycle = ['estimate','booked','in progress','complete'];
+  job.status = cycle[(cycle.indexOf(job.status) + 1) % cycle.length];
+  try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(e){}
+  renderDetailStatus(job.status);
+}
+
+// ══════════════════════════════════════════════
+// REPORTS
+// ══════════════════════════════════════════════
+let reportPeriod = 'month';
+
+function setReportPeriod(period) {
+  reportPeriod = period;
+  ['month','year','all'].forEach(p => {
+    document.getElementById('rptTab-' + p).classList.toggle('active', p === period);
+  });
+  renderReports();
+}
+
+function getJobsForPeriod(period) {
+  const now = new Date();
+  return savedJobs.filter(job => {
+    const d = new Date(job.date);
+    if (isNaN(d)) return period === 'all';
+    if (period === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    if (period === 'year')  return d.getFullYear() === now.getFullYear();
+    return true;
+  });
+}
+
+function calcJobMargin(job, r) {
+  const rev = job.total || 0;
+  if (rev === 0) return { profit: 0, margin: 0, laborCost: 0, matCost: 0, overhead: 0 };
+
+  // Labor cost — what you actually pay crew
+  let laborCost = 0;
+  if (job.type === 'stairs') {
+    laborCost = (job.stairTreads || job.stairCount || 0) * (r.costStairs || 44);
+  } else {
+    const sqft = job.sqft || 0;
+    const rate = job.type === 'install' ? (r.costInstall || 1.88) : (r.costSf || 3.00);
+    laborCost = sqft * rate;
+  }
+
+  // True material cost — strip markup back out
+  const mkFactor = 1 + (r.markup || 25) / 100;
+  const matCost = ((job.sealerCost  || 0) / mkFactor)
+                + ((job.polyCost    || 0) / mkFactor)
+                +  (job.suppliesCost || 0);
+
+  // Fixed overhead as % of revenue
+  const overhead = rev * ((r.overheadPct || 18) / 100);
+
+  const totalCost = laborCost + matCost + overhead;
+  const profit    = rev - totalCost;
+  const margin    = rev > 0 ? (profit / rev) * 100 : 0;
+
+  return {
+    profit:    Math.round(profit),
+    margin:    Math.round(margin * 10) / 10,
+    laborCost: Math.round(laborCost),
+    matCost:   Math.round(matCost),
+    overhead:  Math.round(overhead),
+    totalCost: Math.round(totalCost),
+  };
+}
+
+function renderReports() {
+  loadJobs();
+  const r = getRates();
+  const jobs = getJobsForPeriod(reportPeriod);
+
+  // Revenue & margin
+  const totalRev  = jobs.reduce((a, j) => a + (j.total || 0), 0);
+  const margins   = jobs.map(j => calcJobMargin(j, r));
+  const totalProfit = margins.reduce((a, m) => a + m.profit, 0);
+  const avgMargin = totalRev > 0 ? Math.round((totalProfit / totalRev) * 100) : 0;
+  const avgJob    = jobs.length ? Math.round(totalRev / jobs.length) : 0;
+
+  // Unbooked pipeline (estimate status only, all time)
+  const unbooked = savedJobs
+    .filter(j => j.status === 'estimate')
+    .reduce((a, j) => a + (j.total || 0), 0);
+
+  // Update pills
+  document.getElementById('rptRevenue').textContent  = '$' + totalRev.toLocaleString();
+  document.getElementById('rptJobCount').textContent  = jobs.length + ' job' + (jobs.length !== 1 ? 's' : '');
+  document.getElementById('rptMargin').textContent    = avgMargin + '%';
+  document.getElementById('rptMargin').style.color    = avgMargin >= 30 ? 'var(--success)' : avgMargin >= 15 ? 'var(--gold)' : 'var(--crimson)';
+  document.getElementById('rptProfit').textContent    = '$' + totalProfit.toLocaleString() + ' profit';
+  document.getElementById('rptAvgJob').textContent    = '$' + avgJob.toLocaleString();
+  document.getElementById('rptUnbooked').textContent  = '$' + unbooked.toLocaleString();
+
+  // Job type breakdown
+  const typeLabels = { sf: 'Sand & Finish', install: 'New Install', stairs: 'Stairs' };
+  const types = ['sf', 'install', 'stairs'];
+  const typeData = types.map(t => ({
+    label: typeLabels[t],
+    jobs:  jobs.filter(j => j.type === t),
+    rev:   jobs.filter(j => j.type === t).reduce((a, j) => a + (j.total||0), 0),
+  })).filter(t => t.jobs.length > 0);
+
+  const typeEl = document.getElementById('rptTypeBreakdown');
+  if (!typeData.length) {
+    typeEl.innerHTML = '<div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">No jobs in this period</div>';
+  } else {
+    typeEl.innerHTML = '';
+    typeData.forEach(t => {
+      const pct = totalRev > 0 ? Math.round((t.rev / totalRev) * 100) : 0;
+      const row = document.createElement('div');
+      row.style.cssText = 'margin-bottom:12px;';
+      row.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
+          <div style="font-size:19px;color:var(--navy);font-weight:600;">${t.label}</div>
+          <div style="font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--crimson);">$${t.rev.toLocaleString()} <span style="font-family:var(--font-body);font-size:16px;color:var(--mist);font-weight:400;">${t.jobs.length} job${t.jobs.length!==1?'s':''}</span></div>
+        </div>
+        <div style="background:var(--stock-mid);border-radius:2px;height:5px;overflow:hidden;">
+          <div style="height:100%;border-radius:2px;background:var(--crimson);width:${pct}%;transition:width 0.5s ease;"></div>
+        </div>`;
+      typeEl.appendChild(row);
+    });
+  }
+
+  // Pipeline
+  const pipelineStatuses = ['estimate','booked','in progress','complete'];
+  const statusColors = {
+    'estimate':    'var(--navy-fade);color:var(--navy)',
+    'booked':      'rgba(184,134,11,0.12);color:var(--gold)',
+    'in progress': 'var(--crimson-fade);color:var(--crimson)',
+    'complete':    'var(--success-fade);color:var(--success)',
+  };
+  const pipeEl = document.getElementById('rptPipeline');
+  const pipeData = pipelineStatuses.map(s => ({
+    status: s,
+    count:  savedJobs.filter(j => j.status === s).length,
+    value:  savedJobs.filter(j => j.status === s).reduce((a,j) => a+(j.total||0), 0),
+  })).filter(p => p.count > 0);
+
+  if (!pipeData.length) {
+    pipeEl.innerHTML = '<div style="font-size:19px;color:var(--mist);text-align:center;padding:8px 0;">No jobs saved yet</div>';
+  } else {
+    pipeEl.innerHTML = '';
+    pipeData.forEach(p => {
+      const [bg, col] = statusColors[p.status].split(';');
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--stock);';
+      row.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="font-family:var(--font-ui);font-size:15px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:3px;background:${bg};${col}">${p.status}</div>
+          <div style="font-size:18px;color:var(--mist);">${p.count} job${p.count!==1?'s':''}</div>
+        </div>
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--navy);">$${p.value.toLocaleString()}</div>`;
+      pipeEl.appendChild(row);
+    });
+    pipeEl.lastChild.style.borderBottom = 'none';
+  }
+
+  // Cost basis breakdown
+  const cbEl = document.getElementById('rptCostBasis');
+  if (cbEl) {
+    const typeRows = [
+      { label: 'Sand & Finish', unit: 'sq ft', charge: r.sf,      cost: r.costSf,      example: 500 },
+      { label: 'New Install',   unit: 'sq ft', charge: r.install,  cost: r.costInstall, example: 500 },
+      { label: 'Stairs',        unit: 'tread', charge: r.stairs,   cost: r.costStairs,  example: 12  },
+    ];
+    cbEl.innerHTML = '';
+    typeRows.forEach(t => {
+      const exRev      = t.example * t.charge;
+      const exLabor    = t.example * t.cost;
+      const exOverhead = exRev * (r.overheadPct / 100);
+      const exMat      = t.unit === 'sq ft' ? Math.round(t.example * 0.40) : 0;
+      const exProfit   = exRev - exLabor - exOverhead - exMat;
+      const exMargin   = Math.round((exProfit / exRev) * 100);
+      const marginCol  = exMargin >= 30 ? 'var(--success)' : exMargin >= 15 ? 'var(--gold)' : 'var(--crimson)';
+      const row = document.createElement('div');
+      row.style.cssText = 'padding:10px 0;border-bottom:1px solid var(--stock);';
+      row.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
+          <div style="font-size:19px;font-weight:700;color:var(--navy);">${t.label}</div>
+          <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:${marginCol};">~${exMargin}% margin</div>
+        </div>
+        <div style="font-size:16px;color:var(--mist);line-height:1.9;">
+          Charge <strong style="color:var(--navy);">$${t.charge.toFixed(2)}/${t.unit}</strong> &nbsp;·&nbsp; Labor cost <strong style="color:var(--crimson);">$${t.cost.toFixed(2)}/${t.unit}</strong><br>
+          ${t.example} ${t.unit} example → Rev $${exRev.toLocaleString()} − Labor $${exLabor.toLocaleString()} − OH $${Math.round(exOverhead).toLocaleString()} = <strong style="color:${marginCol};">$${Math.round(exProfit).toLocaleString()} profit</strong>
+        </div>`;
+      cbEl.appendChild(row);
+    });
+    if (cbEl.lastChild) cbEl.lastChild.style.borderBottom = 'none';
+  }
+}
+
+// ══════════════════════════════════════════════
+// VENDOR QUOTE EMAIL
+// ══════════════════════════════════════════════
+const VENDOR_EMAIL = 'infogdc@galleherduffy.com';
+
+function requestVendorQuote() {
+  if (!lastEstimate) return;
+  const e = lastEstimate;
+
+  const species   = e.flooringLabel  || 'unspecified';
+  const width     = e.flooringWidth  ? ', ' + e.flooringWidth + ' wide'     : '';
+  const thickness = e.flooringThick  ? ', ' + e.flooringThick + ' thick'    : '';
+  const notes     = e.flooringNotes  ? '\nGrade/Notes: ' + e.flooringNotes  : '';
+  const orderQty  = e.orderSqft      || e.rawSqft || 0;
+  const client    = e.client         || 'a client';
+  const city      = e.city           ? ' in ' + e.city : '';
+
+  const subject = encodeURIComponent(
+    'Quote Request — ' + species + ' ' + orderQty + ' sq ft'
+  );
+
+  const body = encodeURIComponent(
+`Hi,
+
+I'd like to request a quote for the following flooring material for a job${city}:
+
+Species/Type: ${species}${width}${thickness}
+Quantity: ${orderQty} sq ft${notes}
+
+This is for a ${e.typeLabel || 'flooring'} project for ${client}.
+
+Please reply with your best price per square foot and estimated availability.
+
+Thank you,
+John Mattie
+Mattie's Hardwood Flooring
+(707) 953-9663
+License No. 969033`
+  );
+
+  window.location.href = `mailto:${VENDOR_EMAIL}?subject=${subject}&body=${body}`;
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+loadSettings();
+loadJobs();
+addRoom('Living Room', '');
+updateStairDisplay();
+renderRecentEstimates();
+updateJobsQuickDesc();
+</script>
+</body>
+</html>
