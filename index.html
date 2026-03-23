@@ -556,26 +556,6 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
       <div class="sdiv">Material Costs</div>
       <div class="card">
         <div class="settings-row">
-          <div class="settings-label">Sealer<small>Cost per gallon</small></div>
-          <input class="settings-input" id="cost_sealer_gal" type="number" step="5" value="95">
-        </div>
-        <div class="settings-row">
-          <div class="settings-label">Sealer coverage<small>Sq ft per gallon</small></div>
-          <input class="settings-input" id="cov_sealer" type="number" step="10" value="500">
-        </div>
-        <div class="settings-row">
-          <div class="settings-label">Polyurethane<small>Cost per gallon</small></div>
-          <input class="settings-input" id="cost_poly_gal" type="number" step="5" value="130">
-        </div>
-        <div class="settings-row">
-          <div class="settings-label">Poly coat 1 coverage<small>Sq ft per gallon</small></div>
-          <input class="settings-input" id="cov_poly1" type="number" step="10" value="500">
-        </div>
-        <div class="settings-row">
-          <div class="settings-label">Poly coat 2+ coverage<small>Sq ft per gallon</small></div>
-          <input class="settings-input" id="cov_poly2" type="number" step="10" value="650">
-        </div>
-        <div class="settings-row">
           <div class="settings-label">Bona R851 Adhesive<small>Cost per 3-gal container</small></div>
           <input class="settings-input" id="cost_adhesive" type="number" step="5" value="150">
         </div>
@@ -584,12 +564,16 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
           <input class="settings-input" id="cov_adhesive" type="number" step="10" value="150">
         </div>
         <div class="settings-row">
-          <div class="settings-label">Material markup<small>Percentage over cost</small></div>
-          <input class="settings-input" id="markup" type="number" step="5" value="25">
+          <div class="settings-label">Bona R540 Moisture Barrier<small>Cost per container</small></div>
+          <input class="settings-input" id="cost_moisture" type="number" step="5" value="120">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">R540 coverage<small>Sq ft per container</small></div>
+          <input class="settings-input" id="cov_moisture" type="number" step="10" value="250">
         </div>
         <div class="settings-row" style="border-bottom:none;">
-          <div class="settings-label">Supplies flat rate<small>Sandpaper, tack cloth, etc.</small></div>
-          <input class="settings-input" id="supplies_flat" type="number" step="5" value="85">
+          <div class="settings-label">Material markup<small>Percentage over cost</small></div>
+          <input class="settings-input" id="markup" type="number" step="5" value="25">
         </div>
       </div>
 
@@ -818,6 +802,16 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
           <div style="font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--mist);">Vent Subtotal</div>
           <div style="font-family:var(--font-display);font-size:29px;font-weight:800;color:var(--crimson);" id="ventSubtotal">$0.00</div>
         </div>
+      </div>
+
+      <!-- ── MOISTURE BARRIER ── -->
+      <div class="sdiv">Moisture Barrier</div>
+      <div class="card">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="mat_moisture" style="width:22px;height:22px;accent-color:var(--crimson);">
+          <span style="font-family:var(--font-ui);font-size:18px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy);">Add Bona R540 Moisture Barrier</span>
+        </label>
+        <div style="font-size:17px;color:var(--mist);margin-top:6px;line-height:1.5;">Auto-calculated based on sq ft and coverage rate set in Rates.</div>
       </div>
 
       <!-- ── REDUCERS ── -->
@@ -1116,15 +1110,11 @@ function getRates() {
     install:      parseFloat(document.getElementById('rate_install').value)  || 6.50,
     installSf:    parseFloat(document.getElementById('rate_install_sf').value) || 13.00,
     stairs:       parseFloat(document.getElementById('rate_stairs').value)   || 125,
-    sealerGal:    parseFloat(document.getElementById('cost_sealer_gal').value) || 95,
-    covSealer:    parseFloat(document.getElementById('cov_sealer').value)    || 500,
-    polyGal:      parseFloat(document.getElementById('cost_poly_gal').value) || 130,
-    covPoly1:     parseFloat(document.getElementById('cov_poly1').value)     || 500,
-    covPoly2:     parseFloat(document.getElementById('cov_poly2').value)     || 650,
-    adhesiveCost: parseFloat(document.getElementById('cost_adhesive').value) || 150,
-    covAdhesive:  parseFloat(document.getElementById('cov_adhesive').value)  || 150,
-    markup:       parseFloat(document.getElementById('markup').value)        || 25,
-    supplies:     parseFloat(document.getElementById('supplies_flat').value) || 85,
+    adhesiveCost:  parseFloat(document.getElementById('cost_adhesive').value) || 150,
+    covAdhesive:   parseFloat(document.getElementById('cov_adhesive').value)  || 150,
+    moistureCost:  parseFloat(document.getElementById('cost_moisture').value) || 120,
+    covMoisture:   parseFloat(document.getElementById('cov_moisture').value)  || 250,
+    markup:        parseFloat(document.getElementById('markup').value)        || 25,
     // Crew costs for margin calculation
     costSf:       parseFloat(document.getElementById('cost_sf').value)       || 3.00,
     costInstall:  parseFloat(document.getElementById('cost_install').value)  || 1.88,
@@ -1146,10 +1136,9 @@ function loadSettings() {
     const saved = JSON.parse(localStorage.getItem('mattie_rates') || '{}');
     const map = {
       rate_sf:'sf', rate_install:'install', rate_install_sf:'installSf', rate_stairs:'stairs',
-      cost_sealer_gal:'sealerGal', cov_sealer:'covSealer',
-      cost_poly_gal:'polyGal', cov_poly1:'covPoly1', cov_poly2:'covPoly2',
       cost_adhesive:'adhesiveCost', cov_adhesive:'covAdhesive',
-      markup:'markup', supplies_flat:'supplies',
+      cost_moisture:'moistureCost', cov_moisture:'covMoisture',
+      markup:'markup',
       cost_sf:'costSf', cost_install:'costInstall',
       cost_stairs:'costStairs', overhead_pct:'overheadPct',
     };
@@ -1400,9 +1389,6 @@ function calculate() {
       laborRate: r.stairs,
       laborTotal,
       materialsTotal: 0,
-      sealerCost: 0,
-      polyCost: 0,
-      suppliesCost: 0,
       total: laborTotal,
       perSqft: 0,
       rooms: [],
@@ -1427,35 +1413,7 @@ function calculate() {
     }
     const laborTotal = rawSqft * laborRate;
 
-    // Use default coat counts from rates for finish material calculation
-    const sealerCoats = 1;
-    const polyCoats   = 2;
-
-    // Finish materials — sealer and poly based on actual sq ft
     const mk = 1 + (r.markup / 100);
-    let sealerCost = 0;
-    if (sealerCoats > 0) {
-      const sealerGals = Math.ceil(rawSqft / r.covSealer) * sealerCoats;
-      sealerCost = sealerGals * r.sealerGal * mk;
-    }
-
-    let polyCost = 0;
-    if (polyCoats >= 1) {
-      const gals1 = Math.ceil(rawSqft / r.covPoly1);
-      polyCost += gals1 * r.polyGal * mk;
-    }
-    if (polyCoats >= 2) {
-      const gals2 = Math.ceil(rawSqft / r.covPoly2) * (polyCoats - 1);
-      polyCost += gals2 * r.polyGal * mk;
-    }
-
-    const suppliesCost = r.supplies;
-
-    // Custom materials — based on actual sq ft
-    const customMatLines = customMaterials
-      .filter(m => m.desc && parseFloat(m.costPerSqft) > 0)
-      .map(m => ({desc: m.desc, costPerSqft: parseFloat(m.costPerSqft), total: parseFloat(m.costPerSqft) * rawSqft}));
-    const customMatTotal = customMatLines.reduce((a, m) => a + m.total, 0);
 
     // Grab flooring material spec from Materials tab
     const flooringLabel = mat.species || '';
@@ -1481,11 +1439,26 @@ function calculate() {
       adhesiveCost = adhesiveContainers * r.adhesiveCost * mk;
     }
 
+    // R540 Moisture barrier — optional, toggled on Materials tab
+    let moistureCost = 0;
+    let moistureContainers = 0;
+    const needsMoisture = document.getElementById('mat_moisture')?.checked || false;
+    if (needsMoisture && r.covMoisture > 0) {
+      moistureContainers = Math.ceil(orderSqft / r.covMoisture);
+      moistureCost = moistureContainers * r.moistureCost * mk;
+    }
+
     // Floor vents
     const vents = getVentData();
     const ventCost = vents.total;
 
-    const materialsTotal = sealerCost + polyCost + suppliesCost + customMatTotal + flooringMaterialCost + adhesiveCost + ventCost;
+    // Custom materials — based on actual sq ft
+    const customMatLines = customMaterials
+      .filter(m => m.desc && parseFloat(m.costPerSqft) > 0)
+      .map(m => ({desc: m.desc, costPerSqft: parseFloat(m.costPerSqft), total: parseFloat(m.costPerSqft) * rawSqft}));
+    const customMatTotal = customMatLines.reduce((a, m) => a + m.total, 0);
+
+    const materialsTotal = flooringMaterialCost + adhesiveCost + moistureCost + ventCost + customMatTotal;
     const total          = laborTotal + materialsTotal;
     const perSqft        = rawSqft > 0 ? total / rawSqft : 0;
 
@@ -1497,14 +1470,13 @@ function calculate() {
       client, phone, city,
       rawSqft, wasteSqft, orderSqft, totalSqft,
       laborRate, laborTotal,
-      sealerCoats, polyCoats,
-      sealerCost, polyCost, suppliesCost,
       customMatLines, customMatTotal,
       materialsTotal, total, perSqft,
       finishType, finishNotes,
       flooringLabel, flooringWidth, flooringThick, flooringNotes, matFinish,
       flooringCostPerSqft, flooringClientRate, flooringMaterialCost,
       adhesiveCost, adhesiveContainers, needsGlue,
+      moistureCost, moistureContainers, needsMoisture,
       ventSpecies: vents.species, ventSize: vents.size, ventQty: vents.qty, ventPriceEach: vents.priceEach, ventCost,
       rooms: rooms.map(r => ({name: r.name, sqft: calcRoomSqft(r), removeType: r.removeType, removeOther: r.removeOther})),
     };
@@ -1568,11 +1540,6 @@ function renderResults(e) {
     if (e.stairNotes) rows.innerHTML += `<div class="breakdown-row"><div><div class="b-name">Notes</div><div class="b-detail">${e.stairNotes}</div></div><div class="b-val">—</div></div>`;
   } else {
     rows.innerHTML += row('Labor — ' + e.typeLabel, e.rawSqft + ' sq ft × ' + fmt2(e.laborRate) + '/sqft', e.laborTotal, true);
-    if (e.sealerCoats > 0 && e.sealerCost > 0)
-      rows.innerHTML += row('Sealer (' + e.sealerCoats + ' coat)', 'Material + markup', e.sealerCost, false);
-    if (e.polyCost > 0)
-      rows.innerHTML += row('Polyurethane (' + e.polyCoats + ' coats)', 'Material + markup', e.polyCost, false);
-    rows.innerHTML += row('Supplies & sandpaper', 'Flat rate', e.suppliesCost, false);
     if (e.flooringMaterialCost > 0) {
       rows.innerHTML += row(
         'Flooring — ' + (e.flooringLabel || 'Material'),
@@ -1585,6 +1552,13 @@ function renderResults(e) {
         'Bona R851 Adhesive (glue assist)',
         e.adhesiveContainers + ' × 3-gal container' + (e.adhesiveContainers > 1 ? 's' : '') + ' + markup',
         e.adhesiveCost, false
+      );
+    }
+    if (e.needsMoisture && e.moistureCost > 0) {
+      rows.innerHTML += row(
+        'Bona R540 Moisture Barrier',
+        e.moistureContainers + ' container' + (e.moistureContainers > 1 ? 's' : '') + ' + markup',
+        e.moistureCost, false
       );
     }
     if (e.ventQty > 0 && e.ventCost > 0) {
@@ -1651,6 +1625,14 @@ function renderResults(e) {
         </div>
         <div class="b-val hi">${e.adhesiveContainers} × 3-gal</div>
       </div>` : ''}
+      ${e.needsMoisture ? `
+      <div class="breakdown-row">
+        <div>
+          <div class="b-name">Bona R540 Moisture Barrier</div>
+          <div class="b-detail">${e.moistureContainers} container${e.moistureContainers > 1 ? 's' : ''}</div>
+        </div>
+        <div class="b-val hi">$${Math.round(e.moistureCost).toLocaleString()}</div>
+      </div>` : ''}
       ${e.ventQty > 0 ? `
       <div class="breakdown-row">
         <div>
@@ -1711,11 +1693,6 @@ function saveToSheet() {
     riserWidth:    e.riserWidth   || '',
     laborRate:     e.laborRate    || 0,
     laborTotal:    Math.round(e.laborTotal    || 0),
-    sealerCoats:   e.sealerCoats  || 0,
-    sealerCost:    Math.round(e.sealerCost    || 0),
-    polyCoats:     e.polyCoats    || 0,
-    polyCost:      Math.round(e.polyCost      || 0),
-    suppliesCost:  Math.round(e.suppliesCost  || 0),
     customMatLines: e.customMatLines || [],
     total:         Math.round(e.total         || 0),
     perSqft:       e.perSqft ? parseFloat(e.perSqft).toFixed(2) : '',
@@ -1730,6 +1707,9 @@ function saveToSheet() {
     adhesiveCost:  Math.round(e.adhesiveCost || 0),
     adhesiveContainers: e.adhesiveContainers || 0,
     needsGlue:     e.needsGlue    || false,
+    moistureCost:  Math.round(e.moistureCost || 0),
+    moistureContainers: e.moistureContainers || 0,
+    needsMoisture: e.needsMoisture || false,
     ventSpecies:   e.ventSpecies   || '',
     ventSize:      e.ventSize      || '',
     ventQty:       e.ventQty       || 0,
@@ -2148,6 +2128,8 @@ function resetMaterials() {
   document.getElementById('ventOtherGroup').style.display = 'none';
   document.getElementById('ventSizeOtherGroup').style.display = 'none';
   document.getElementById('ventSubtotal').textContent = '$0.00';
+  const moistureCheck = document.getElementById('mat_moisture');
+  if (moistureCheck) moistureCheck.checked = false;
   renderReducers();
   calcMaterialsTotal();
 }
@@ -2360,11 +2342,6 @@ function saveJobLocally(estimate) {
     total:       Math.round(estimate.total),
     laborRate:   estimate.laborRate,
     laborTotal:  Math.round(estimate.laborTotal || 0),
-    sealerCoats: estimate.sealerCoats || 0,
-    sealerCost:  Math.round(estimate.sealerCost || 0),
-    polyCoats:   estimate.polyCoats || 0,
-    polyCost:    Math.round(estimate.polyCost || 0),
-    suppliesCost:Math.round(estimate.suppliesCost || 0),
     customMatLines: estimate.customMatLines || [],
     perSqft:     estimate.perSqft ? estimate.perSqft.toFixed(2) : '',
     flooringLabel: estimate.flooringLabel || '',
@@ -2378,6 +2355,9 @@ function saveJobLocally(estimate) {
     adhesiveCost: Math.round(estimate.adhesiveCost || 0),
     adhesiveContainers: estimate.adhesiveContainers || 0,
     needsGlue:   estimate.needsGlue || false,
+    moistureCost: Math.round(estimate.moistureCost || 0),
+    moistureContainers: estimate.moistureContainers || 0,
+    needsMoisture: estimate.needsMoisture || false,
     ventSpecies: estimate.ventSpecies || '',
     ventSize:    estimate.ventSize || '',
     ventQty:     estimate.ventQty || 0,
@@ -2580,12 +2560,14 @@ function openJobDetail(id) {
   } else {
     const sqftUsed = job.totalSqft || job.sqft;
     rows.innerHTML += detailRow('Labor — ' + job.typeLabel, sqftUsed + ' sq ft × $' + (job.laborRate||0).toFixed(2), job.laborTotal, true);
-    if (job.sealerCoats > 0 && job.sealerCost > 0)
-      rows.innerHTML += detailRow('Sealer (' + job.sealerCoats + ' coat)', 'Material + markup', job.sealerCost, false);
-    if (job.polyCost > 0)
-      rows.innerHTML += detailRow('Polyurethane (' + job.polyCoats + ' coats)', 'Material + markup', job.polyCost, false);
-    if (job.suppliesCost > 0)
-      rows.innerHTML += detailRow('Supplies & sandpaper', 'Flat rate', job.suppliesCost, false);
+    if (job.flooringMaterialCost > 0)
+      rows.innerHTML += detailRow('Flooring — ' + (job.flooringLabel || 'Material'), '$' + (job.flooringClientRate||0).toFixed(2) + '/sq ft', job.flooringMaterialCost, false);
+    if (job.needsGlue && job.adhesiveCost > 0)
+      rows.innerHTML += detailRow('Bona R851 Adhesive', job.adhesiveContainers + ' × 3-gal container' + (job.adhesiveContainers > 1 ? 's' : ''), job.adhesiveCost, false);
+    if (job.needsMoisture && job.moistureCost > 0)
+      rows.innerHTML += detailRow('Bona R540 Moisture Barrier', job.moistureContainers + ' container' + (job.moistureContainers > 1 ? 's' : ''), job.moistureCost, false);
+    if (job.ventQty > 0 && job.ventCost > 0)
+      rows.innerHTML += detailRow('Floor Vents — ' + (job.ventSpecies||'') + ' ' + (job.ventSize||''), job.ventQty + ' × $' + job.ventPriceEach + '/vent', job.ventCost, false);
     if (job.customMatLines && job.customMatLines.length) {
       job.customMatLines.forEach(m => rows.innerHTML += detailRow(m.desc, '$' + m.costPerSqft.toFixed(2) + '/sq ft', m.total, false));
     }
@@ -2840,6 +2822,9 @@ function editJobEstimate() {
   }
   if (job.ventQty) document.getElementById('vent_qty').value = job.ventQty;
   if (job.ventPriceEach) document.getElementById('vent_cost').value = job.ventPriceEach;
+  // Restore moisture barrier
+  const moistureCheck = document.getElementById('mat_moisture');
+  if (moistureCheck) moistureCheck.checked = !!job.needsMoisture;
 
   // Mark that we're editing (so save updates instead of creates)
   window._editingJobId = job.id;
@@ -2892,9 +2877,10 @@ function calcJobMargin(job, r) {
 
   // True material cost — strip markup back out
   const mkFactor = 1 + (r.markup || 25) / 100;
-  const matCost = ((job.sealerCost  || 0) / mkFactor)
-                + ((job.polyCost    || 0) / mkFactor)
-                +  (job.suppliesCost || 0);
+  const matCost = ((job.flooringMaterialCost || 0) / mkFactor)
+                + ((job.adhesiveCost || 0) / mkFactor)
+                + ((job.moistureCost || 0) / mkFactor)
+                +  (job.ventCost || 0);
 
   // Fixed overhead as % of revenue
   const overhead = rev * ((r.overheadPct || 18) / 100);
