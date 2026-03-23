@@ -326,104 +326,6 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
         </div>
       </div>
 
-      <!-- MATERIAL SELECTION (New Install only) -->
-      <div id="materialSection" style="display:none;">
-        <div class="sdiv">Flooring Material</div>
-        <div class="card">
-          <div class="card-label" style="margin-bottom:8px;">Species</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="speciesChips">
-            <button class="mat-chip" data-val="Red Oak" onclick="pickSpecies(this)">Red Oak</button>
-            <button class="mat-chip" data-val="White Oak" onclick="pickSpecies(this)">White Oak</button>
-            <button class="mat-chip" data-val="Maple" onclick="pickSpecies(this)">Maple</button>
-            <button class="mat-chip" data-val="Engineered" onclick="pickSpecies(this)">Engineered</button>
-            <button class="mat-chip" data-val="other" onclick="pickSpecies(this)">Other</button>
-          </div>
-          <div class="field-group" id="speciesOtherGroup" style="display:none;margin-bottom:10px;">
-            <label class="fl">Specify Material</label>
-            <input class="fi" id="speciesOtherInput" type="text" placeholder="e.g. Brazilian Cherry, Walnut, Hickory…" oninput="syncMaterialToMaterialsTab()">
-          </div>
-
-          <div class="card-label" style="margin-bottom:8px;">Board Width</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="sizeChips">
-            <button class="mat-chip" data-val='2-1/4"' onclick="pickSize(this)">2-1/4"</button>
-            <button class="mat-chip" data-val='3-1/4"' onclick="pickSize(this)">3-1/4"</button>
-            <button class="mat-chip" data-val='4"' onclick="pickSize(this)">4"</button>
-            <button class="mat-chip" data-val='5"' onclick="pickSize(this)">5"</button>
-            <button class="mat-chip" data-val="other" onclick="pickSize(this)">Other</button>
-          </div>
-          <div class="field-group" id="sizeOtherGroup" style="display:none;margin-bottom:10px;">
-            <label class="fl">Specify Width</label>
-            <input class="fi" id="sizeOtherInput" type="text" placeholder='e.g. 6", 7-1/2"' oninput="syncMaterialToMaterialsTab()">
-          </div>
-
-          <div class="card-label" style="margin-bottom:8px;">Finish</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="matFinishChips">
-            <button class="mat-chip" data-val="Pre-Finished" onclick="pickMatFinish(this)">Pre-Finished</button>
-            <button class="mat-chip" data-val="Site Finish" onclick="pickMatFinish(this)">Site Finish</button>
-          </div>
-
-          <div class="field-row" style="margin-top:4px;">
-            <div class="field-group">
-              <label class="fl">Material Cost / sq ft</label>
-              <input class="fi" id="matCostPerSqft" type="number" step="0.25" placeholder="e.g. 4.50" min="0" oninput="updateMatClientPrice(); syncMaterialToMaterialsTab();">
-            </div>
-            <div class="field-group">
-              <label class="fl">Client Price / sq ft</label>
-              <input class="fi" id="matClientPrice" type="text" placeholder="Auto" readonly
-                style="background:var(--stock-dark);color:var(--crimson);font-family:var(--font-display);font-weight:700;cursor:default;">
-            </div>
-          </div>
-          <div style="font-size:12px;color:var(--mist);margin-top:4px;">
-            Client price = your cost + <span id="inline_markup_pct">25</span>% markup. Applied to order qty (sq ft + waste).
-          </div>
-        </div>
-
-        <!-- FLOOR VENTS -->
-        <div class="sdiv" style="margin-top:8px;">Floor Vents</div>
-        <div class="card">
-          <div class="card-label" style="margin-bottom:8px;">Vent Species</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="ventSpeciesChips">
-            <button class="mat-chip" data-val="match" onclick="pickVentSpecies(this)">Match Flooring</button>
-            <button class="mat-chip" data-val="Red Oak" onclick="pickVentSpecies(this)">Red Oak</button>
-            <button class="mat-chip" data-val="White Oak" onclick="pickVentSpecies(this)">White Oak</button>
-            <button class="mat-chip" data-val="Maple" onclick="pickVentSpecies(this)">Maple</button>
-            <button class="mat-chip" data-val="other" onclick="pickVentSpecies(this)">Other</button>
-          </div>
-          <div class="field-group" id="ventSpeciesOtherGroup" style="display:none;margin-bottom:10px;">
-            <label class="fl">Specify Vent Species</label>
-            <input class="fi" id="ventSpeciesOtherInput" type="text" placeholder="e.g. Hickory, Walnut…">
-          </div>
-
-          <div class="card-label" style="margin-bottom:8px;">Vent Size</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="ventSizeChips">
-            <button class="mat-chip" data-val="4x10" onclick="pickVentSize(this)">4×10</button>
-            <button class="mat-chip" data-val="4x12" onclick="pickVentSize(this)">4×12</button>
-            <button class="mat-chip" data-val="4x14" onclick="pickVentSize(this)">4×14</button>
-            <button class="mat-chip" data-val="other" onclick="pickVentSize(this)">Other</button>
-          </div>
-          <div class="field-group" id="ventSizeOtherGroup" style="display:none;margin-bottom:10px;">
-            <label class="fl">Specify Size</label>
-            <input class="fi" id="ventSizeOtherInput" type="text" placeholder="e.g. 6x12, 2x10…">
-          </div>
-
-          <div class="field-row">
-            <div class="field-group">
-              <label class="fl">Qty</label>
-              <input class="fi" id="ventQty" type="number" min="0" step="1" value="0" placeholder="0" oninput="updateVentTotal()">
-            </div>
-            <div class="field-group">
-              <label class="fl">Price per Vent</label>
-              <input class="fi" id="ventPrice" type="number" min="0" step="5" value="95" placeholder="95" oninput="updateVentTotal()">
-            </div>
-            <div class="field-group">
-              <label class="fl">Vent Total</label>
-              <input class="fi" id="ventTotal" type="text" readonly
-                style="background:var(--stock-dark);color:var(--crimson);font-family:var(--font-display);font-weight:700;cursor:default;">
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- ROOM MEASUREMENTS (hidden for stairs) -->
       <div id="roomSection">
         <div class="sdiv">Room Measurements</div>
@@ -819,12 +721,31 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
         <div class="field-row" style="margin-top:4px;">
           <div class="field-group">
             <label class="fl">Width</label>
-            <input class="fi" id="mat_flooring_width" type="text" placeholder='e.g. 3¼"'>
+            <select class="fi" id="mat_flooring_width" onchange="toggleWidthOther()">
+              <option value="">— Select —</option>
+              <option value='2-1/4"'>2-1/4"</option>
+              <option value='3-1/4"'>3-1/4"</option>
+              <option value='4"'>4"</option>
+              <option value='5"'>5"</option>
+              <option value="other">Other…</option>
+            </select>
           </div>
           <div class="field-group">
             <label class="fl">Thickness</label>
             <input class="fi" id="mat_flooring_thickness" type="text" placeholder='e.g. ¾"'>
           </div>
+        </div>
+        <div class="field-group" id="widthOtherGroup" style="display:none;margin-top:4px;">
+          <label class="fl">Specify Width</label>
+          <input class="fi" id="mat_flooring_width_other" type="text" placeholder='e.g. 6", 7-1/2"'>
+        </div>
+        <div class="field-group" style="margin-top:4px;">
+          <label class="fl">Finish</label>
+          <select class="fi" id="mat_finish">
+            <option value="">— Select —</option>
+            <option value="Pre-Finished">Pre-Finished</option>
+            <option value="Site Finish">Site Finish</option>
+          </select>
         </div>
         <div class="field-row" style="margin-top:4px;">
           <div class="field-group">
@@ -868,9 +789,9 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
           <label class="fl">Size</label>
           <select class="fi" id="vent_size" onchange="toggleVentSizeOther()">
             <option value="">— Select —</option>
-            <option value='4×10'>4 × 10</option>
-            <option value='4×12'>4 × 12</option>
-            <option value='4×4'>4 × 4</option>
+            <option value='4x10'>4 × 10</option>
+            <option value='4x12'>4 × 12</option>
+            <option value='4x14'>4 × 14</option>
             <option value="other">Other / Custom…</option>
           </select>
         </div>
@@ -1253,7 +1174,6 @@ function selectType(el, type) {
   const isInstall = type === 'install';
   document.getElementById('roomSection').style.display     = isStairs ? 'none' : 'block';
   document.getElementById('stairSection').style.display    = isStairs ? 'block' : 'none';
-  document.getElementById('materialSection').style.display = isInstall ? 'block' : 'none';
   // Show/hide tear-up row on every existing room card
   document.querySelectorAll('.room-tearup-row').forEach(row => {
     row.style.display = isInstall ? 'block' : 'none';
@@ -1263,150 +1183,32 @@ function selectType(el, type) {
 }
 
 // ══════════════════════════════════════════════
-// MATERIAL SELECTION (New Install)
+// MATERIAL SELECTION (reads from Materials tab)
 // ══════════════════════════════════════════════
-let selectedSpecies = '';
-let selectedSize = '';
-let selectedMatFinish = '';
-
-function pickSpecies(el) {
-  document.querySelectorAll('#speciesChips .mat-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  const val = el.dataset.val;
-  if (val === 'other') {
-    selectedSpecies = '';
-    document.getElementById('speciesOtherGroup').style.display = 'block';
-    document.getElementById('speciesOtherInput').focus();
-  } else {
-    selectedSpecies = val;
-    document.getElementById('speciesOtherGroup').style.display = 'none';
-    document.getElementById('speciesOtherInput').value = '';
-  }
-  syncMaterialToMaterialsTab();
-}
-
-function pickSize(el) {
-  document.querySelectorAll('#sizeChips .mat-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  const val = el.dataset.val;
-  if (val === 'other') {
-    selectedSize = '';
-    document.getElementById('sizeOtherGroup').style.display = 'block';
-    document.getElementById('sizeOtherInput').focus();
-  } else {
-    selectedSize = val;
-    document.getElementById('sizeOtherGroup').style.display = 'none';
-    document.getElementById('sizeOtherInput').value = '';
-  }
-  syncMaterialToMaterialsTab();
-}
-
-function pickMatFinish(el) {
-  document.querySelectorAll('#matFinishChips .mat-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedMatFinish = el.dataset.val;
-  syncMaterialToMaterialsTab();
-}
-
-function updateMatClientPrice() {
-  const cost = parseFloat(document.getElementById('matCostPerSqft').value) || 0;
-  const r = getRates();
-  const mk = 1 + (r.markup / 100);
-  const price = cost * mk;
-  document.getElementById('matClientPrice').value = cost > 0 ? '$' + price.toFixed(2) : '';
-  document.getElementById('inline_markup_pct').textContent = r.markup;
-}
-
-function syncMaterialToMaterialsTab() {
-  // Sync species
-  const species = selectedSpecies || document.getElementById('speciesOtherInput').value.trim();
-  const matTypeEl = document.getElementById('mat_flooring_type');
-  const knownSpecies = ['Red Oak','White Oak','Maple','Engineered','Laminate','LVP'];
-  if (knownSpecies.includes(species)) {
-    matTypeEl.value = species;
-    document.getElementById('mat_flooring_other').value = '';
-  } else if (species) {
-    matTypeEl.value = 'other';
-    document.getElementById('mat_flooring_other').value = species;
-    document.getElementById('flooringOtherGroup').style.display = 'block';
-  }
-  // Sync width
-  const width = selectedSize || document.getElementById('sizeOtherInput').value.trim();
-  if (width) document.getElementById('mat_flooring_width').value = width;
-  // Sync cost
-  const cost = document.getElementById('matCostPerSqft').value;
-  if (cost) document.getElementById('mat_flooring_cost').value = cost;
-  // Sync pre-finished into notes
-  if (selectedMatFinish) {
-    const notesEl = document.getElementById('mat_flooring_notes');
-    const existing = notesEl.value.replace(/Pre-Finished|Site Finish/gi, '').trim();
-    notesEl.value = (selectedMatFinish + (existing ? ', ' + existing : '')).trim();
-  }
-  // Update Materials tab client price display
-  if (typeof toggleFlooringOther === 'function') toggleFlooringOther();
-}
-
 function getSelectedMaterial() {
-  return {
-    species: selectedSpecies || document.getElementById('speciesOtherInput').value.trim(),
-    boardWidth: selectedSize || document.getElementById('sizeOtherInput').value.trim(),
-    matFinish: selectedMatFinish,
-    costPerSqft: parseFloat(document.getElementById('matCostPerSqft').value) || 0,
-  };
+  const type = document.getElementById('mat_flooring_type')?.value || '';
+  const other = document.getElementById('mat_flooring_other')?.value.trim() || '';
+  const species = type === 'other' ? other : type;
+  const widthSel = document.getElementById('mat_flooring_width')?.value || '';
+  const widthOther = document.getElementById('mat_flooring_width_other')?.value.trim() || '';
+  const boardWidth = widthSel === 'other' ? widthOther : widthSel;
+  const matFinish = document.getElementById('mat_finish')?.value || '';
+  const costPerSqft = parseFloat(document.getElementById('mat_flooring_cost')?.value) || 0;
+  return { species, boardWidth, matFinish, costPerSqft };
 }
 
 // ══════════════════════════════════════════════
 // FLOOR VENTS
 // ══════════════════════════════════════════════
-let selectedVentSpecies = '';
-let selectedVentSize = '';
-
-function pickVentSpecies(el) {
-  document.querySelectorAll('#ventSpeciesChips .mat-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  const val = el.dataset.val;
-  if (val === 'other') {
-    selectedVentSpecies = '';
-    document.getElementById('ventSpeciesOtherGroup').style.display = 'block';
-    document.getElementById('ventSpeciesOtherInput').focus();
-  } else if (val === 'match') {
-    selectedVentSpecies = selectedSpecies || document.getElementById('speciesOtherInput').value.trim() || 'Match Flooring';
-    document.getElementById('ventSpeciesOtherGroup').style.display = 'none';
-    document.getElementById('ventSpeciesOtherInput').value = '';
-  } else {
-    selectedVentSpecies = val;
-    document.getElementById('ventSpeciesOtherGroup').style.display = 'none';
-    document.getElementById('ventSpeciesOtherInput').value = '';
-  }
-}
-
-function pickVentSize(el) {
-  document.querySelectorAll('#ventSizeChips .mat-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  const val = el.dataset.val;
-  if (val === 'other') {
-    selectedVentSize = '';
-    document.getElementById('ventSizeOtherGroup').style.display = 'block';
-    document.getElementById('ventSizeOtherInput').focus();
-  } else {
-    selectedVentSize = val;
-    document.getElementById('ventSizeOtherGroup').style.display = 'none';
-    document.getElementById('ventSizeOtherInput').value = '';
-  }
-}
-
-function updateVentTotal() {
-  const qty = parseInt(document.getElementById('ventQty').value) || 0;
-  const price = parseFloat(document.getElementById('ventPrice').value) || 0;
-  const total = qty * price;
-  document.getElementById('ventTotal').value = qty > 0 ? '$' + total.toLocaleString() : '';
-}
-
 function getVentData() {
-  const species = selectedVentSpecies || document.getElementById('ventSpeciesOtherInput').value.trim();
-  const size = selectedVentSize || document.getElementById('ventSizeOtherInput').value.trim();
-  const qty = parseInt(document.getElementById('ventQty').value) || 0;
-  const priceEach = parseFloat(document.getElementById('ventPrice').value) || 95;
+  const speciesSel = document.getElementById('vent_species')?.value || '';
+  const speciesOther = document.getElementById('vent_species_other')?.value.trim() || '';
+  const species = speciesSel === 'other' ? speciesOther : speciesSel;
+  const sizeSel = document.getElementById('vent_size')?.value || '';
+  const sizeOther = document.getElementById('vent_size_other')?.value.trim() || '';
+  const size = sizeSel === 'other' ? sizeOther : sizeSel;
+  const qty = parseInt(document.getElementById('vent_qty')?.value) || 0;
+  const priceEach = parseFloat(document.getElementById('vent_cost')?.value) || 0;
   return { species, size, qty, priceEach, total: qty * priceEach };
 }
 
@@ -1655,17 +1457,15 @@ function calculate() {
       .map(m => ({desc: m.desc, costPerSqft: parseFloat(m.costPerSqft), total: parseFloat(m.costPerSqft) * rawSqft}));
     const customMatTotal = customMatLines.reduce((a, m) => a + m.total, 0);
 
-    // Grab flooring material spec — prefer inline material section, fall back to Materials tab
-    const flooringType  = mat.species || document.getElementById('mat_flooring_type')?.value || '';
-    const flooringOther = document.getElementById('mat_flooring_other')?.value.trim() || '';
-    const flooringLabel = flooringType === 'other' ? flooringOther : flooringType;
-    const flooringWidth = mat.boardWidth || document.getElementById('mat_flooring_width')?.value.trim() || '';
+    // Grab flooring material spec from Materials tab
+    const flooringLabel = mat.species || '';
+    const flooringWidth = mat.boardWidth || '';
     const flooringThick = document.getElementById('mat_flooring_thickness')?.value.trim() || '';
     const flooringNotes = document.getElementById('mat_flooring_notes')?.value.trim() || '';
     const matFinish     = mat.matFinish || '';
 
     // Flooring material cost — cost per sqft + markup × order qty (raw + waste)
-    const flooringCostPerSqft = mat.costPerSqft || parseFloat(document.getElementById('mat_flooring_cost')?.value) || 0;
+    const flooringCostPerSqft = mat.costPerSqft || 0;
     const flooringMarkup      = 1 + ((r.markup || 25) / 100);
     const flooringClientRate  = flooringCostPerSqft * flooringMarkup;
     const orderSqftForCost    = currentType === 'install' ? rawSqft + wasteSqft : rawSqft;
@@ -2096,26 +1896,6 @@ function newEstimate() {
   document.querySelector('[data-type="sf"]').classList.add('selected');
   document.getElementById('roomSection').style.display = 'block';
   document.getElementById('stairSection').style.display = 'none';
-  document.getElementById('materialSection').style.display = 'none';
-  // Reset material selection
-  selectedSpecies = ''; selectedSize = ''; selectedMatFinish = '';
-  document.querySelectorAll('.mat-chip').forEach(c => c.classList.remove('selected'));
-  document.getElementById('speciesOtherGroup').style.display = 'none';
-  document.getElementById('speciesOtherInput').value = '';
-  document.getElementById('sizeOtherGroup').style.display = 'none';
-  document.getElementById('sizeOtherInput').value = '';
-  document.getElementById('matCostPerSqft').value = '';
-  document.getElementById('matClientPrice').value = '';
-  // Reset floor vents
-  selectedVentSpecies = ''; selectedVentSize = '';
-  document.querySelectorAll('#ventSpeciesChips .mat-chip, #ventSizeChips .mat-chip').forEach(c => c.classList.remove('selected'));
-  document.getElementById('ventSpeciesOtherGroup').style.display = 'none';
-  document.getElementById('ventSpeciesOtherInput').value = '';
-  document.getElementById('ventSizeOtherGroup').style.display = 'none';
-  document.getElementById('ventSizeOtherInput').value = '';
-  document.getElementById('ventQty').value = '0';
-  document.getElementById('ventPrice').value = '95';
-  document.getElementById('ventTotal').value = '';
   document.getElementById('saveBtn').textContent = '💾 Save to Google Sheets';
   document.getElementById('saveBtn').style.background = '';
   stairTreads = 12;
@@ -2151,6 +1931,10 @@ let reducerCounter = 0;
 function toggleFlooringOther() {
   const sel = document.getElementById('mat_flooring_type').value;
   document.getElementById('flooringOtherGroup').style.display = sel === 'other' ? 'block' : 'none';
+}
+function toggleWidthOther() {
+  const sel = document.getElementById('mat_flooring_width').value;
+  document.getElementById('widthOtherGroup').style.display = sel === 'other' ? 'block' : 'none';
 }
 
 // ── Flooring cost → live client price preview ──
@@ -2350,17 +2134,17 @@ function sumRow(name, detail, val) {
 function resetMaterials() {
   reducers = [];
   reducerCounter = 0;
-  ['mat_flooring_type','mat_flooring_other','mat_flooring_width','mat_flooring_thickness',
-   'mat_flooring_notes','vent_species','vent_species_other','vent_size','vent_size_other',
+  ['mat_flooring_type','mat_flooring_other','mat_flooring_width','mat_flooring_width_other',
+   'mat_flooring_thickness','mat_flooring_notes','mat_finish',
+   'mat_flooring_cost','mat_flooring_price',
+   'vent_species','vent_species_other','vent_size','vent_size_other',
    'vent_qty','vent_cost','vent_notes'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.nodeName === 'SELECT' ? el.selectedIndex = 0 : el.value = ''; }
   });
-  const floorCostEl = document.getElementById('mat_flooring_cost');
-  if (floorCostEl) floorCostEl.value = '';
-  const floorPriceEl = document.getElementById('mat_flooring_price');
-  if (floorPriceEl) floorPriceEl.value = '';
   document.getElementById('flooringOtherGroup').style.display = 'none';
+  const wog = document.getElementById('widthOtherGroup');
+  if (wog) wog.style.display = 'none';
   document.getElementById('ventOtherGroup').style.display = 'none';
   document.getElementById('ventSizeOtherGroup').style.display = 'none';
   document.getElementById('ventSubtotal').textContent = '$0.00';
@@ -2999,78 +2783,63 @@ function editJobEstimate() {
     }
   }
   document.getElementById('finishNotes').value = job.finishNotes || '';
-  // Material section (New Install)
-  document.getElementById('materialSection').style.display = currentType === 'install' ? 'block' : 'none';
-  selectedSpecies = ''; selectedSize = ''; selectedMatFinish = '';
-  document.querySelectorAll('.mat-chip').forEach(c => c.classList.remove('selected'));
-  document.getElementById('speciesOtherGroup').style.display = 'none';
-  document.getElementById('sizeOtherGroup').style.display = 'none';
-  if (currentType === 'install' && job.flooringLabel) {
-    // Try to select species chip
-    const speciesChip = document.querySelector('#speciesChips .mat-chip[data-val="' + job.flooringLabel + '"]');
-    if (speciesChip) {
-      speciesChip.classList.add('selected');
-      selectedSpecies = job.flooringLabel;
+  // Restore Materials tab fields
+  if (job.flooringLabel) {
+    const matType = document.getElementById('mat_flooring_type');
+    const knownSpecies = Array.from(matType.options).map(o => o.value);
+    if (knownSpecies.includes(job.flooringLabel)) {
+      matType.value = job.flooringLabel;
     } else {
-      const otherChip = document.querySelector('#speciesChips .mat-chip[data-val="other"]');
-      if (otherChip) otherChip.classList.add('selected');
-      document.getElementById('speciesOtherGroup').style.display = 'block';
-      document.getElementById('speciesOtherInput').value = job.flooringLabel;
+      matType.value = 'other';
+      document.getElementById('mat_flooring_other').value = job.flooringLabel;
     }
-    // Try to select size chip
-    if (job.flooringWidth) {
-      const sizeChip = document.querySelector('#sizeChips .mat-chip[data-val="' + job.flooringWidth + '"]');
-      if (sizeChip) {
-        sizeChip.classList.add('selected');
-        selectedSize = job.flooringWidth;
-      } else {
-        const otherSizeChip = document.querySelector('#sizeChips .mat-chip[data-val="other"]');
-        if (otherSizeChip) otherSizeChip.classList.add('selected');
-        document.getElementById('sizeOtherGroup').style.display = 'block';
-        document.getElementById('sizeOtherInput').value = job.flooringWidth;
-      }
-    }
-    // Pre-finished / Site Finish
-    if (job.matFinish) {
-      const finishChip = document.querySelector('#matFinishChips .mat-chip[data-val="' + job.matFinish + '"]');
-      if (finishChip) { finishChip.classList.add('selected'); selectedMatFinish = job.matFinish; }
-    }
-    // Cost
-    if (job.flooringCostPerSqft) {
-      document.getElementById('matCostPerSqft').value = job.flooringCostPerSqft;
-      updateMatClientPrice();
-    }
+    toggleFlooringOther();
   }
-  // Restore floor vents
-  selectedVentSpecies = ''; selectedVentSize = '';
-  document.querySelectorAll('#ventSpeciesChips .mat-chip, #ventSizeChips .mat-chip').forEach(c => c.classList.remove('selected'));
-  document.getElementById('ventSpeciesOtherGroup').style.display = 'none';
-  document.getElementById('ventSpeciesOtherInput').value = '';
-  document.getElementById('ventSizeOtherGroup').style.display = 'none';
-  document.getElementById('ventSizeOtherInput').value = '';
-  document.getElementById('ventQty').value = job.ventQty || 0;
-  document.getElementById('ventPrice').value = job.ventPriceEach || 95;
-  if (job.ventSpecies) {
-    const ventSpChip = document.querySelector('#ventSpeciesChips .mat-chip[data-val="' + job.ventSpecies + '"]');
-    if (ventSpChip) { ventSpChip.classList.add('selected'); selectedVentSpecies = job.ventSpecies; }
-    else {
-      const ventSpOther = document.querySelector('#ventSpeciesChips .mat-chip[data-val="other"]');
-      if (ventSpOther) ventSpOther.classList.add('selected');
-      document.getElementById('ventSpeciesOtherGroup').style.display = 'block';
-      document.getElementById('ventSpeciesOtherInput').value = job.ventSpecies;
+  if (job.flooringWidth) {
+    const widthSel = document.getElementById('mat_flooring_width');
+    const knownWidths = Array.from(widthSel.options).map(o => o.value);
+    if (knownWidths.includes(job.flooringWidth)) {
+      widthSel.value = job.flooringWidth;
+    } else {
+      widthSel.value = 'other';
+      document.getElementById('mat_flooring_width_other').value = job.flooringWidth;
     }
+    toggleWidthOther();
+  }
+  if (job.flooringThick) document.getElementById('mat_flooring_thickness').value = job.flooringThick;
+  if (job.flooringCostPerSqft) document.getElementById('mat_flooring_cost').value = job.flooringCostPerSqft;
+  if (job.flooringNotes) document.getElementById('mat_flooring_notes').value = job.flooringNotes;
+  if (job.matFinish) {
+    const matFinishSel = document.getElementById('mat_finish');
+    if (matFinishSel) matFinishSel.value = job.matFinish;
+  }
+  // Restore vents on Materials tab
+  if (job.ventSpecies) {
+    const ventSpecSel = document.getElementById('vent_species');
+    const knownVent = Array.from(ventSpecSel.options).map(o => o.value);
+    if (knownVent.includes(job.ventSpecies)) {
+      ventSpecSel.value = job.ventSpecies;
+    } else {
+      ventSpecSel.value = 'other';
+      const vo = document.getElementById('vent_species_other');
+      if (vo) vo.value = job.ventSpecies;
+    }
+    if (typeof toggleVentOther === 'function') toggleVentOther();
   }
   if (job.ventSize) {
-    const ventSzChip = document.querySelector('#ventSizeChips .mat-chip[data-val="' + job.ventSize + '"]');
-    if (ventSzChip) { ventSzChip.classList.add('selected'); selectedVentSize = job.ventSize; }
-    else {
-      const ventSzOther = document.querySelector('#ventSizeChips .mat-chip[data-val="other"]');
-      if (ventSzOther) ventSzOther.classList.add('selected');
-      document.getElementById('ventSizeOtherGroup').style.display = 'block';
-      document.getElementById('ventSizeOtherInput').value = job.ventSize;
+    const ventSizeSel = document.getElementById('vent_size');
+    const knownSizes = Array.from(ventSizeSel.options).map(o => o.value);
+    if (knownSizes.includes(job.ventSize)) {
+      ventSizeSel.value = job.ventSize;
+    } else {
+      ventSizeSel.value = 'other';
+      const vso = document.getElementById('vent_size_other');
+      if (vso) vso.value = job.ventSize;
     }
+    if (typeof toggleVentSizeOther === 'function') toggleVentSizeOther();
   }
-  updateVentTotal();
+  if (job.ventQty) document.getElementById('vent_qty').value = job.ventQty;
+  if (job.ventPriceEach) document.getElementById('vent_cost').value = job.ventPriceEach;
 
   // Mark that we're editing (so save updates instead of creates)
   window._editingJobId = job.id;
