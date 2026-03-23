@@ -891,6 +891,53 @@ function loadSettings() {
 // LOAD DATA FROM SHEET
 // Reads the Google Sheet directly via fetch
 // ══════════════════════════════════════════════
+function formatSheetDate(raw) {
+  if (!raw) return '';
+  const d = new Date(raw);
+  if (isNaN(d)) return raw;
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+function normalizeEstimate(row, idx) {
+  // Map Sheet column names (e.g. "Job Type") to desktop property names
+  const r = {};
+  Object.keys(row).forEach(k => { r[k.toLowerCase().replace(/ /g,'_')] = row[k]; });
+  return {
+    _idx: idx,
+    client:      row['Client'] || r.client || '',
+    city:        row['City'] || r.city || '',
+    phone:       row['Phone'] || r.phone || '',
+    typeLabel:   row['Job Type'] || r.job_type || '',
+    type:        typeFromLabel(row['Job Type'] || r.job_type || ''),
+    sqft:        parseFloat(row['Raw Sq Ft'] || r.raw_sq_ft || r.sqft || 0),
+    wasteSqft:   parseFloat(row['Waste Sq Ft'] || r.waste_sq_ft || 0),
+    totalSqft:   parseFloat(row['Total Sq Ft'] || r.total_sq_ft || 0),
+    stairTreads: parseInt(row['Stair Treads'] || r.stair_treads || 0),
+    stairRisers: parseInt(row['Stair Risers'] || r.stair_risers || 0),
+    laborRate:   parseFloat(row['Labor Rate'] || r.labor_rate || 0),
+    laborTotal:  parseFloat(row['Labor Total'] || r.labor_total || 0),
+    sealerCoats: parseInt(row['Sealer Coats'] || r.sealer_coats || 0),
+    sealerCost:  parseFloat(row['Sealer Cost'] || r.sealer_cost || 0),
+    polyCoats:   parseInt(row['Poly Coats'] || r.poly_coats || 0),
+    polyCost:    parseFloat(row['Poly Cost'] || r.poly_cost || 0),
+    suppliesCost:parseFloat(row['Supplies Cost'] || r.supplies_cost || 0),
+    customMaterials: row['Custom Materials'] || r.custom_materials || '',
+    materialsTotal: parseFloat(row['Materials Total'] || r.materials_total || 0),
+    total:       parseFloat(row['Estimate Total'] || r.estimate_total || r.total || 0),
+    perSqft:     row['Price Per Sq Ft'] || r.price_per_sq_ft || '',
+    finishType:  row['Finish Type'] || r.finish_type || '',
+    finishNotes: row['Finish Notes'] || r.finish_notes || '',
+    stairNotes:  row['Stair Notes'] || r.stair_notes || '',
+    flooringSpecies: row['Flooring Species'] || r.flooring_species || '',
+    flooringWidth:   row['Flooring Width'] || r.flooring_width || '',
+    flooringThickness: row['Flooring Thickness'] || r.flooring_thickness || '',
+    flooringNotes: row['Flooring Notes'] || r.flooring_notes || '',
+    rooms:       row['Rooms'] || r.rooms || '',
+    photoCount:  parseInt(row['Photo Count'] || r.photo_count || 0),
+    status:      (row['Status'] || r.status || 'estimate').toLowerCase(),
+    date:        formatSheetDate(row['Date'] || r.date || ''),
+  };
+}
 async function loadFromSheet() {
   if (!sheetUrl) {
     showToast('⚠ Add Sheet URL in Connection Settings first', '');
@@ -909,7 +956,7 @@ async function loadFromSheet() {
     try {
       const data = JSON.parse(text);
       if (data.estimates) {
-        allEstimates = data.estimates;
+        allEstimates = data.estimates.map((row, i) => normalizeEstimate(row, i));
         filteredEstimates = [...allEstimates];
         renderAll();
         showToast('✓ Loaded ' + allEstimates.length + ' estimates', 'success');
