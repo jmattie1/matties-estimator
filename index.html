@@ -50,7 +50,7 @@ body{background:var(--stock);font-family:var(--font-body);min-height:100vh;-webk
 .scroll::-webkit-scrollbar{display:none;}
 
 /* ── BOTTOM NAV ── */
-.bottom-nav{position:absolute;bottom:0;left:0;right:0;height:68px;background:var(--white);border-top:1px solid var(--stock-mid);display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;z-index:20;box-shadow:0 -4px 20px rgba(28,42,74,0.08);}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:68px;background:var(--white);border-top:1px solid var(--stock-mid);display:flex;align-items:center;justify-content:space-around;padding:0 8px 8px;z-index:100;box-shadow:0 -4px 20px rgba(28,42,74,0.08);}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 14px;border-radius:var(--radius-pill);transition:all var(--ease);}
 .nav-item.active{background:var(--crimson-fade);}
 .nav-icon{font-size:29px;line-height:1;}
