@@ -1937,6 +1937,7 @@ function saveToSheet() {
     ventCost:      Math.round(e.ventCost || 0),
     rooms:         e.rooms        || [],
     photos:        { general: [], room: {} },
+    photoFolderId: e.photoFolderId || '',
   };
 
   // Use hidden iframe + form POST — works on all browsers including Safari iOS
@@ -1977,14 +1978,104 @@ function saveToSheet() {
     window._editingJobId = null;
     window._editingSheetRow = 0;
     document.body.removeChild(form);
-    // Auto-reset form after successful save
-    setTimeout(function() {
-      newEstimate();
-      showToast('Ready for next estimate', 'success');
-    }, 1500);
+
+    // Upload photos to Google Drive in background (if any)
+    const hasAnyPhotos = (photoStore.general || []).length > 0
+      || Object.values(photoStore.room || {}).some(a => a.length > 0);
+    if (hasAnyPhotos) {
+      uploadPhotosToDrive(url, payload.client, payload.date);
+    } else {
+      // Auto-reset form after successful save
+      setTimeout(function() { newEstimate(); showToast('Ready for next estimate', 'success'); }, 1500);
+    }
   };
 
   form.submit();
+}
+
+// ── UPLOAD PHOTOS TO DRIVE (runs after estimate save) ────────
+async function uploadPhotosToDrive(sheetUrl, clientName, date) {
+  showToast('📷 Uploading photos to Drive…', '');
+  try {
+    // Build photo payload — send medium quality images
+    const photoPayload = {
+      action: 'uploadPhotos',
+      client: clientName || 'Unknown',
+      date: date || new Date().toLocaleDateString('en-US'),
+      photos: {
+        general: (photoStore.general || []).map(p => ({
+          id: p.id, label: p.label,
+          dataUrl: p.mediumUrl || p.dataUrl
+        })),
+        room: Object.fromEntries(
+          Object.entries(photoStore.room || {}).map(([rid, arr]) => [
+            rid, arr.map(p => ({ id: p.id, label: p.label, dataUrl: p.mediumUrl || p.dataUrl }))
+          ])
+        )
+      }
+    };
+
+    // Try fetch first
+    let result;
+    try {
+      const resp = await fetch(sheetUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(photoPayload),
+        redirect: 'follow',
+      });
+      result = await resp.json();
+    } catch(fetchErr) {
+      // If fetch fails (Safari), use form POST to a hidden iframe
+      // Photos will be saved but we won't get the folder ID back
+      result = await postPhotoViaForm(sheetUrl, photoPayload);
+    }
+
+    if (result && result.success) {
+      showToast('✓ ' + (result.count || 0) + ' photos saved to Drive!', 'success');
+      // Store the folder ID with the local job
+      if (result.folderId) {
+        const job = savedJobs.find(j => j.client === clientName);
+        if (job) {
+          job.photoFolderId = result.folderId;
+          try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(err){}
+        }
+      }
+    } else {
+      showToast('⚠ Photos saved locally only', '');
+    }
+  } catch(err) {
+    console.error('Photo upload error:', err);
+    showToast('⚠ Photos saved locally only', '');
+  }
+  // Auto-reset form
+  setTimeout(function() { newEstimate(); showToast('Ready for next estimate', 'success'); }, 1500);
+}
+
+function postPhotoViaForm(url, payload) {
+  return new Promise(resolve => {
+    const iframeName = 'photo_upload_frame';
+    let iframe = document.getElementById(iframeName);
+    if (!iframe) {
+      iframe = document.createElement('iframe');
+      iframe.name = iframeName; iframe.id = iframeName;
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+    }
+    const form = document.createElement('form');
+    form.method = 'POST'; form.action = url;
+    form.target = iframeName; form.style.display = 'none';
+    const input = document.createElement('input');
+    input.type = 'hidden'; input.name = 'payload';
+    input.value = JSON.stringify(payload);
+    form.appendChild(input);
+    document.body.appendChild(form);
+    iframe.onload = function() {
+      document.body.removeChild(form);
+      resolve({ success: true, count: 0, folderId: '' });
+    };
+    form.submit();
+  });
 }
 
 
@@ -2297,23 +2388,44 @@ function triggerPhoto(source, type, roomId = null) {
   }
 }
 
+function compressImage(dataUrl, maxWidth, quality) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width, h = img.height;
+      if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.src = dataUrl;
+  });
+}
+
 function handlePhoto(event, source) {
   const files = Array.from(event.target.files);
   if (!files.length) return;
+  const capturedTarget = { ...photoTarget };
   files.forEach(file => {
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = async e => {
+      const fullDataUrl = e.target.result;
+      // Compress: 800px wide thumbnail for localStorage, 1600px for Drive upload
+      const thumb = await compressImage(fullDataUrl, 800, 0.7);
+      const medium = await compressImage(fullDataUrl, 1600, 0.8);
       const photo = {
         id: Date.now() + Math.random(),
-        dataUrl: e.target.result,
-        label: photoTarget.type === 'room'
-          ? (rooms.find(r => r.id === photoTarget.roomId)?.name || 'Room')
+        dataUrl: thumb,
+        mediumUrl: medium,
+        label: capturedTarget.type === 'room'
+          ? (rooms.find(r => r.id === capturedTarget.roomId)?.name || 'Room')
           : 'Site Photo'
       };
-      if (photoTarget.type === 'room' && photoTarget.roomId) {
-        if (!photoStore.room[photoTarget.roomId]) photoStore.room[photoTarget.roomId] = [];
-        photoStore.room[photoTarget.roomId].push(photo);
-        renderRoomPhotos(photoTarget.roomId);
+      if (capturedTarget.type === 'room' && capturedTarget.roomId) {
+        if (!photoStore.room[capturedTarget.roomId]) photoStore.room[capturedTarget.roomId] = [];
+        photoStore.room[capturedTarget.roomId].push(photo);
+        renderRoomPhotos(capturedTarget.roomId);
       } else {
         photoStore.general.push(photo);
         renderGeneralPhotos();
@@ -2393,6 +2505,41 @@ function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
 }
 
+// ── LOAD PHOTOS FROM GOOGLE DRIVE ──
+async function loadDrivePhotosMobile(folderId, container) {
+  try {
+    const url = document.getElementById('sheetUrl').value.trim();
+    if (!url) { container.innerHTML = '<div class="photo-empty">No Sheet URL configured</div>'; return; }
+    const resp = await fetch(url + '?action=getPhotos&folderId=' + encodeURIComponent(folderId), { redirect: 'follow' });
+    const data = await resp.json();
+    if (data.photos && data.photos.length) {
+      container.innerHTML = '';
+      data.photos.forEach((p, idx) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'photo-thumb';
+        thumb.innerHTML = `<img src="${p.url}" alt="${p.label}" style="cursor:pointer;" onerror="this.parentElement.style.display='none'">
+          <div class="photo-thumb-label">${p.label||''}</div>`;
+        thumb.querySelector('img').addEventListener('click', () => {
+          lbPhotos = data.photos.map(ph => ({ dataUrl: ph.fullUrl || ph.url, label: ph.label }));
+          lbIndex = idx;
+          showLbPhoto();
+          document.getElementById('lightbox').classList.add('open');
+        });
+        container.appendChild(thumb);
+      });
+      // Add Drive folder link
+      const link = document.createElement('div');
+      link.style.cssText = 'grid-column:1/-1;text-align:center;padding:8px;';
+      link.innerHTML = `<a href="https://drive.google.com/drive/folders/${folderId}" target="_blank" style="font-size:14px;color:var(--crimson);text-decoration:none;">📁 Open in Drive</a>`;
+      container.appendChild(link);
+    } else {
+      container.innerHTML = '<div class="photo-empty">No photos in Drive</div>';
+    }
+  } catch(err) {
+    container.innerHTML = `<div class="photo-empty"><a href="https://drive.google.com/drive/folders/${folderId}" target="_blank" style="color:var(--crimson);">View photos in Drive</a></div>`;
+  }
+}
+
 // Reset photos on new estimate
 function resetPhotos() {
   photoStore.general = [];
@@ -2463,6 +2610,7 @@ function saveJobLocally(estimate) {
         ])
       ),
     },
+    photoFolderId: estimate.photoFolderId || '',
   };
   savedJobs.unshift(job);
   try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(e){}
@@ -2685,58 +2833,67 @@ function openJobDetail(id) {
   const generalPhotos = photos.general || [];
   const roomPhotos = photos.room || {};
   const hasAnyPhotos = generalPhotos.length > 0 || Object.values(roomPhotos).some(a => a.length > 0);
+  const jobFolderId = job.photoFolderId || '';
 
-  document.getElementById('detailPhotosSection').style.display = hasAnyPhotos ? 'block' : 'none';
+  document.getElementById('detailPhotosSection').style.display = (hasAnyPhotos || jobFolderId) ? 'block' : 'none';
 
-  // General photos grid
-  const genGrid = document.getElementById('detailGeneralGrid');
-  if (generalPhotos.length) {
-    genGrid.innerHTML = '';
-    generalPhotos.forEach((photo, idx) => {
-      const thumb = document.createElement('div');
-      thumb.className = 'photo-thumb';
-      thumb.innerHTML = `<img src="${photo.dataUrl}" alt="${photo.label}" style="cursor:pointer;">
-        <div class="photo-thumb-label">${photo.label}</div>`;
-      thumb.querySelector('img').addEventListener('click', () => {
-        lbPhotos = generalPhotos;
-        lbIndex = idx;
-        showLbPhoto();
-        document.getElementById('lightbox').classList.add('open');
-      });
-      genGrid.appendChild(thumb);
-    });
+  // Load from Google Drive if folder exists
+  if (jobFolderId && !hasAnyPhotos) {
+    const genGrid = document.getElementById('detailGeneralGrid');
+    genGrid.innerHTML = '<div style="text-align:center;padding:12px;font-size:14px;color:var(--mist);">Loading photos from Drive…</div>';
+    loadDrivePhotosMobile(jobFolderId, genGrid);
+    document.getElementById('detailRoomPhotosList').innerHTML = '';
   } else {
-    genGrid.innerHTML = '<div class="photo-empty">No general photos</div>';
-  }
-
-  // Per-room photo sections
-  const roomList = document.getElementById('detailRoomPhotosList');
-  roomList.innerHTML = '';
-  if (job.rooms && job.rooms.length) {
-    job.rooms.forEach(room => {
-      const roomPics = roomPhotos[room.id] || roomPhotos[String(room.id)] || [];
-      if (!roomPics.length) return;
-      const section = document.createElement('div');
-      section.innerHTML = `<div class="card" style="padding:14px 16px;margin-bottom:10px;">
-        <div class="card-label" style="margin-bottom:8px;">${room.name}</div>
-        <div class="photo-grid" id="detailRoomGrid-${room.id}"></div>
-      </div>`;
-      roomList.appendChild(section);
-      const grid = document.getElementById(`detailRoomGrid-${room.id}`);
-      roomPics.forEach((photo, idx) => {
+    // Show local photos from localStorage
+    const genGrid = document.getElementById('detailGeneralGrid');
+    if (generalPhotos.length) {
+      genGrid.innerHTML = '';
+      generalPhotos.forEach((photo, idx) => {
         const thumb = document.createElement('div');
         thumb.className = 'photo-thumb';
         thumb.innerHTML = `<img src="${photo.dataUrl}" alt="${photo.label}" style="cursor:pointer;">
           <div class="photo-thumb-label">${photo.label}</div>`;
         thumb.querySelector('img').addEventListener('click', () => {
-          lbPhotos = roomPics;
+          lbPhotos = generalPhotos;
           lbIndex = idx;
           showLbPhoto();
           document.getElementById('lightbox').classList.add('open');
         });
-        grid.appendChild(thumb);
+        genGrid.appendChild(thumb);
       });
-    });
+    } else {
+      genGrid.innerHTML = '<div class="photo-empty">No photos</div>';
+    }
+
+    // Per-room photo sections
+    const roomList = document.getElementById('detailRoomPhotosList');
+    roomList.innerHTML = '';
+    if (job.rooms && job.rooms.length) {
+      job.rooms.forEach(room => {
+        const roomPics = roomPhotos[room.id] || roomPhotos[String(room.id)] || [];
+        if (!roomPics.length) return;
+        const section = document.createElement('div');
+        section.innerHTML = `<div class="card" style="padding:14px 16px;margin-bottom:10px;">
+          <div class="card-label" style="margin-bottom:8px;">${room.name}</div>
+          <div class="photo-grid" id="detailRoomGrid-${room.id}"></div>
+        </div>`;
+        roomList.appendChild(section);
+        const grid = document.getElementById(`detailRoomGrid-${room.id}`);
+        roomPics.forEach((photo, idx) => {
+          const thumb = document.createElement('div');
+          thumb.className = 'photo-thumb';
+          thumb.innerHTML = `<img src="${photo.dataUrl}" alt="${photo.label}" style="cursor:pointer;">
+            <div class="photo-thumb-label">${photo.label}</div>`;
+          thumb.querySelector('img').addEventListener('click', () => {
+            lbPhotos = roomPics;
+            lbIndex = idx;
+            showLbPhoto();
+            document.getElementById('lightbox').classList.add('open');
+          });
+          grid.appendChild(thumb);
+        });
+      });
+    }
   }
 
   goTo('screen-job-detail');
