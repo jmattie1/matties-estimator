@@ -594,7 +594,11 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
         </div>
         <div class="settings-row">
           <div class="settings-label">New Installation<small>Per sq ft</small></div>
-          <input class="settings-input" id="rate_install" type="number" step="0.25" value="6.00">
+          <input class="settings-input" id="rate_install" type="number" step="0.25" value="6.50">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Install + Sand & Finish<small>Per sq ft (site finish)</small></div>
+          <input class="settings-input" id="rate_install_sf" type="number" step="0.25" value="13.00">
         </div>
         <div class="settings-row" style="border-bottom:none;">
           <div class="settings-label">Stair Work<small>Per tread (flat)</small></div>
@@ -1135,7 +1139,8 @@ function goTo(id) {
 function getRates() {
   return {
     sf:           parseFloat(document.getElementById('rate_sf').value)       || 7.25,
-    install:      parseFloat(document.getElementById('rate_install').value)  || 6.00,
+    install:      parseFloat(document.getElementById('rate_install').value)  || 6.50,
+    installSf:    parseFloat(document.getElementById('rate_install_sf').value) || 13.00,
     stairs:       parseFloat(document.getElementById('rate_stairs').value)   || 125,
     sealerGal:    parseFloat(document.getElementById('cost_sealer_gal').value) || 95,
     covSealer:    parseFloat(document.getElementById('cov_sealer').value)    || 500,
@@ -1164,7 +1169,7 @@ function loadSettings() {
   try {
     const saved = JSON.parse(localStorage.getItem('mattie_rates') || '{}');
     const map = {
-      rate_sf:'sf', rate_install:'install', rate_stairs:'stairs',
+      rate_sf:'sf', rate_install:'install', rate_install_sf:'installSf', rate_stairs:'stairs',
       cost_sealer_gal:'sealerGal', cov_sealer:'covSealer',
       cost_poly_gal:'polyGal', cov_poly1:'covPoly1', cov_poly2:'covPoly2',
       markup:'markup', supplies_flat:'supplies',
@@ -1501,7 +1506,12 @@ function calculate() {
     const totalSqft  = rawSqft;             // sq ft for labor calculation
 
     // Labor — based on actual measured sq ft only
-    const laborRate  = r[currentType] || r.sf;
+    // For install jobs: Site Finish = install+s&f rate, Pre-Finished = install-only rate
+    const mat = getSelectedMaterial();
+    let laborRate = r[currentType] || r.sf;
+    if (currentType === 'install' && mat.matFinish) {
+      laborRate = mat.matFinish === 'Site Finish' ? r.installSf : r.install;
+    }
     const laborTotal = rawSqft * laborRate;
 
     // Use default coat counts from rates for finish material calculation
@@ -1535,7 +1545,6 @@ function calculate() {
     const customMatTotal = customMatLines.reduce((a, m) => a + m.total, 0);
 
     // Grab flooring material spec — prefer inline material section, fall back to Materials tab
-    const mat = getSelectedMaterial();
     const flooringType  = mat.species || document.getElementById('mat_flooring_type')?.value || '';
     const flooringOther = document.getElementById('mat_flooring_other')?.value.trim() || '';
     const flooringLabel = flooringType === 'other' ? flooringOther : flooringType;
