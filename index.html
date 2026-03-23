@@ -377,6 +377,51 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
             Client price = your cost + <span id="inline_markup_pct">25</span>% markup. Applied to order qty (sq ft + waste).
           </div>
         </div>
+
+        <!-- FLOOR VENTS -->
+        <div class="sdiv" style="margin-top:8px;">Floor Vents</div>
+        <div class="card">
+          <div class="card-label" style="margin-bottom:8px;">Vent Species</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="ventSpeciesChips">
+            <button class="mat-chip" data-val="match" onclick="pickVentSpecies(this)">Match Flooring</button>
+            <button class="mat-chip" data-val="Red Oak" onclick="pickVentSpecies(this)">Red Oak</button>
+            <button class="mat-chip" data-val="White Oak" onclick="pickVentSpecies(this)">White Oak</button>
+            <button class="mat-chip" data-val="Maple" onclick="pickVentSpecies(this)">Maple</button>
+            <button class="mat-chip" data-val="other" onclick="pickVentSpecies(this)">Other</button>
+          </div>
+          <div class="field-group" id="ventSpeciesOtherGroup" style="display:none;margin-bottom:10px;">
+            <label class="fl">Specify Vent Species</label>
+            <input class="fi" id="ventSpeciesOtherInput" type="text" placeholder="e.g. Hickory, Walnut…">
+          </div>
+
+          <div class="card-label" style="margin-bottom:8px;">Vent Size</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="ventSizeChips">
+            <button class="mat-chip" data-val="4x10" onclick="pickVentSize(this)">4×10</button>
+            <button class="mat-chip" data-val="4x12" onclick="pickVentSize(this)">4×12</button>
+            <button class="mat-chip" data-val="4x14" onclick="pickVentSize(this)">4×14</button>
+            <button class="mat-chip" data-val="other" onclick="pickVentSize(this)">Other</button>
+          </div>
+          <div class="field-group" id="ventSizeOtherGroup" style="display:none;margin-bottom:10px;">
+            <label class="fl">Specify Size</label>
+            <input class="fi" id="ventSizeOtherInput" type="text" placeholder="e.g. 6x12, 2x10…">
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label class="fl">Qty</label>
+              <input class="fi" id="ventQty" type="number" min="0" step="1" value="0" placeholder="0" oninput="updateVentTotal()">
+            </div>
+            <div class="field-group">
+              <label class="fl">Price per Vent</label>
+              <input class="fi" id="ventPrice" type="number" min="0" step="5" value="95" placeholder="95" oninput="updateVentTotal()">
+            </div>
+            <div class="field-group">
+              <label class="fl">Vent Total</label>
+              <input class="fi" id="ventTotal" type="text" readonly
+                style="background:var(--stock-dark);color:var(--crimson);font-family:var(--font-display);font-weight:700;cursor:default;">
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- ROOM MEASUREMENTS (hidden for stairs) -->
@@ -1311,6 +1356,61 @@ function getSelectedMaterial() {
 }
 
 // ══════════════════════════════════════════════
+// FLOOR VENTS
+// ══════════════════════════════════════════════
+let selectedVentSpecies = '';
+let selectedVentSize = '';
+
+function pickVentSpecies(el) {
+  document.querySelectorAll('#ventSpeciesChips .mat-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const val = el.dataset.val;
+  if (val === 'other') {
+    selectedVentSpecies = '';
+    document.getElementById('ventSpeciesOtherGroup').style.display = 'block';
+    document.getElementById('ventSpeciesOtherInput').focus();
+  } else if (val === 'match') {
+    selectedVentSpecies = selectedSpecies || document.getElementById('speciesOtherInput').value.trim() || 'Match Flooring';
+    document.getElementById('ventSpeciesOtherGroup').style.display = 'none';
+    document.getElementById('ventSpeciesOtherInput').value = '';
+  } else {
+    selectedVentSpecies = val;
+    document.getElementById('ventSpeciesOtherGroup').style.display = 'none';
+    document.getElementById('ventSpeciesOtherInput').value = '';
+  }
+}
+
+function pickVentSize(el) {
+  document.querySelectorAll('#ventSizeChips .mat-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const val = el.dataset.val;
+  if (val === 'other') {
+    selectedVentSize = '';
+    document.getElementById('ventSizeOtherGroup').style.display = 'block';
+    document.getElementById('ventSizeOtherInput').focus();
+  } else {
+    selectedVentSize = val;
+    document.getElementById('ventSizeOtherGroup').style.display = 'none';
+    document.getElementById('ventSizeOtherInput').value = '';
+  }
+}
+
+function updateVentTotal() {
+  const qty = parseInt(document.getElementById('ventQty').value) || 0;
+  const price = parseFloat(document.getElementById('ventPrice').value) || 0;
+  const total = qty * price;
+  document.getElementById('ventTotal').value = qty > 0 ? '$' + total.toLocaleString() : '';
+}
+
+function getVentData() {
+  const species = selectedVentSpecies || document.getElementById('ventSpeciesOtherInput').value.trim();
+  const size = selectedVentSize || document.getElementById('ventSizeOtherInput').value.trim();
+  const qty = parseInt(document.getElementById('ventQty').value) || 0;
+  const priceEach = parseFloat(document.getElementById('ventPrice').value) || 95;
+  return { species, size, qty, priceEach, total: qty * priceEach };
+}
+
+// ══════════════════════════════════════════════
 // ROOMS
 // ══════════════════════════════════════════════
 const roomNames = ['Living Room','Bedroom','Dining Room','Hallway','Kitchen','Master Bedroom','Office','Family Room'];
@@ -1581,7 +1681,11 @@ function calculate() {
       adhesiveCost = adhesiveContainers * r.adhesiveCost * mk;
     }
 
-    const materialsTotal = sealerCost + polyCost + suppliesCost + customMatTotal + flooringMaterialCost + adhesiveCost;
+    // Floor vents
+    const vents = getVentData();
+    const ventCost = vents.total;
+
+    const materialsTotal = sealerCost + polyCost + suppliesCost + customMatTotal + flooringMaterialCost + adhesiveCost + ventCost;
     const total          = laborTotal + materialsTotal;
     const perSqft        = rawSqft > 0 ? total / rawSqft : 0;
 
@@ -1601,6 +1705,7 @@ function calculate() {
       flooringLabel, flooringWidth, flooringThick, flooringNotes, matFinish,
       flooringCostPerSqft, flooringClientRate, flooringMaterialCost,
       adhesiveCost, adhesiveContainers, needsGlue,
+      ventSpecies: vents.species, ventSize: vents.size, ventQty: vents.qty, ventPriceEach: vents.priceEach, ventCost,
       rooms: rooms.map(r => ({name: r.name, sqft: calcRoomSqft(r), removeType: r.removeType, removeOther: r.removeOther})),
     };
   }
@@ -1682,6 +1787,13 @@ function renderResults(e) {
         e.adhesiveCost, false
       );
     }
+    if (e.ventQty > 0 && e.ventCost > 0) {
+      rows.innerHTML += row(
+        'Floor Vents — ' + (e.ventSpecies || '') + ' ' + (e.ventSize || ''),
+        e.ventQty + ' × $' + e.ventPriceEach + '/vent',
+        e.ventCost, false
+      );
+    }
     if (e.customMatLines && e.customMatLines.length) {
       e.customMatLines.forEach(m => {
         rows.innerHTML += row(m.desc, fmt2(m.costPerSqft) + '/sq ft × ' + e.rawSqft + ' sq ft', m.total, false);
@@ -1738,6 +1850,14 @@ function renderResults(e) {
           <div class="b-detail">Glue assist required (${e.flooringWidth} boards)</div>
         </div>
         <div class="b-val hi">${e.adhesiveContainers} × 3-gal</div>
+      </div>` : ''}
+      ${e.ventQty > 0 ? `
+      <div class="breakdown-row">
+        <div>
+          <div class="b-name">Floor Vents — ${e.ventSpecies || ''} ${e.ventSize || ''}</div>
+          <div class="b-detail">${e.ventQty} vent${e.ventQty > 1 ? 's' : ''} × $${e.ventPriceEach}/ea</div>
+        </div>
+        <div class="b-val hi">$${e.ventCost.toLocaleString()}</div>
       </div>` : ''}
       ${e.flooringNotes ? `<div class="breakdown-row" style="border-bottom:none;"><div><div class="b-name">Notes</div><div class="b-detail">${e.flooringNotes}</div></div><div class="b-val">—</div></div>` : ''}`;
   } else if (orderCard) {
@@ -1810,6 +1930,11 @@ function saveToSheet() {
     adhesiveCost:  Math.round(e.adhesiveCost || 0),
     adhesiveContainers: e.adhesiveContainers || 0,
     needsGlue:     e.needsGlue    || false,
+    ventSpecies:   e.ventSpecies   || '',
+    ventSize:      e.ventSize      || '',
+    ventQty:       e.ventQty       || 0,
+    ventPriceEach: e.ventPriceEach || 0,
+    ventCost:      Math.round(e.ventCost || 0),
     rooms:         e.rooms        || [],
     photos:        { general: [], room: {} },
   };
@@ -1890,6 +2015,16 @@ function newEstimate() {
   document.getElementById('sizeOtherInput').value = '';
   document.getElementById('matCostPerSqft').value = '';
   document.getElementById('matClientPrice').value = '';
+  // Reset floor vents
+  selectedVentSpecies = ''; selectedVentSize = '';
+  document.querySelectorAll('#ventSpeciesChips .mat-chip, #ventSizeChips .mat-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('ventSpeciesOtherGroup').style.display = 'none';
+  document.getElementById('ventSpeciesOtherInput').value = '';
+  document.getElementById('ventSizeOtherGroup').style.display = 'none';
+  document.getElementById('ventSizeOtherInput').value = '';
+  document.getElementById('ventQty').value = '0';
+  document.getElementById('ventPrice').value = '95';
+  document.getElementById('ventTotal').value = '';
   document.getElementById('saveBtn').textContent = '💾 Save to Google Sheets';
   document.getElementById('saveBtn').style.background = '';
   stairTreads = 12;
@@ -2301,6 +2436,22 @@ function saveJobLocally(estimate) {
     suppliesCost:Math.round(estimate.suppliesCost || 0),
     customMatLines: estimate.customMatLines || [],
     perSqft:     estimate.perSqft ? estimate.perSqft.toFixed(2) : '',
+    flooringLabel: estimate.flooringLabel || '',
+    flooringWidth: estimate.flooringWidth || '',
+    flooringThick: estimate.flooringThick || '',
+    flooringNotes: estimate.flooringNotes || '',
+    flooringCostPerSqft: estimate.flooringCostPerSqft || 0,
+    flooringClientRate: estimate.flooringClientRate || 0,
+    flooringMaterialCost: Math.round(estimate.flooringMaterialCost || 0),
+    matFinish:   estimate.matFinish || '',
+    adhesiveCost: Math.round(estimate.adhesiveCost || 0),
+    adhesiveContainers: estimate.adhesiveContainers || 0,
+    needsGlue:   estimate.needsGlue || false,
+    ventSpecies: estimate.ventSpecies || '',
+    ventSize:    estimate.ventSize || '',
+    ventQty:     estimate.ventQty || 0,
+    ventPriceEach: estimate.ventPriceEach || 0,
+    ventCost:    Math.round(estimate.ventCost || 0),
     rooms:       estimate.rooms || [],
     status:      'estimate',
     // Snapshot photos from memory at save time
@@ -2733,6 +2884,37 @@ function editJobEstimate() {
       updateMatClientPrice();
     }
   }
+  // Restore floor vents
+  selectedVentSpecies = ''; selectedVentSize = '';
+  document.querySelectorAll('#ventSpeciesChips .mat-chip, #ventSizeChips .mat-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('ventSpeciesOtherGroup').style.display = 'none';
+  document.getElementById('ventSpeciesOtherInput').value = '';
+  document.getElementById('ventSizeOtherGroup').style.display = 'none';
+  document.getElementById('ventSizeOtherInput').value = '';
+  document.getElementById('ventQty').value = job.ventQty || 0;
+  document.getElementById('ventPrice').value = job.ventPriceEach || 95;
+  if (job.ventSpecies) {
+    const ventSpChip = document.querySelector('#ventSpeciesChips .mat-chip[data-val="' + job.ventSpecies + '"]');
+    if (ventSpChip) { ventSpChip.classList.add('selected'); selectedVentSpecies = job.ventSpecies; }
+    else {
+      const ventSpOther = document.querySelector('#ventSpeciesChips .mat-chip[data-val="other"]');
+      if (ventSpOther) ventSpOther.classList.add('selected');
+      document.getElementById('ventSpeciesOtherGroup').style.display = 'block';
+      document.getElementById('ventSpeciesOtherInput').value = job.ventSpecies;
+    }
+  }
+  if (job.ventSize) {
+    const ventSzChip = document.querySelector('#ventSizeChips .mat-chip[data-val="' + job.ventSize + '"]');
+    if (ventSzChip) { ventSzChip.classList.add('selected'); selectedVentSize = job.ventSize; }
+    else {
+      const ventSzOther = document.querySelector('#ventSizeChips .mat-chip[data-val="other"]');
+      if (ventSzOther) ventSzOther.classList.add('selected');
+      document.getElementById('ventSizeOtherGroup').style.display = 'block';
+      document.getElementById('ventSizeOtherInput').value = job.ventSize;
+    }
+  }
+  updateVentTotal();
+
   // Mark that we're editing (so save updates instead of creates)
   window._editingJobId = job.id;
   window._editingSheetRow = job.sheetRow || 0;
