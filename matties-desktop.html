@@ -936,6 +936,7 @@ function normalizeEstimate(row, idx) {
     flooringWidth:   row['Flooring Width'] || r.flooring_width || '',
     flooringThickness: row['Flooring Thickness'] || r.flooring_thickness || '',
     flooringNotes: row['Flooring Notes'] || r.flooring_notes || '',
+    matFinish:   row['Material Finish'] || r.material_finish || '',
     rooms:       row['Rooms'] || r.rooms || '',
     photoCount:  parseInt(row['Photo Count'] || r.photo_count || 0),
     status:      (row['Status'] || r.status || 'estimate').toLowerCase(),
@@ -1224,6 +1225,7 @@ function openDetail(idx) {
   const flooringWidth   = j.flooring_width ||j.flooringWidth||'';
   const flooringThick   = j.flooring_thickness||j.flooringThick||'';
   const flooringNotes   = j.flooring_notes ||j.flooringNotes||'';
+  const matFinish       = j.material_finish||j.matFinish||'';
   const finishType  = j.finish_type  ||j.finishType ||'';
   const finishNotes = j.finish_notes ||j.finishNotes||'';
   const stairNotes  = j.stair_notes  ||j.stairNotes ||'';
@@ -1249,12 +1251,13 @@ function openDetail(idx) {
   // ── FLOORING SPEC ──
   const flooringEl = document.getElementById('dp-flooring');
   const flooringTitle = document.getElementById('dp-flooring-title');
-  if (flooringSpecies || flooringWidth || flooringThick) {
+  if (flooringSpecies || flooringWidth || flooringThick || matFinish) {
     flooringTitle.style.display = 'block';
     flooringEl.innerHTML =
       dr('Species', flooringSpecies, true) +
       (flooringWidth ? dr('Width', flooringWidth, false) : '') +
       (flooringThick ? dr('Thickness', flooringThick, false) : '') +
+      (matFinish     ? dr('Material Finish', matFinish, false) : '') +
       (flooringNotes ? dr('Notes', flooringNotes, false) : '');
   } else {
     flooringTitle.style.display = 'none';
@@ -1405,6 +1408,29 @@ function editEstimate() {
         <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Estimate Total</label><input id="edit-total" type="number" value="${j.total||0}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
         <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Finish Type</label><input id="edit-finish" value="${j.finishType||''}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
         <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Rooms</label><input id="edit-rooms" value="${j.rooms||''}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Flooring Species</label><select id="edit-flooring-species" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;">
+          <option value="">— None —</option>
+          <option ${j.flooringSpecies==='Red Oak'?'selected':''}>Red Oak</option>
+          <option ${j.flooringSpecies==='White Oak'?'selected':''}>White Oak</option>
+          <option ${j.flooringSpecies==='Maple'?'selected':''}>Maple</option>
+          <option ${j.flooringSpecies==='Engineered'?'selected':''}>Engineered</option>
+          <option value="other" ${j.flooringSpecies&&!['Red Oak','White Oak','Maple','Engineered',''].includes(j.flooringSpecies)?'selected':''}>Other…</option>
+        </select></div>
+        <div id="edit-species-other-wrap" style="display:${j.flooringSpecies&&!['Red Oak','White Oak','Maple','Engineered',''].includes(j.flooringSpecies)?'block':'none'}"><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Species (Other)</label><input id="edit-flooring-species-other" value="${j.flooringSpecies&&!['Red Oak','White Oak','Maple','Engineered',''].includes(j.flooringSpecies)?j.flooringSpecies:''}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Board Width</label><select id="edit-flooring-width" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;">
+          <option value="">— None —</option>
+          <option ${j.flooringWidth==='2-1/4"'?'selected':''}>2-1/4"</option>
+          <option ${j.flooringWidth==='3-1/4"'?'selected':''}>3-1/4"</option>
+          <option ${j.flooringWidth==='4"'?'selected':''}>4"</option>
+          <option ${j.flooringWidth==='5"'?'selected':''}>5"</option>
+          <option value="other" ${j.flooringWidth&&!['2-1/4"','3-1/4"','4"','5"',''].includes(j.flooringWidth)?'selected':''}>Other…</option>
+        </select></div>
+        <div id="edit-width-other-wrap" style="display:${j.flooringWidth&&!['2-1/4"','3-1/4"','4"','5"',''].includes(j.flooringWidth)?'block':'none'}"><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Width (Other)</label><input id="edit-flooring-width-other" value="${j.flooringWidth&&!['2-1/4\\"','3-1/4\\"','4\\"','5\\"',''].includes(j.flooringWidth)?j.flooringWidth:''}" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;"></div>
+        <div><label style="font-family:var(--font-ui);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:4px;">Material Finish</label><select id="edit-mat-finish" style="width:100%;padding:8px 10px;border:1px solid var(--stock-mid);border-radius:6px;font-size:14px;">
+          <option value="">— None —</option>
+          <option ${j.matFinish==='Pre-Finished'?'selected':''}>Pre-Finished</option>
+          <option ${j.matFinish==='Site Finish'?'selected':''}>Site Finish</option>
+        </select></div>
       </div>
       <div style="display:flex;gap:10px;margin-top:20px;">
         <button onclick="saveEdit()" style="flex:1;padding:12px;background:var(--crimson);color:var(--white);border:none;border-radius:6px;font-family:var(--font-ui);font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;">Save Changes</button>
@@ -1412,6 +1438,13 @@ function editEstimate() {
       </div>
     </div>`;
   overlay.style.display = 'flex';
+  // Toggle Other fields in edit overlay
+  document.getElementById('edit-flooring-species').onchange = function() {
+    document.getElementById('edit-species-other-wrap').style.display = this.value === 'other' ? 'block' : 'none';
+  };
+  document.getElementById('edit-flooring-width').onchange = function() {
+    document.getElementById('edit-width-other-wrap').style.display = this.value === 'other' ? 'block' : 'none';
+  };
 }
 function closeEdit() {
   document.getElementById('editOverlay').style.display = 'none';
@@ -1431,6 +1464,16 @@ async function saveEdit() {
   j.total     = parseFloat(document.getElementById('edit-total').value) || 0;
   j.finishType= document.getElementById('edit-finish').value.trim();
   j.rooms     = document.getElementById('edit-rooms').value.trim();
+  // Flooring material fields
+  const speciesVal = document.getElementById('edit-flooring-species').value;
+  j.flooringSpecies = speciesVal === 'other'
+    ? document.getElementById('edit-flooring-species-other').value.trim()
+    : speciesVal;
+  const widthVal = document.getElementById('edit-flooring-width').value;
+  j.flooringWidth = widthVal === 'other'
+    ? document.getElementById('edit-flooring-width-other').value.trim()
+    : widthVal;
+  j.matFinish = document.getElementById('edit-mat-finish').value;
   j.perSqft   = j.sqft > 0 ? (j.total / j.sqft).toFixed(2) : '';
   // Push full update to Sheet
   if (sheetUrl && j._row) {
@@ -1453,6 +1496,7 @@ async function saveEdit() {
       stairNotes: j.stairNotes || '',
       flooringLabel: j.flooringSpecies || '', flooringWidth: j.flooringWidth || '',
       flooringThick: j.flooringThickness || '', flooringNotes: j.flooringNotes || '',
+      matFinish: j.matFinish || '',
       rooms: j.rooms, photos: { general: [], room: {} },
     });
   }
