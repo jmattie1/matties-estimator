@@ -889,6 +889,7 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
 
       <!-- Actions -->
       <div class="action-stack" style="margin-bottom:10px;">
+        <button class="btn btn-success-fill" onclick="editJobEstimate()">✏️ Edit Estimate</button>
         <button class="btn btn-navy" id="detailDeleteBtn">🗑 Delete Estimate</button>
         <button class="btn btn-outline" onclick="window.print()">🖨 Print / PDF</button>
       </div>
@@ -1569,7 +1570,11 @@ function saveToSheet() {
 
   const e = lastEstimate;
 
+  // If editing, add update action and row reference
+  const isEdit = !!window._editingJobId;
   const payload = {
+    action:        isEdit ? 'update' : undefined,
+    _row:          isEdit ? window._editingSheetRow : undefined,
     date:          e.date || new Date().toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}),
     client:        e.client       || '',
     phone:         e.phone        || '',
@@ -1631,14 +1636,17 @@ function saveToSheet() {
 
   iframe.onload = function() {
     btn.disabled = false;
-    btn.textContent = '✓ Saved to Sheet';
+    btn.textContent = isEdit ? '✓ Updated in Sheet' : '✓ Saved to Sheet';
     btn.style.background = 'var(--success)';
-    showToast('✓ Saved to Google Sheets!', 'success');
+    showToast(isEdit ? '✓ Estimate updated!' : '✓ Saved to Google Sheets!', 'success');
     const job = savedJobs.find(j => j.client === payload.client && j.total === payload.total);
     if (job) {
       job.savedToSheet = true;
       try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(err){}
     }
+    // Clear editing state
+    window._editingJobId = null;
+    window._editingSheetRow = 0;
     document.body.removeChild(form);
     // Auto-reset form after successful save
     setTimeout(function() {
@@ -1656,6 +1664,8 @@ function saveToSheet() {
 // ══════════════════════════════════════════════
 function newEstimate() {
   lastEstimate = null;
+  window._editingJobId = null;
+  window._editingSheetRow = 0;
   rooms.length = 0;
   roomCounter = 0;
   currentType = 'sf';
@@ -2392,6 +2402,89 @@ function cycleDetailStatus() {
   job.status = cycle[(cycle.indexOf(job.status) + 1) % cycle.length];
   try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(e){}
   renderDetailStatus(job.status);
+  // Push status change to Sheet if connected
+  if (job.savedToSheet) {
+    pushStatusToSheet(job);
+  }
+}
+function pushStatusToSheet(job) {
+  const url = document.getElementById('sheetUrl').value.trim();
+  if (!url) return;
+  const payload = { action: 'updateStatus', _row: job.sheetRow || 0, status: job.status };
+  // Use hidden form POST for Safari compatibility
+  const iframeName = 'hidden_status_frame';
+  let iframe = document.getElementById(iframeName);
+  if (!iframe) {
+    iframe = document.createElement('iframe');
+    iframe.name = iframeName; iframe.id = iframeName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+  const form = document.createElement('form');
+  form.method = 'POST'; form.action = url; form.target = iframeName;
+  form.style.display = 'none';
+  const input = document.createElement('input');
+  input.type = 'hidden'; input.name = 'payload';
+  input.value = JSON.stringify(payload);
+  form.appendChild(input);
+  document.body.appendChild(form);
+  iframe.onload = function() {
+    showToast('✓ Status updated in Sheet', 'success');
+    document.body.removeChild(form);
+  };
+  form.submit();
+}
+function editJobEstimate() {
+  const job = savedJobs.find(j => j.id === detailJobId);
+  if (!job) return;
+  // Load the job data back into the estimate form
+  document.getElementById('clientName').value = job.client || '';
+  document.getElementById('clientPhone').value = job.phone || '';
+  document.getElementById('clientCity').value = job.city || '';
+  // Set job type
+  currentType = job.type || 'sf';
+  document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('selected'));
+  const chip = document.querySelector('[data-type="' + currentType + '"]');
+  if (chip) chip.classList.add('selected');
+  document.getElementById('roomSection').style.display = currentType === 'stairs' ? 'none' : 'block';
+  document.getElementById('stairSection').style.display = currentType === 'stairs' ? 'block' : 'none';
+  // Load rooms
+  rooms.length = 0;
+  roomCounter = 0;
+  if (job.rooms && Array.isArray(job.rooms)) {
+    job.rooms.forEach(r => {
+      roomCounter++;
+      rooms.push({ id: roomCounter, name: r.name, sqft: r.sqft, removeType: r.removeType || '' });
+    });
+  }
+  renderRooms();
+  // Load stairs
+  if (currentType === 'stairs') {
+    stairTreads = job.stairTreads || job.stairCount || 12;
+    stairRisers = job.stairRisers || 13;
+    document.getElementById('stairTreads').textContent = stairTreads;
+    document.getElementById('stairRisers').textContent = stairRisers;
+    document.getElementById('treadWidth').value = job.treadWidth || '';
+    document.getElementById('riserWidth').value = job.riserWidth || '';
+    document.getElementById('stairNotes').value = job.stairNotes || '';
+  }
+  // Finish
+  const finishSel = document.getElementById('finishType');
+  if (finishSel) {
+    for (let i = 0; i < finishSel.options.length; i++) {
+      if (finishSel.options[i].value === (job.finishType || 'Natural')) { finishSel.selectedIndex = i; break; }
+    }
+  }
+  document.getElementById('finishNotes').value = job.finishNotes || '';
+  // Mark that we're editing (so save updates instead of creates)
+  window._editingJobId = job.id;
+  window._editingSheetRow = job.sheetRow || 0;
+  // Reset save button
+  document.getElementById('saveBtn').textContent = '💾 Save Changes to Sheet';
+  document.getElementById('saveBtn').style.background = '';
+  // Go to estimate screen
+  goTo('screen-estimate');
+  showToast('Editing: ' + job.client, 'success');
 }
 
 // ══════════════════════════════════════════════
