@@ -629,6 +629,14 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
           <input class="settings-input" id="cov_poly2" type="number" step="10" value="650">
         </div>
         <div class="settings-row">
+          <div class="settings-label">Bona R851 Adhesive<small>Cost per 3-gal container</small></div>
+          <input class="settings-input" id="cost_adhesive" type="number" step="5" value="150">
+        </div>
+        <div class="settings-row">
+          <div class="settings-label">Adhesive coverage<small>Sq ft per 3-gal container</small></div>
+          <input class="settings-input" id="cov_adhesive" type="number" step="10" value="150">
+        </div>
+        <div class="settings-row">
           <div class="settings-label">Material markup<small>Percentage over cost</small></div>
           <input class="settings-input" id="markup" type="number" step="5" value="25">
         </div>
@@ -1147,6 +1155,8 @@ function getRates() {
     polyGal:      parseFloat(document.getElementById('cost_poly_gal').value) || 130,
     covPoly1:     parseFloat(document.getElementById('cov_poly1').value)     || 500,
     covPoly2:     parseFloat(document.getElementById('cov_poly2').value)     || 650,
+    adhesiveCost: parseFloat(document.getElementById('cost_adhesive').value) || 150,
+    covAdhesive:  parseFloat(document.getElementById('cov_adhesive').value)  || 150,
     markup:       parseFloat(document.getElementById('markup').value)        || 25,
     supplies:     parseFloat(document.getElementById('supplies_flat').value) || 85,
     // Crew costs for margin calculation
@@ -1172,6 +1182,7 @@ function loadSettings() {
       rate_sf:'sf', rate_install:'install', rate_install_sf:'installSf', rate_stairs:'stairs',
       cost_sealer_gal:'sealerGal', cov_sealer:'covSealer',
       cost_poly_gal:'polyGal', cov_poly1:'covPoly1', cov_poly2:'covPoly2',
+      cost_adhesive:'adhesiveCost', cov_adhesive:'covAdhesive',
       markup:'markup', supplies_flat:'supplies',
       cost_sf:'costSf', cost_install:'costInstall',
       cost_stairs:'costStairs', overhead_pct:'overheadPct',
@@ -1560,7 +1571,17 @@ function calculate() {
     const orderSqftForCost    = currentType === 'install' ? rawSqft + wasteSqft : rawSqft;
     const flooringMaterialCost = flooringClientRate * orderSqftForCost;
 
-    const materialsTotal = sealerCost + polyCost + suppliesCost + customMatTotal + flooringMaterialCost;
+    // Glue assist — Bona R851 adhesive required for boards 5" or wider
+    let adhesiveCost = 0;
+    let adhesiveContainers = 0;
+    const widthNum = parseFloat(flooringWidth) || 0;
+    const needsGlue = currentType === 'install' && widthNum >= 5;
+    if (needsGlue && r.covAdhesive > 0) {
+      adhesiveContainers = Math.ceil(orderSqft / r.covAdhesive);
+      adhesiveCost = adhesiveContainers * r.adhesiveCost * mk;
+    }
+
+    const materialsTotal = sealerCost + polyCost + suppliesCost + customMatTotal + flooringMaterialCost + adhesiveCost;
     const total          = laborTotal + materialsTotal;
     const perSqft        = rawSqft > 0 ? total / rawSqft : 0;
 
@@ -1579,6 +1600,7 @@ function calculate() {
       finishType, finishNotes,
       flooringLabel, flooringWidth, flooringThick, flooringNotes, matFinish,
       flooringCostPerSqft, flooringClientRate, flooringMaterialCost,
+      adhesiveCost, adhesiveContainers, needsGlue,
       rooms: rooms.map(r => ({name: r.name, sqft: calcRoomSqft(r), removeType: r.removeType, removeOther: r.removeOther})),
     };
   }
@@ -1653,6 +1675,13 @@ function renderResults(e) {
         e.flooringMaterialCost, false
       );
     }
+    if (e.needsGlue && e.adhesiveCost > 0) {
+      rows.innerHTML += row(
+        'Bona R851 Adhesive (glue assist)',
+        e.adhesiveContainers + ' × 3-gal container' + (e.adhesiveContainers > 1 ? 's' : '') + ' + markup',
+        e.adhesiveCost, false
+      );
+    }
     if (e.customMatLines && e.customMatLines.length) {
       e.customMatLines.forEach(m => {
         rows.innerHTML += row(m.desc, fmt2(m.costPerSqft) + '/sq ft × ' + e.rawSqft + ' sq ft', m.total, false);
@@ -1701,6 +1730,14 @@ function renderResults(e) {
       <div class="breakdown-row">
         <div><div class="b-name">Material Total</div></div>
         <div class="b-val hi">$${Math.round(e.flooringMaterialCost).toLocaleString()}</div>
+      </div>` : ''}
+      ${e.needsGlue ? `
+      <div class="breakdown-row">
+        <div>
+          <div class="b-name">Bona R851 Adhesive</div>
+          <div class="b-detail">Glue assist required (${e.flooringWidth} boards)</div>
+        </div>
+        <div class="b-val hi">${e.adhesiveContainers} × 3-gal</div>
       </div>` : ''}
       ${e.flooringNotes ? `<div class="breakdown-row" style="border-bottom:none;"><div><div class="b-name">Notes</div><div class="b-detail">${e.flooringNotes}</div></div><div class="b-val">—</div></div>` : ''}`;
   } else if (orderCard) {
@@ -1770,6 +1807,9 @@ function saveToSheet() {
     flooringThick: e.flooringThick || '',
     flooringNotes: e.flooringNotes || '',
     matFinish:     e.matFinish     || '',
+    adhesiveCost:  Math.round(e.adhesiveCost || 0),
+    adhesiveContainers: e.adhesiveContainers || 0,
+    needsGlue:     e.needsGlue    || false,
     rooms:         e.rooms        || [],
     photos:        { general: [], room: {} },
   };
