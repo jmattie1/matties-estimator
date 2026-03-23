@@ -1408,7 +1408,11 @@ function showToast(msg, type) {
 // INIT
 // ══════════════════════════════════════════════
 loadSettings();
-loadDemoData();
+if (sheetUrl) {
+  loadFromSheet();
+} else {
+  loadDemoData();
+}
 </script>
 </body>
 </html>
