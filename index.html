@@ -1096,6 +1096,7 @@ function goTo(id) {
     sb.style.background = '';
     sb.style.color = '';
   }
+  if (id === 'screen-home')    { loadJobs(); renderRecentEstimates(); updateJobsQuickDesc(); }
   if (id === 'screen-jobs')    renderJobsList();
   if (id === 'screen-reports') renderReports();
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -2327,9 +2328,11 @@ function loadJobs() {
 
 function saveJobLocally(estimate) {
   loadJobs();
+  const editingId = window._editingJobId;
+  const existingJob = editingId ? savedJobs.find(j => j.id === editingId) : null;
   const job = {
-    id:          Date.now(),
-    date:        new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}),
+    id:          existingJob ? existingJob.id : Date.now(),
+    date:        existingJob ? existingJob.date : new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}),
     client:      estimate.client,
     city:        estimate.city || '',
     phone:       estimate.phone || '',
@@ -2375,8 +2378,20 @@ function saveJobLocally(estimate) {
       ),
     },
     photoFolderId: estimate.photoFolderId || '',
+    sheetRow:    existingJob ? existingJob.sheetRow : 0,
   };
-  savedJobs.unshift(job);
+  if (existingJob) {
+    job.status = existingJob.status || 'estimate';
+    const idx = savedJobs.findIndex(j => j.id === editingId);
+    if (idx !== -1) {
+      savedJobs[idx] = job;
+      // Move to front so it shows as most recent
+      savedJobs.splice(idx, 1);
+      savedJobs.unshift(job);
+    }
+  } else {
+    savedJobs.unshift(job);
+  }
   try { localStorage.setItem('mattie_jobs', JSON.stringify(savedJobs)); } catch(e){}
   renderRecentEstimates();
   updateJobsQuickDesc();
