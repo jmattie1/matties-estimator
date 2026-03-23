@@ -96,6 +96,10 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
 .type-chip-label{font-family:var(--font-ui);font-size:16px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate);}
 .type-chip.selected .type-chip-label{color:var(--crimson);}
 
+/* ── MATERIAL CHIPS ── */
+.mat-chip{font-family:var(--font-ui);font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:var(--white);border:1.5px solid var(--stock-mid);border-radius:var(--radius-pill);padding:8px 14px;cursor:pointer;transition:all var(--ease);color:var(--slate);}
+.mat-chip.selected{background:var(--crimson-fade);border-color:var(--crimson);color:var(--crimson);}
+
 /* ── SECTION DIVIDER ── */
 .sdiv{font-family:var(--font-ui);font-size:15px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--mist);padding:0 16px;margin:14px 0 8px;display:flex;align-items:center;gap:10px;}
 .sdiv::after{content:'';flex:1;height:1px;background:var(--stock-mid);}
@@ -319,6 +323,59 @@ input.dim{width:68px;text-align:center;font-family:var(--font-display);font-size
         <div class="type-chip" data-type="stairs" onclick="selectType(this,'stairs')">
           <span class="type-chip-icon">🪜</span>
           <div class="type-chip-label">Stair Work</div>
+        </div>
+      </div>
+
+      <!-- MATERIAL SELECTION (New Install only) -->
+      <div id="materialSection" style="display:none;">
+        <div class="sdiv">Flooring Material</div>
+        <div class="card">
+          <div class="card-label" style="margin-bottom:8px;">Species</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="speciesChips">
+            <button class="mat-chip" data-val="Red Oak" onclick="pickSpecies(this)">Red Oak</button>
+            <button class="mat-chip" data-val="White Oak" onclick="pickSpecies(this)">White Oak</button>
+            <button class="mat-chip" data-val="Maple" onclick="pickSpecies(this)">Maple</button>
+            <button class="mat-chip" data-val="Engineered" onclick="pickSpecies(this)">Engineered</button>
+            <button class="mat-chip" data-val="other" onclick="pickSpecies(this)">Other</button>
+          </div>
+          <div class="field-group" id="speciesOtherGroup" style="display:none;margin-bottom:10px;">
+            <label class="fl">Specify Material</label>
+            <input class="fi" id="speciesOtherInput" type="text" placeholder="e.g. Brazilian Cherry, Walnut, Hickory…" oninput="syncMaterialToMaterialsTab()">
+          </div>
+
+          <div class="card-label" style="margin-bottom:8px;">Board Width</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="sizeChips">
+            <button class="mat-chip" data-val='2-1/4"' onclick="pickSize(this)">2-1/4"</button>
+            <button class="mat-chip" data-val='3-1/4"' onclick="pickSize(this)">3-1/4"</button>
+            <button class="mat-chip" data-val='4"' onclick="pickSize(this)">4"</button>
+            <button class="mat-chip" data-val='5"' onclick="pickSize(this)">5"</button>
+            <button class="mat-chip" data-val="other" onclick="pickSize(this)">Other</button>
+          </div>
+          <div class="field-group" id="sizeOtherGroup" style="display:none;margin-bottom:10px;">
+            <label class="fl">Specify Width</label>
+            <input class="fi" id="sizeOtherInput" type="text" placeholder='e.g. 6", 7-1/2"' oninput="syncMaterialToMaterialsTab()">
+          </div>
+
+          <div class="card-label" style="margin-bottom:8px;">Finish</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;" id="matFinishChips">
+            <button class="mat-chip" data-val="Pre-Finished" onclick="pickMatFinish(this)">Pre-Finished</button>
+            <button class="mat-chip" data-val="Site Finish" onclick="pickMatFinish(this)">Site Finish</button>
+          </div>
+
+          <div class="field-row" style="margin-top:4px;">
+            <div class="field-group">
+              <label class="fl">Material Cost / sq ft</label>
+              <input class="fi" id="matCostPerSqft" type="number" step="0.25" placeholder="e.g. 4.50" min="0" oninput="updateMatClientPrice(); syncMaterialToMaterialsTab();">
+            </div>
+            <div class="field-group">
+              <label class="fl">Client Price / sq ft</label>
+              <input class="fi" id="matClientPrice" type="text" placeholder="Auto" readonly
+                style="background:var(--stock-dark);color:var(--crimson);font-family:var(--font-display);font-weight:700;cursor:default;">
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--mist);margin-top:4px;">
+            Client price = your cost + <span id="inline_markup_pct">25</span>% markup. Applied to order qty (sq ft + waste).
+          </div>
         </div>
       </div>
 
@@ -1133,14 +1190,108 @@ function selectType(el, type) {
   currentType = type;
   const isStairs  = type === 'stairs';
   const isInstall = type === 'install';
-  document.getElementById('roomSection').style.display  = isStairs ? 'none' : 'block';
-  document.getElementById('stairSection').style.display = isStairs ? 'block' : 'none';
+  document.getElementById('roomSection').style.display     = isStairs ? 'none' : 'block';
+  document.getElementById('stairSection').style.display    = isStairs ? 'block' : 'none';
+  document.getElementById('materialSection').style.display = isInstall ? 'block' : 'none';
   // Show/hide tear-up row on every existing room card
   document.querySelectorAll('.room-tearup-row').forEach(row => {
     row.style.display = isInstall ? 'block' : 'none';
   });
   updateStairDisplay();
   updateSqftTotal();
+}
+
+// ══════════════════════════════════════════════
+// MATERIAL SELECTION (New Install)
+// ══════════════════════════════════════════════
+let selectedSpecies = '';
+let selectedSize = '';
+let selectedMatFinish = '';
+
+function pickSpecies(el) {
+  document.querySelectorAll('#speciesChips .mat-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const val = el.dataset.val;
+  if (val === 'other') {
+    selectedSpecies = '';
+    document.getElementById('speciesOtherGroup').style.display = 'block';
+    document.getElementById('speciesOtherInput').focus();
+  } else {
+    selectedSpecies = val;
+    document.getElementById('speciesOtherGroup').style.display = 'none';
+    document.getElementById('speciesOtherInput').value = '';
+  }
+  syncMaterialToMaterialsTab();
+}
+
+function pickSize(el) {
+  document.querySelectorAll('#sizeChips .mat-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const val = el.dataset.val;
+  if (val === 'other') {
+    selectedSize = '';
+    document.getElementById('sizeOtherGroup').style.display = 'block';
+    document.getElementById('sizeOtherInput').focus();
+  } else {
+    selectedSize = val;
+    document.getElementById('sizeOtherGroup').style.display = 'none';
+    document.getElementById('sizeOtherInput').value = '';
+  }
+  syncMaterialToMaterialsTab();
+}
+
+function pickMatFinish(el) {
+  document.querySelectorAll('#matFinishChips .mat-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedMatFinish = el.dataset.val;
+  syncMaterialToMaterialsTab();
+}
+
+function updateMatClientPrice() {
+  const cost = parseFloat(document.getElementById('matCostPerSqft').value) || 0;
+  const r = getRates();
+  const mk = 1 + (r.markup / 100);
+  const price = cost * mk;
+  document.getElementById('matClientPrice').value = cost > 0 ? '$' + price.toFixed(2) : '';
+  document.getElementById('inline_markup_pct').textContent = r.markup;
+}
+
+function syncMaterialToMaterialsTab() {
+  // Sync species
+  const species = selectedSpecies || document.getElementById('speciesOtherInput').value.trim();
+  const matTypeEl = document.getElementById('mat_flooring_type');
+  const knownSpecies = ['Red Oak','White Oak','Maple','Engineered','Laminate','LVP'];
+  if (knownSpecies.includes(species)) {
+    matTypeEl.value = species;
+    document.getElementById('mat_flooring_other').value = '';
+  } else if (species) {
+    matTypeEl.value = 'other';
+    document.getElementById('mat_flooring_other').value = species;
+    document.getElementById('flooringOtherGroup').style.display = 'block';
+  }
+  // Sync width
+  const width = selectedSize || document.getElementById('sizeOtherInput').value.trim();
+  if (width) document.getElementById('mat_flooring_width').value = width;
+  // Sync cost
+  const cost = document.getElementById('matCostPerSqft').value;
+  if (cost) document.getElementById('mat_flooring_cost').value = cost;
+  // Sync pre-finished into notes
+  if (selectedMatFinish) {
+    const notesEl = document.getElementById('mat_flooring_notes');
+    const existing = notesEl.value.replace(/Pre-Finished|Site Finish/gi, '').trim();
+    notesEl.value = (selectedMatFinish + (existing ? ', ' + existing : '')).trim();
+  }
+  // Update Materials tab client price display
+  if (typeof toggleFlooringOther === 'function') toggleFlooringOther();
+}
+
+function getSelectedMaterial() {
+  return {
+    species: selectedSpecies || document.getElementById('speciesOtherInput').value.trim(),
+    boardWidth: selectedSize || document.getElementById('sizeOtherInput').value.trim(),
+    matFinish: selectedMatFinish,
+    costPerSqft: parseFloat(document.getElementById('matCostPerSqft').value) || 0,
+  };
 }
 
 // ══════════════════════════════════════════════
@@ -1383,16 +1534,18 @@ function calculate() {
       .map(m => ({desc: m.desc, costPerSqft: parseFloat(m.costPerSqft), total: parseFloat(m.costPerSqft) * rawSqft}));
     const customMatTotal = customMatLines.reduce((a, m) => a + m.total, 0);
 
-    // Grab flooring material spec from Materials tab
-    const flooringType  = document.getElementById('mat_flooring_type')?.value || '';
+    // Grab flooring material spec — prefer inline material section, fall back to Materials tab
+    const mat = getSelectedMaterial();
+    const flooringType  = mat.species || document.getElementById('mat_flooring_type')?.value || '';
     const flooringOther = document.getElementById('mat_flooring_other')?.value.trim() || '';
     const flooringLabel = flooringType === 'other' ? flooringOther : flooringType;
-    const flooringWidth = document.getElementById('mat_flooring_width')?.value.trim() || '';
+    const flooringWidth = mat.boardWidth || document.getElementById('mat_flooring_width')?.value.trim() || '';
     const flooringThick = document.getElementById('mat_flooring_thickness')?.value.trim() || '';
     const flooringNotes = document.getElementById('mat_flooring_notes')?.value.trim() || '';
+    const matFinish     = mat.matFinish || '';
 
     // Flooring material cost — cost per sqft + markup × order qty (raw + waste)
-    const flooringCostPerSqft = parseFloat(document.getElementById('mat_flooring_cost')?.value) || 0;
+    const flooringCostPerSqft = mat.costPerSqft || parseFloat(document.getElementById('mat_flooring_cost')?.value) || 0;
     const flooringMarkup      = 1 + ((r.markup || 25) / 100);
     const flooringClientRate  = flooringCostPerSqft * flooringMarkup;
     const orderSqftForCost    = currentType === 'install' ? rawSqft + wasteSqft : rawSqft;
@@ -1415,7 +1568,7 @@ function calculate() {
       customMatLines, customMatTotal,
       materialsTotal, total, perSqft,
       finishType, finishNotes,
-      flooringLabel, flooringWidth, flooringThick, flooringNotes,
+      flooringLabel, flooringWidth, flooringThick, flooringNotes, matFinish,
       flooringCostPerSqft, flooringClientRate, flooringMaterialCost,
       rooms: rooms.map(r => ({name: r.name, sqft: calcRoomSqft(r), removeType: r.removeType, removeOther: r.removeOther})),
     };
@@ -1518,6 +1671,7 @@ function renderResults(e) {
       </div>
       ${e.flooringWidth ? `<div class="breakdown-row"><div><div class="b-name">Width</div></div><div class="b-val">${e.flooringWidth}</div></div>` : ''}
       ${e.flooringThick ? `<div class="breakdown-row"><div><div class="b-name">Thickness</div></div><div class="b-val">${e.flooringThick}</div></div>` : ''}
+      ${e.matFinish ? `<div class="breakdown-row"><div><div class="b-name">Finish</div></div><div class="b-val">${e.matFinish}</div></div>` : ''}
       ${e.flooringCostPerSqft > 0 ? `
       <div class="breakdown-row">
         <div><div class="b-name">My Cost</div></div>
@@ -1606,6 +1760,7 @@ function saveToSheet() {
     flooringWidth: e.flooringWidth || '',
     flooringThick: e.flooringThick || '',
     flooringNotes: e.flooringNotes || '',
+    matFinish:     e.matFinish     || '',
     rooms:         e.rooms        || [],
     photos:        { general: [], room: {} },
   };
@@ -1676,6 +1831,16 @@ function newEstimate() {
   document.querySelector('[data-type="sf"]').classList.add('selected');
   document.getElementById('roomSection').style.display = 'block';
   document.getElementById('stairSection').style.display = 'none';
+  document.getElementById('materialSection').style.display = 'none';
+  // Reset material selection
+  selectedSpecies = ''; selectedSize = ''; selectedMatFinish = '';
+  document.querySelectorAll('.mat-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('speciesOtherGroup').style.display = 'none';
+  document.getElementById('speciesOtherInput').value = '';
+  document.getElementById('sizeOtherGroup').style.display = 'none';
+  document.getElementById('sizeOtherInput').value = '';
+  document.getElementById('matCostPerSqft').value = '';
+  document.getElementById('matClientPrice').value = '';
   document.getElementById('saveBtn').textContent = '💾 Save to Google Sheets';
   document.getElementById('saveBtn').style.background = '';
   stairTreads = 12;
@@ -2476,6 +2641,48 @@ function editJobEstimate() {
     }
   }
   document.getElementById('finishNotes').value = job.finishNotes || '';
+  // Material section (New Install)
+  document.getElementById('materialSection').style.display = currentType === 'install' ? 'block' : 'none';
+  selectedSpecies = ''; selectedSize = ''; selectedMatFinish = '';
+  document.querySelectorAll('.mat-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('speciesOtherGroup').style.display = 'none';
+  document.getElementById('sizeOtherGroup').style.display = 'none';
+  if (currentType === 'install' && job.flooringLabel) {
+    // Try to select species chip
+    const speciesChip = document.querySelector('#speciesChips .mat-chip[data-val="' + job.flooringLabel + '"]');
+    if (speciesChip) {
+      speciesChip.classList.add('selected');
+      selectedSpecies = job.flooringLabel;
+    } else {
+      const otherChip = document.querySelector('#speciesChips .mat-chip[data-val="other"]');
+      if (otherChip) otherChip.classList.add('selected');
+      document.getElementById('speciesOtherGroup').style.display = 'block';
+      document.getElementById('speciesOtherInput').value = job.flooringLabel;
+    }
+    // Try to select size chip
+    if (job.flooringWidth) {
+      const sizeChip = document.querySelector('#sizeChips .mat-chip[data-val="' + job.flooringWidth + '"]');
+      if (sizeChip) {
+        sizeChip.classList.add('selected');
+        selectedSize = job.flooringWidth;
+      } else {
+        const otherSizeChip = document.querySelector('#sizeChips .mat-chip[data-val="other"]');
+        if (otherSizeChip) otherSizeChip.classList.add('selected');
+        document.getElementById('sizeOtherGroup').style.display = 'block';
+        document.getElementById('sizeOtherInput').value = job.flooringWidth;
+      }
+    }
+    // Pre-finished / Site Finish
+    if (job.matFinish) {
+      const finishChip = document.querySelector('#matFinishChips .mat-chip[data-val="' + job.matFinish + '"]');
+      if (finishChip) { finishChip.classList.add('selected'); selectedMatFinish = job.matFinish; }
+    }
+    // Cost
+    if (job.flooringCostPerSqft) {
+      document.getElementById('matCostPerSqft').value = job.flooringCostPerSqft;
+      updateMatClientPrice();
+    }
+  }
   // Mark that we're editing (so save updates instead of creates)
   window._editingJobId = job.id;
   window._editingSheetRow = job.sheetRow || 0;
